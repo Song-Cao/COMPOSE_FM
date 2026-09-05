@@ -5,6 +5,29 @@ life-cycle**. Do not relax them. If a decision seems to require breaking one, th
 
 ---
 
+## 0. FRAMING — overrides presentation choices everywhere
+
+**This is a flow-matching METHODOLOGICAL paper. Finance and biology are VALIDATION, not the
+subject.** Stated by the user 2026-09-05; honour it in every artifact, especially the draft:
+
+> "the central theme of this paper is a flow matching methodological design with
+> finance/bio data as validation rather than a finance-bio specific flow matching design
+> (start with a general method innovation, and then case studies on specific data instead
+> of data-driven design for the model)"
+
+Concretely this forbids several otherwise-tempting moves:
+  * Do NOT motivate the method from a dataset quirk. The operator follows from a general
+    principle — composition of intervention generators must be chart-independent — and
+    would be the same operator if neither dataset existed.
+  * Do NOT put domain terms in the model definition. The architecture speaks of generators,
+    exposure, composition, charts; never "drug", "dose", "gene", "order flow". Domain
+    vocabulary belongs only in the case-study sections.
+  * Paper order is METHOD FIRST: problem → covariance principle → operator → theory →
+    then two case studies as independent validations of the *same* operator.
+  * A result holding in only one domain is a case-study finding, not a method claim.
+  * Exposure is the semigroup parameter τ. Dose is ONE instantiation, as are executed
+    quantity and knockdown efficiency. Never write the method in dose language.
+
 ## 1. Central purposes — IN NO CONDITION DEVIATE
 
 1. **NeurIPS/ICLR-main-level significance** of the idea.
@@ -19,12 +42,26 @@ life-cycle**. Do not relax them. If a decision seems to require breaking one, th
 2. **If the gate fails → adjust the proposal with methodological creativity and reasoning,
    then repeat step 1.** The gate definition may itself change as the method changes.
    Iterate until a gate passes.
+   **Amended 2026-09-05 (user):** steps 1-2 are DONE (Gates A2 and B passed). Do not spend
+   further time on stringent toy-data gate calling — "save the time for actual model
+   implementation & evaluation". Toy experiments from here on are sanity checks, not gates.
 3. Generate the full evaluation plan: datasets (≥1 bio + ≥1 quant finance), SOTA
    comparisons, ablations.
 4. Run the full evaluation plan; adjust model/plan mid-flight if needed; collect everything
    the paper needs.
 5. Paper drafting — LaTeX first; format, structure and tone must follow NeurIPS workshop
    convention (read the official guideline and a few real workshop papers first).
+
+## 2b. Budget amendments (user, 2026-09-05)
+
+* **Steps 3+4 target: ~12 hours**, not the full deadline window.
+* **Do NOT feel obliged to spend 25 GPU-hours. Save computational cost.** Prefer the
+  smallest run that supports the claim; a d=16 latent CPU/short-GPU run that answers the
+  question beats a large one that answers it more slowly.
+* **Two datasets minimum** — "one dataset wouldn't be enough anyway". Finance first for
+  significance, organoid drug-screen second.
+* **Model detail matters.** Do not leave the architecture thin: make it *more* expressive
+  and elaborate where that is defensible, not less.
 
 ## 3. The failure mode to avoid — THE most important rule
 
