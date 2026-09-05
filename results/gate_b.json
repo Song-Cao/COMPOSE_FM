@@ -1,0 +1,98 @@
+{
+  "agg": {
+    "M1_cpa": {
+      "zeroshot_pair": 0.0030268495747833904,
+      "exposure_extrap": 0.0815573395175699,
+      "k4": 0.20711131000052121
+    },
+    "M2_fields": {
+      "zeroshot_pair": 0.0,
+      "exposure_extrap": 0.033506831850503384,
+      "k4": 0.11927447353512216
+    },
+    "M3_const": {
+      "zeroshot_pair": 0.0,
+      "exposure_extrap": 0.033506831850503384,
+      "k4": 0.11927447353512216
+    },
+    "M4_full": {
+      "zeroshot_pair": 0.0,
+      "exposure_extrap": 0.008740973114625612,
+      "k4": 0.003888744330206483
+    }
+  },
+  "per_seed": [
+    {
+      "M1_cpa": {
+        "zeroshot_pair": 0.0,
+        "exposure_extrap": 0.009348308092928704,
+        "k4": 0.0
+      },
+      "M2_fields": {
+        "zeroshot_pair": 0.0,
+        "exposure_extrap": 0.012064743736182163,
+        "k4": 0.013822557458456843
+      },
+      "M3_const": {
+        "zeroshot_pair": 0.0,
+        "exposure_extrap": 0.012064743736182163,
+        "k4": 0.013822557458456843
+      },
+      "M4_full": {
+        "zeroshot_pair": 0.0,
+        "exposure_extrap": 0.0008044166242860676,
+        "k4": 0.0
+      }
+    },
+    {
+      "M1_cpa": {
+        "zeroshot_pair": 0.009080548724350171,
+        "exposure_extrap": 0.1424181149373775,
+        "k4": 0.46979188345684514
+      },
+      "M2_fields": {
+        "zeroshot_pair": 0.0,
+        "exposure_extrap": 0.04795556748284059,
+        "k4": 0.23643186106914507
+      },
+      "M3_const": {
+        "zeroshot_pair": 0.0,
+        "exposure_extrap": 0.04795556748284059,
+        "k4": 0.23643186106914507
+      },
+      "M4_full": {
+        "zeroshot_pair": 0.0,
+        "exposure_extrap": 0.019056473213164348,
+        "k4": 0.0
+      }
+    },
+    {
+      "M1_cpa": {
+        "zeroshot_pair": 0.0,
+        "exposure_extrap": 0.09290559552240352,
+        "k4": 0.1515420465447185
+      },
+      "M2_fields": {
+        "zeroshot_pair": 0.0,
+        "exposure_extrap": 0.04050018433248739,
+        "k4": 0.10756900207776454
+      },
+      "M3_const": {
+        "zeroshot_pair": 0.0,
+        "exposure_extrap": 0.04050018433248739,
+        "k4": 0.10756900207776454
+      },
+      "M4_full": {
+        "zeroshot_pair": 0.0,
+        "exposure_extrap": 0.00636202950642642,
+        "k4": 0.011666232990619448
+      }
+    }
+  ],
+  "c1": true,
+  "c2": true,
+  "c3": true,
+  "margin_k2": 0.0030268495747833904,
+  "margin_k4": 0.08783683646539905,
+  "verdict": "PASS"
+}
