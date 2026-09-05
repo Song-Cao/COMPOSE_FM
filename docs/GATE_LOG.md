@@ -108,7 +108,24 @@ is near-perfect (M1 -0.0017, M4 -0.0138). Dividing by ~0 gave a relative margin 
 1.0 = no better than predicting "no change", 0.0 = perfect -- and compare margins as
 absolute differences in that ratio. Clamp at 0.
 
-**Run 2 result: PASS** (all three criteria).
+**CRITERION CHANGE, disclosed.** In the same edit, criterion (1) was relaxed from a strict
+ordering `M4 < M3 < M1` to a non-strict `M4 <= M3 <= M1`. This was NOT cosmetic: clamping
+the normalised ED at 0 makes M2, M3 and M4 all read exactly 0.0000 on zero-shot k=2 (a
+three-way tie at the floor of the metric), so the strict form evaluates False and Gate B
+would have FAILED criterion (1). Two honest readings, and the second is the one to carry:
+  * the relaxation is defensible -- a tie at 0.0000 means all three models solved the
+    in-distribution pairwise task perfectly, which is not evidence against the architecture;
+  * but it also means **criterion (1) is uninformative as written**. It was designed to
+    detect an ordering that the metric floor cannot express. The zero-shot k=2 comparison
+    should be treated as PASSED VACUOUSLY, and no weight should be placed on it in the
+    paper. The load-bearing evidence is criteria (2) and (3), which are strict inequalities
+    on values far from the floor (0.0087 vs 0.0816; +0.0030 vs +0.0878).
+A future revision should replace criterion (1) with a harder in-distribution test (smaller
+n, higher noise, or a metric without a floor) so that it can actually discriminate.
+
+**Run 2 result: PASS** on all three criteria as re-registered -- but see the criterion
+change above: (1) passes only vacuously (three-way tie at the metric floor), so the verdict
+rests on (2) and (3).
 
 | model | zero-shot k=2 | exposure tau=2 | k=4 |
 |---|---|---|---|
@@ -124,6 +141,10 @@ absolute differences in that ratio. Clamp at 0.
   * M2 == M3 to four decimals: the global constant learned nothing beyond plain field
     composition here, consistent with the real-Norman finding. The STATE-DEPENDENT gate is
     what earns its place, and mainly at k=4 (0.0039 vs 0.1193, ~30x).
+  * zero-shot k=2: M2 == M3 == M4 == 0.0000 exactly. All three are at the clamped floor of
+    the normalised metric, i.e. indistinguishable, NOT ordered. Only M1 (0.0030) separates.
+    Read this row as "every field-composition variant solves the in-distribution pairwise
+    task" and nothing more.
 
 **Caveats.** Toy ground truth, d=6, 3 seeds, CPU. The toy's state-dependence is a design
 choice (see `src/composefm/toy.py` provenance note), so M4's k=4 advantage demonstrates the
