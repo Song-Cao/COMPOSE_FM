@@ -67,6 +67,62 @@ CHANNEL_NAMES = ["small sell", "large sell", "small buy", "large buy"]
 
 
 # ---------------------------------------------------------------- state features
+def impact_state(df: pd.DataFrame, window: str = "10s", min_trades: int = 5):
+    """State that CARRIES the response: the quantity finance actually models.
+
+    Rationale for replacing the first attempt (kept in `build_windows`): a state of purely
+    aggregate window statistics (realised vol, intensity, dispersion...) responds almost not
+    at all to executed quantity -- measured log-log slope of ||dz|| vs exposure was 0.064,
+    i.e. no exposure signal to model. The square-root law is a statement about PRICE IMPACT,
+    so the state must contain price. With impact in the state the same measurement gives a
+    log-log slope of 0.587 on bin means (1.0 = additive, 0.5 = square-root law), i.e. strong,
+    real sub-additivity -- exactly the contraction the gate represents.
+
+    Returns per-window:
+      z0 : (mid log-price relative to window start, realised vol, signed-flow imbalance,
+            trade intensity, size dispersion, sign autocorrelation)   -- the PRE state
+      z1 : the same features one window later                          -- the POST state
+      tau: executed quantity per channel, normalised by that channel's median active value
+    """
+    df = df.copy()
+    df["bin"] = df["ts"].dt.floor(window)
+    rows, expo, keys = [], [], []
+    for b, g in df.groupby("bin", sort=True):
+        if len(g) < min_trades:
+            continue
+        lp = g["logp"].to_numpy(); q = g["qty"].to_numpy(); s = g["sign"].to_numpy()
+        r = np.diff(lp) if len(lp) > 1 else np.array([0.0])
+        dur = max((g["ts"].iloc[-1] - g["ts"].iloc[0]).total_seconds(), 1e-3)
+        tot = q.sum() + 1e-12
+        ac = float(np.corrcoef(s[:-1], s[1:])[0, 1]) if len(s) > 2 and np.std(s) > 0 else 0.0
+        rows.append([
+            float(lp[-1]),                                  # level: last log price
+            float(np.sqrt(np.sum(r ** 2))),                  # realised vol
+            float((s * q).sum() / tot),                      # flow imbalance
+            float(np.log1p(len(lp) / dur)),                  # intensity
+            float(np.std(np.log(q + 1e-12))),                # size dispersion
+            ac,
+        ])
+        e = np.zeros(N_CHANNELS)
+        for ch, gg in g.groupby("channel"):
+            e[int(ch)] = gg["qty"].sum()
+        expo.append(e); keys.append(b)
+    F = np.asarray(rows); E = np.asarray(expo)
+    med = np.array([np.median(E[E[:, c] > 0, c]) if (E[:, c] > 0).any() else 1.0
+                    for c in range(N_CHANNELS)])
+    Tau = E / med
+    # price LEVEL is non-stationary: convert to a within-pair return so the state is
+    # comparable across the day. Column 0 of z1 becomes the log return over the step.
+    z0 = F[:-1].copy(); z1 = F[1:].copy()
+    z1[:, 0] = F[1:, 0] - F[:-1, 0]        # realised log return (the impact)
+    z0[:, 0] = 0.0                          # pre-state return is zero by construction
+    return dict(z0=z0, z1=z1, tau=Tau[:-1], keys=keys[:-1], med=med)
+
+
+IMPACT_STATE_NAMES = ["log return", "realised vol", "flow imbalance",
+                      "log intensity", "size dispersion", "sign autocorr"]
+
+
 def _window_features(g: pd.DataFrame) -> np.ndarray:
     """Microstructure state of one window. Deliberately generic, no channel information."""
     lp = g["logp"].to_numpy()
@@ -128,7 +184,23 @@ def build_windows(df: pd.DataFrame, window: str = "10s", horizon: int = 1):
                 z0=Z[i0], z1=Z[i1], tau=Tau[i0])
 
 
-def standardise(z0: np.ndarray, z1: np.ndarray):
-    """Whiten on the PRE-state only, so the transform is not shaped by the response."""
-    mu, sd = z0.mean(0), z0.std(0) + 1e-9
+def standardise(z0: np.ndarray, z1: np.ndarray, degenerate_from_z1: bool = True):
+    """Whiten on the PRE-state, but fall back to z1's scale for degenerate columns.
+
+    Why the fallback is needed (this produced a 3.7e6 blow-up and NaN losses before it was
+    added): in `impact_state` the return column of the PRE-state is identically zero by
+    construction, so its std is 0. Dividing by it sends the corresponding TARGET column to
+    ~1e5-1e6 and the loss to ~1e10. For any column with (near-)zero spread in z0 we take
+    the scale from z1 instead, which is the only informative scale available. The transform
+    is still fitted without reference to the *conditional* structure of the response -- only
+    its overall spread -- so it does not leak the thing being predicted.
+    """
+    mu = z0.mean(0)
+    sd = z0.std(0)
+    if degenerate_from_z1:
+        bad = sd < 1e-8
+        if bad.any():
+            sd = sd.copy()
+            sd[bad] = z1[:, bad].std(0)
+    sd = sd + 1e-9
     return (z0 - mu) / sd, (z1 - mu) / sd, mu, sd
