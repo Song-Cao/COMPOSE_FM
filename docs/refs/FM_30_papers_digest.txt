@@ -1,0 +1,552 @@
+
+== page 1 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 1
+Flow Matching
+30 method and architecture papers
+JANUARY 2025 - 5 SEPTEMBER 2026
+A curated review of 30 methodological and architectural papers first released on arXiv from January 2025 
+onward, with a search cutoff of 5 September 2026. Selection favors distinct changes to learning objectives, 
+transport paths, couplings, prediction targets, and model structure, including closely related discrete and 
+stochastic-interpolant methods.
+Search starting points
+Discovery began with the foundational flow-matching and rectified-flow lines associated with Yaron Lipman, 
+Ricky T. Q. Chen, and Qiang Liu. It then followed stochastic-interpolant work by Michael S. Albergo and Eric 
+Vanden-Eijnden, and fast-generation work involving Kaiming He and Stefano Ermon. Author publication lists, 
+related-work references, and targeted arXiv searches expanded the candidates; these names are search 
+seeds, not a bibliometric ranking.
+Chen: publications | Liu: research page
+How to read the entries
+Each entry separates the paper's claimed problem and proposed method from a retrospective design 
+rationale. The three rationale points are an explanatory reconstruction of the method's motivation, not the 
+authors' actual discovery process or a private reasoning transcript.
+Reading map
+Part Theme Pages
+A Prediction targets and fast flow maps 2-4
+B Training, coupling, and parameterization 5-7
+C Paths, geometry, and structure 8-10
+D Generalized transitions and mixed-state models 11-13
+E Constraints, multimarginal learning, and adaptation 14-16
+Six papers per theme; two entries per page.
+Entries draw on the original problem statements and relevant method sections. Dates indicate first arXiv 
+release; links identify the consulted text and version. arXiv hosting does not imply peer review, and this 
+selection is not exhaustive. Results and proofs were not independently reproduced.
+== page 2 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 2
+A / PREDICTION TARGETS AND FAST FLOW MAPS
+01 Mean Flows for One-step Generative Modeling
+arxiv.org/abs/2505.13447 | First release: May 2025
+Method text (v1) | Sections 4.1-4.2
+Claimed problem. Standard flow matching learns instantaneous velocity, so generation requires 
+numerical integration and can deteriorate when compressed to one step. The paper seeks a model 
+trained directly for finite-interval transport without a pretrained teacher.
+RETROSPECTIVE DESIGN RATIONALE
+1. Make the prediction target describe displacement across an interval, since that is the quantity a 
+one-step sampler needs.
+2. Connect this average velocity to the instantaneous velocity using a differentiable identity, 
+providing supervision without observing exact transport trajectories.
+3. Condition the network on both interval endpoints and train the identity so the same model 
+supports large or small sampling steps.
+Proposed method. MeanFlow learns interval-averaged velocity using an identity relating it to 
+instantaneous velocity and its total derivative, evaluated with a Jacobian-vector product. A stop-gradient
+regression objective enables training from scratch and single-evaluation generation.
+02 Improved Mean Flows: On the Challenges of Fastforward Generative Models
+arxiv.org/abs/2512.02012 | First release: December 2025
+Method text (v1) | Method sections on parameterization and guidance
+Claimed problem. MeanFlow training couples average-velocity prediction to noisy conditional velocity 
+targets, which can make the effective prediction target-dependent and difficult to optimize. Fast 
+generation also needs flexible guidance rather than a single baked-in guidance scale.
+RETROSPECTIVE DESIGN RATIONALE
+1. Separate the quantity used to form the network prediction from the noisy sample-specific 
+supervision.
+2. Use a predicted marginal velocity in the derivative direction, then supervise the resulting 
+composite velocity prediction with the accessible conditional target.
+3. Expose guidance strength as an input so a trained fast generator can change the quality-diversity 
+tradeoff at inference.
+Proposed method. Improved Mean Flows replaces the target-dependent derivative direction with a 
+predicted velocity, obtained from the average-velocity network or an auxiliary velocity head. It also 
+conditions on guidance strength to support adjustable guided generation in very few evaluations.
+== page 3 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 3
+A / PREDICTION TARGETS AND FAST FLOW MAPS
+03 How to build a consistency model: Learning flow maps via self-distillation
+arxiv.org/abs/2505.18825 | First release: May 2025
+Method text (v1) | Sections 2.2-2.3
+Claimed problem. Flow-map and consistency models can accelerate sampling, but conventional 
+approaches often require a separately trained velocity model or delicate direct-training objectives. The 
+paper asks how to learn instantaneous dynamics and finite-time maps together.
+RETROSPECTIVE DESIGN RATIONALE
+1. Represent a finite-time map so its infinitesimal limit exposes an ordinary velocity field.
+2. Use flow-matching supervision at coincident times to learn the local dynamics from data.
+3. Constrain maps at separated times through differential or composition identities, allowing the 
+developing model to supervise its own longer transitions.
+Proposed method. The paper parameterizes a two-time flow map with an Euler-like residual form and 
+combines diagonal flow matching with off-diagonal self-distillation. Lagrangian, Eulerian, and semigroupbased objectives provide alternative consistency constraints without requiring a separately pretrained 
+teacher.
+04 Align Your Flow: Scaling Continuous-Time Flow Map Distillation
+arxiv.org/abs/2506.14603 | First release: June 2025
+Method text (v1) | Sections 3.1-3.4
+Claimed problem. The paper identifies error accumulation and unfavorable scaling with additional steps 
+in the consistency formulations it analyzes. It seeks continuous-time distillation that remains useful 
+across sampling budgets and scales to large image generators.
+RETROSPECTIVE DESIGN RATIONALE
+1. Predict transport between arbitrary noise levels instead of committing every prediction to the final
+endpoint.
+2. Require the predicted map's derivatives to agree with the teacher dynamics, yielding constraints 
+that remain meaningful when transitions are composed.
+3. Stabilize the time representation and derivative-based optimization, then include the desired 
+guidance in the distilled behavior.
+Proposed method. Align Your Flow introduces continuous-time flow-map distillation objectives derived 
+from Eulerian and Lagrangian descriptions. Time embeddings, tangent warmup, and guidance distillation
+make the approach practical at scale; the framework also permits adversarial refinement.
+== page 4 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 4
+A / PREDICTION TARGETS AND FAST FLOW MAPS
+05 Flow Map Distillation Without Data
+arxiv.org/abs/2511.19428 | First release: November 2025
+Method text (v1) | Sections 3-4
+Claimed problem. Data used for distillation may be unavailable or mismatched to a teacher that has 
+been post-trained, while approximate teacher trajectories introduce another source of error. The goal is 
+to distill a teacher's own distribution using only its prior and dynamics.
+RETROSPECTIVE DESIGN RATIONALE
+1. Use prior samples as the common starting distribution because the teacher's generative process is
+defined from that prior.
+2. Evaluate teacher consistency at states predicted by the student, avoiding dependence on an 
+external training dataset.
+3. Add a corrective noising construction to reduce errors that would otherwise compound along the 
+learned transport.
+Proposed method. The paper trains a prior-anchored flow map by matching its induced dynamics to the 
+pretrained teacher at student-generated states. A noising-flow correction addresses accumulated 
+transport errors, enabling data-free distillation while retaining access to the teacher.
+06 Inductive Moment Matching
+arxiv.org/abs/2503.07565 | First release: March 2025
+Method text (PDF) | Sections 3.1-3.2
+Claimed problem. Training effective few-step generators often depends on expensive teacher 
+distillation or unstable, highly tuned consistency objectives. The paper seeks a distribution-level 
+objective that learns flexible step sizes directly from data.
+RETROSPECTIVE DESIGN RATIONALE
+1. Require a transition to reproduce the correct intermediate distribution rather than a particular 
+samplewise target.
+2. Compare generated and reference distributions through kernel moments, which also supply 
+interactions between generated samples.
+3. Bootstrap longer transitions from already easier, shorter ones so a single model progressively 
+learns coarse transport.
+Proposed method. Inductive Moment Matching combines marginal-preserving interpolants with an 
+inductive bootstrapping construction. A maximum mean discrepancy objective matches distributions 
+across direct and bootstrapped transitions, supporting few-step generation from scratch without a 
+pretrained teacher.
+== page 5 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 5
+B / TRAINING, COUPLING, AND PARAMETERIZATION
+07 Improving Rectified Flow with Boundary Conditions
+arxiv.org/abs/2506.15864 | First release: June 2025
+Method text (v2) | Sections 3.1-3.3
+Claimed problem. Under the paper's independent Gaussian-noise coupling and linear interpolation, 
+endpoint velocities have known analytical forms that unconstrained networks need not satisfy. 
+Boundary errors can become especially damaging when velocity is converted into a score near an 
+endpoint.
+RETROSPECTIVE DESIGN RATIONALE
+1. Derive the endpoint behavior implied by the chosen coupling and noise distribution before fitting 
+the network.
+2. Encode those known values directly in the prediction formula.
+3. Multiply the learned residual by time-dependent factors that vanish at the boundaries, leaving the
+network to learn only the unconstrained interior behavior.
+Proposed method. The paper introduces velocity parameterizations that impose analytical boundary 
+conditions through fixed terms and gated neural residuals. Mask-based and subtraction-based 
+constructions adapt existing architectures while improving endpoint consistency and the stability of 
+derived quantities.
+08 Understanding, Accelerating, and Improving MeanFlow Training
+arxiv.org/abs/2511.19065 | First release: November 2025
+Method text (v1) | Sections 4-5
+Claimed problem. MeanFlow must learn accurate instantaneous velocity while also learning average 
+velocity over longer intervals. The paper argues that these coupled tasks can interfere, slowing the 
+development of the local dynamics needed for successful fast generation.
+RETROSPECTIVE DESIGN RATIONALE
+1. Treat local velocity learning as a prerequisite that deserves explicit attention during optimization.
+2. Improve the sampling and weighting of local supervision so useful instantaneous dynamics 
+develop earlier.
+3. Gradually broaden emphasis from short intervals to longer ones as those dynamics become 
+reliable.
+Proposed method. The proposed training strategy accelerates instantaneous-velocity learning through 
+timestep sampling and weighting, then progressively adjusts average-velocity loss emphasis. This 
+changes the optimization schedule of MeanFlow rather than replacing its underlying average-velocity 
+formulation.
+== page 6 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 6
+B / TRAINING, COUPLING, AND PARAMETERIZATION
+09 Asymmetric Flow Models
+arxiv.org/abs/2605.12964 | First release: May 2026
+Method text (v1) | Core parameterization and latent-to-pixel construction
+Claimed problem. Pixel-space transformers face a costly high-dimensional noise-prediction burden, 
+while pure clean-data prediction can become poorly conditioned at low noise. The paper seeks a 
+parameterization between full velocity prediction and pure data prediction.
+RETROSPECTIVE DESIGN RATIONALE
+1. Separate the information needed to describe clean structure from the information needed to 
+represent noise.
+2. Preserve full-rank data prediction while restricting the learned noise component to a lowerdimensional subspace.
+3. Recover the missing velocity contribution analytically from the current state, preserving a usable 
+flow field.
+Proposed method. Asymmetric Flow Models combine full-rank data prediction with low-rank noise 
+prediction and analytically reconstruct the complete velocity. The rank controls a continuum between 
+data and velocity prediction, and the formulation supports transferring latent-space models into pixelspace generation.
+10 Variational Rectified Flow Matching
+arxiv.org/abs/2502.09616 | First release: February 2025
+Method text (v1) | Sections 3.1-3.3
+Claimed problem. Multiple conditional trajectories can assign different velocities to the same 
+intermediate state, so squared-error regression averages incompatible directions and can produce 
+curved marginal paths. This concerns ambiguity in the velocity targets, not an inability of flow matching 
+to represent multimodal data.
+RETROSPECTIVE DESIGN RATIONALE
+1. Represent alternative velocity directions explicitly instead of forcing them into one conditional 
+mean.
+2. Introduce a latent variable that distinguishes plausible transport behaviors.
+3. Learn the latent assignment variationally while regularizing it toward a sampling-time prior.
+Proposed method. Variational Rectified Flow Matching uses a latent-conditioned velocity model and a 
+variational encoder over transport examples. An evidence lower bound combines velocity regression 
+with a KL regularizer, allowing the learned transport to represent conditional velocity ambiguity.
+== page 7 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 7
+B / TRAINING, COUPLING, AND PARAMETERIZATION
+11 Beyond Optimal Transport: Model-Aligned Coupling for Flow Matching
+arxiv.org/abs/2505.23346 | First release: May 2025
+Method text (v1) | Section 3
+Claimed problem. A coupling that is attractive under geometric transport cost may still be difficult for 
+the current neural model to learn. The paper argues that training efficiency also depends on how well 
+the chosen pairs align with the model's present predictive ability.
+RETROSPECTIVE DESIGN RATIONALE
+1. Include model learnability in the pairing criterion instead of measuring only endpoint distance.
+2. Score candidate noise-data pairs with the current velocity-prediction loss.
+3. Select the easier subset repeatedly as training evolves, creating an inexpensive adaptive pairing 
+mechanism.
+Proposed method. Model-Aligned Coupling uses model-dependent prediction error to choose training 
+pairs. Its practical implementation retains a low-loss fraction of candidate pairs through top-k selection, 
+avoiding an expensive full assignment while adapting the training distribution to the model.
+12 COT-FM: Cluster-wise Optimal Transport Flow Matching
+arxiv.org/abs/2603.13395 | First release: March 2026
+Method text (v1) | Sections 3.1-3.2
+Claimed problem. Random and minibatch transport pairings can poorly approximate the global 
+structure of the data distribution, leaving difficult or curved transport paths. Computing an accurate 
+global coupling directly is expensive.
+RETROSPECTIVE DESIGN RATIONALE
+1. Divide the data into coherent clusters so transport can be handled through smaller, structured 
+subproblems.
+2. Use an existing flow in reverse to estimate which source regions correspond to each cluster.
+3. Solve local transport pairings within those regions and refine the model using the resulting better 
+organized paths.
+Proposed method. COT-FM combines data clustering, cluster-specific source estimation from a 
+pretrained reverse flow, and local optimal-transport pairings. Alternating coupling construction and flow
+refinement improves transport structure without requiring a new generator architecture.
+== page 8 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 8
+C / PATHS, GEOMETRY, AND STRUCTURE
+13 Improving Progressive Generation with Decomposable Flow Matching
+arxiv.org/abs/2506.19839 | First release: June 2025
+Method text (v1) | Sections 3.2-3.4
+Claimed problem. Progressive coarse-to-fine generators often need specialized stage transitions and 
+samplers tied to a particular decomposition. The paper seeks a general flow-matching formulation that 
+supports staged generation without rebuilding the generative process for each design.
+RETROSPECTIVE DESIGN RATIONALE
+1. Express the sample as components, such as coarse structure and successive detail bands.
+2. Give each component its own progress variable so their generation schedules can differ.
+3. Train a shared conditional model over these component states, then choose a staged schedule 
+using ordinary flow integration.
+Proposed method. Decomposable Flow Matching assigns separate time coordinates and velocity targets
+to decomposed sample components. Its shared transformer uses component-aware input and time 
+representations, enabling progressive generation, including a Laplacian-pyramid construction, within a 
+unified flow framework.
+14 Lagrangian Flow Matching: A Least-Action Framework for Principled Path Design
+arxiv.org/abs/2605.15419 | First release: May 2026
+Method text (v1) | Least-action formulation and conditional training construction
+Claimed problem. Standard affine paths and kinetic optimal transport cover only a limited range of 
+desirable transport behaviors. The paper asks how to design richer paths from an explicit principle 
+rather than choosing interpolation formulas heuristically.
+RETROSPECTIVE DESIGN RATIONALE
+1. Specify preferred motion through an action that can penalize velocity and encode positiondependent behavior.
+2. Use the corresponding least-action trajectories and endpoint transport costs to connect 
+conditional paths with a distribution-level problem.
+3. For tractable action choices, regress their conditional velocities using the flow-matching 
+machinery.
+Proposed method. Lagrangian Flow Matching formulates path learning through least action and a staticdynamic optimal-transport relationship. Appropriate Lagrangians recover straight kinetic paths or yield 
+curved alternatives, such as harmonic-oscillator paths, with conditional regression objectives for 
+tractable cases.
+== page 9 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 9
+C / PATHS, GEOMETRY, AND STRUCTURE
+15 Generalized Wasserstein Flow Matching: Transport Plans, Everywhere, All at Once
+arxiv.org/abs/2605.08424 | First release: May 2026
+Method text (v1) | Sections 2.3 and 3
+Claimed problem. When each example is itself a probability measure or particle set, ordinary Euclidean 
+interpolation misses the geometry within and between examples. Exact nested optimal transport can be
+too expensive for practical generative training.
+RETROSPECTIVE DESIGN RATIONALE
+1. Treat the dataset as a distribution over distributions, making both transport levels explicit.
+2. Couple example measures at the outer level and their constituent particles at the inner level.
+3. Use tractable Wasserstein approximations and a permutation-equivariant velocity network to 
+preserve this structure computationally.
+Proposed method. The framework combines outer and inner transport plans to construct flow-matching
+targets on distributions of measures. Sliced and linearized Wasserstein approximations reduce cost, 
+while equivariant particle-based models represent the resulting distribution-valued dynamics.
+16 Bures-Wasserstein Flow Matching for Graph Generation
+arxiv.org/abs/2506.14020 | First release: June 2025
+Method text (v1) | Graph representation, Bures-Wasserstein paths, and flow training
+Claimed problem. Independent interpolation of graph nodes and edges can overlook their joint 
+structural dependencies. The paper seeks graph-generation paths that reflect relationships encoded by 
+the whole graph.
+RETROSPECTIVE DESIGN RATIONALE
+1. Represent graph structure through an associated Markov random field, making dependencies part
+of the transported object.
+2. Choose interpolation from a Wasserstein geometry compatible with that representation.
+3. Translate the structured interpolation into trainable node-and-edge dynamics instead of treating 
+the components independently.
+Proposed method. The paper builds graph flow matching around a Markov-random-field representation
+and Bures-Wasserstein interpolation. The resulting structured paths couple node and edge evolution, 
+with formulations that incorporate continuous and discrete flow-matching components.
+== page 10 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 10
+C / PATHS, GEOMETRY, AND STRUCTURE
+17 Energy Guided Geometric Flow Matching
+arxiv.org/abs/2509.25230 | First release: September 2025
+Method text (v1) | Sections 4.1-4.3
+Claimed problem. Straight Euclidean paths can leave a curved data manifold, but density-based 
+geometric metrics may overfavor heavily sampled regions. The paper seeks geometry-aware paths that 
+distinguish manifold support from uneven sampling density.
+RETROSPECTIVE DESIGN RATIONALE
+1. Learn an energy representation of the data support while identifying density imbalance as a 
+separate source of bias.
+2. Reweight the energy-learning process so dense regions do not dominate the inferred geometry.
+3. Construct a metric from the corrected energy and train flow matching along its low-cost paths.
+Proposed method. Energy Guided Geometric Flow Matching uses iterative density reweighting and 
+annealing to learn an energy-based metric, then fits geometric paths and their flow velocities. The 
+guiding energy describes learned data geometry rather than necessarily representing a physical energy 
+or downstream reward.
+18 Space Group Conditional Flow Matching
+arxiv.org/abs/2509.23822 | First release: September 2025
+Method text (v1) | Sections 3.1-3.3
+Claimed problem. Conditioning a crystal generator on a space-group label alone does not guarantee 
+that generated structures obey the requested symmetry. The paper seeks to preserve specified 
+crystallographic symmetry throughout generation.
+RETROSPECTIVE DESIGN RATIONALE
+1. Require the initial distribution to satisfy the desired symmetry, not merely receive its label.
+2. Require the velocity field to commute with the relevant symmetry operations.
+3. Implement both conditions efficiently so every evolution step preserves the selected structural 
+constraints.
+Proposed method. The approach constructs a space-group-conditional prior using Wyckoff positions and
+learns a space-group-equivariant velocity field. An optimized group-averaging procedure symmetrizes 
+the model, preserving the initial symmetry along the generated flow.
+== page 11 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 11
+D / GENERALIZED TRANSITIONS AND MIXED-STATE MODELS
+19 Transition Matching: Scalable and Flexible Generative Modeling
+arxiv.org/abs/2506.23589 | First release: June 2025
+Method text (v1) | Sections 2-3
+Claimed problem. Restrictive transition families, such as deterministic updates or simple noise kernels, 
+limit the expressiveness available at each generative step. The paper seeks a framework that can learn 
+richer finite-step transition distributions.
+RETROSPECTIVE DESIGN RATIONALE
+1. Make the transition kernel itself the learned object, allowing each step to express multiple 
+plausible outcomes.
+2. Obtain transition supervision from a chosen process connecting noise and data.
+3. Separate expensive representation computation from a smaller generative transition head so 
+expressive sampling need not repeatedly invoke the full backbone.
+Proposed method. Transition Matching trains parameterized transition kernels to match those of a 
+supervising process. Its diffusion-style and autoregressive instances use a large backbone with a small 
+flow-based head; in the diffusion-style instance, multiple head evaluations can reuse backbone features.
+20 A Few-Step Generative Model on Cumulative Flow Maps
+arxiv.org/abs/2605.03623 | First release: May 2026
+Method text (v1) | Sections 3.2-3.4
+Claimed problem. Average-velocity formulations for fast generation do not directly provide a unified 
+treatment of other prediction parameterizations and generative update rules. Moreover, a valid 
+cumulative-field training target cannot simply be obtained by averaging conditional cumulative fields.
+RETROSPECTIVE DESIGN RATIONALE
+1. Describe each model's instantaneous update with an abstract transition function that separates 
+the update rule from its predicted field.
+2. Define a cumulative parameterization whose transition function represents transport over a finite 
+interval.
+3. Relate that field to instantaneous supervision and its derivatives, replacing the unavailable direct 
+cumulative target with a trainable identity.
+Proposed method. The paper generalizes finite-interval flow maps through cumulative parameterization
+fields compatible with multiple update formulations. Derivative identities yield objectives for learning 
+these fields, enabling one- or few-step sampling and reuse of pretrained instantaneous models.
+== page 12 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 12
+D / GENERALIZED TRANSITIONS AND MIXED-STATE MODELS
+21 Edit Flows: Flow Matching with Edit Operations
+arxiv.org/abs/2506.09018 | First release: June 2025
+Method text (v1) | Sections 3.1-3.2
+Claimed problem. Fixed-length discrete flow models cannot naturally insert or delete tokens, while 
+autoregressive generation makes arbitrary-position revision awkward. The paper seeks a generative 
+process that changes both sequence content and length.
+RETROSPECTIVE DESIGN RATIONALE
+1. Use a state space containing sequences of different lengths.
+2. Describe local evolution with insertion, deletion, and substitution events rather than only fixedposition token changes.
+3. Construct an auxiliary process whose tractable conditional supervision can be marginalized to 
+train the desired edit dynamics.
+Proposed method. Edit Flows defines a continuous-time Markov process over variable-length sequences
+with learned edit rates and token distributions. An augmented-process construction and flow-matchingstyle objectives make these insertion, deletion, and substitution dynamics trainable.
+22 OneFlow: Concurrent Mixed-Modal and Interleaved Generation with Edit Flows
+arxiv.org/abs/2510.03506 | First release: October 2025
+Method text (v3) | Joint model, time parameterization, and sampling design
+Claimed problem. Autoregressive multimodal systems impose a generation order, while fixed-layout 
+diffusion systems constrain text length and interleaving. The paper seeks concurrent generation of 
+variable-length text and continuous image content.
+RETROSPECTIVE DESIGN RATIONALE
+1. Give text length changes a discrete insertion process and image content a continuous flow.
+2. Couple their predictions through one multimodal backbone so either modality can inform the 
+other's development.
+3. Coordinate modality-specific progress variables and sampling stages to support interleaved 
+generation and refinement.
+Proposed method. OneFlow combines insertion-based Edit Flows for text with continuous flow 
+matching for images in a shared multimodal model. Image-specific time conditioning and coordinated 
+hierarchical sampling support concurrent mixed-modal and interleaved outputs.
+== page 13 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 13
+D / GENERALIZED TRANSITIONS AND MIXED-STATE MODELS
+23 Generative Molecular Morphing for Flexible-Size Design via Unbalanced Optimal 
+Transport
+arxiv.org/abs/2606.07239 | First release: June 2026
+Method text (v1) | Sections 2.2-2.5
+Claimed problem. Molecular generators with a fixed atom count cannot naturally morph a structured 
+molecular prior into a different-sized molecule. The paper seeks joint control over coordinates, atom 
+identities, and changes in molecular size.
+RETROSPECTIVE DESIGN RATIONALE
+1. Combine continuous coordinate motion with discrete events that change the molecular graph's 
+dimension.
+2. Align unequal-size endpoint molecules through transport that permits unmatched mass, 
+accounting for geometric and permutation symmetries.
+3. Use the aligned examples to supervise both coordinate velocities and molecular edit rates.
+Proposed method. The framework combines conditional coordinate-flow learning with insertion, 
+deletion, and substitution jump dynamics. Unbalanced optimal transport supplies symmetry-aware 
+endpoint correspondences and edit supervision, enabling flexible-size molecular transformations from 
+structured priors.
+24 Multitask Learning with Stochastic Interpolants
+arxiv.org/abs/2508.04605 | First release: August 2025
+Method text (v1) | Sections 2-3
+Claimed problem. A stochastic interpolant controlled by a single scalar clock commits training to a 
+narrow family of paths, limiting reuse across generation and inverse problems. The paper seeks a single 
+learned representation that supports multiple task-dependent evolutions.
+RETROSPECTIVE DESIGN RATIONALE
+1. Replace the scalar interpolation schedule with operators that can control different coordinates or 
+subspaces differently.
+2. Learn conditional endpoint statistics across this richer family of interpolants.
+3. At inference, select an operator path appropriate to the task and form its dynamics from the 
+shared learned statistics.
+Proposed method. The paper introduces operator-valued stochastic interpolants and trains associated 
+conditional drift components. Different operator trajectories then realize tasks such as generation, 
+denoising, and inpainting without training a separate model for each task.
+== page 14 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 14
+E / CONSTRAINTS, MULTIMARGINAL LEARNING, AND ADAPTATION
+25 Physics vs Distributions: Pareto Optimal Flow Matching with Physics Constraints
+arxiv.org/abs/2506.08604 | First release: June 2025
+Method text (v4) | Physics-loss formulation, temporal unrolling, and Appendix F
+Claimed problem. Physics residuals and distribution-matching losses can produce conflicting 
+optimization directions. Applying nonlinear physical constraints to an intermediate denoised mean can 
+also misrepresent the constraint violation of generated samples.
+RETROSPECTIVE DESIGN RATIONALE
+1. Evaluate physical constraints on a better approximation to an actual generated endpoint.
+2. Use short differentiable temporal unrolling during training to obtain that endpoint approximation.
+3. Coordinate the physical and statistical loss gradients so improving one objective does not 
+needlessly oppose the other.
+Proposed method. The framework combines flow-matching training with physical residual losses 
+evaluated after temporal unrolling. It adopts conflict-free multiobjective gradient updates to balance 
+physical consistency and distributional fidelity, moving constraint enforcement into training rather than 
+adding it to every inference step.
+26 Multimarginal flow matching with optimal transport potentials
+arxiv.org/abs/2606.05327 | First release: June 2026
+Method text (v2) | Sections 3.2-4
+Claimed problem. Endpoint-only flow matching discards intermediate population observations, while 
+separately connecting adjacent snapshots can create abrupt changes in velocity. The paper seeks a 
+coherent transport model that incorporates multiple observed distributions.
+RETROSPECTIVE DESIGN RATIONALE
+1. Treat intermediate distributions as constraints on one global evolution rather than independent 
+endpoint pairs.
+2. Add time-localized distributional potentials to a transport action so the dynamics respond 
+smoothly to the snapshots.
+3. Develop conditional transport targets and a practical fitting procedure for the resulting 
+multimarginal problem.
+Proposed method. The paper combines a dynamic optimal-transport objective with potentials that 
+penalize mismatch to intermediate marginals. Conditional trajectory regression and a fixed-point 
+consistency construction provide a flow-matching approach to learning the resulting transport.
+== page 15 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 15
+E / CONSTRAINTS, MULTIMARGINAL LEARNING, AND ADAPTATION
+27 GLASS Flows: Transition Sampling for Alignment of Flow and Diffusion Models
+arxiv.org/abs/2509.25170 | First release: September 2025
+Method text (v1) | Section 4
+Claimed problem. Reward-based branching methods need stochastic transitions, but pretrained flow 
+ODEs are deterministic and adding SDE simulation can be costly. The paper seeks flexible conditional 
+transition sampling from existing flow or diffusion models.
+RETROSPECTIVE DESIGN RATIONALE
+1. Regard a stochastic transition as its own conditional generative problem.
+2. Design a Gaussian conditional construction whose observations reduce to a sufficient statistic 
+usable by the pretrained denoiser.
+3. Inject fresh randomness through an inner conditional flow, supplying branching transitions 
+without retraining the base model.
+Proposed method. GLASS constructs tunable stochastic transitions using Gaussian conditional structure 
+and sufficient-statistic transformations. An inner flow reuses the pretrained model to sample those 
+transitions, enabling reward-guided branching and sequential Monte Carlo alignment without finetuning.
+28 Tilt Matching for Scalable Sampling and Fine-Tuning
+arxiv.org/abs/2512.21829 | First release: December 2025
+Method text (v1) | Tilt dynamics and regression objective
+Claimed problem. Sampling from unnormalized reward-tilted distributions or adapting a generator may 
+lack target examples and tractable likelihoods. The paper seeks updates that use scalar rewards without 
+requiring reward gradients or backpropagation through long sampling trajectories.
+RETROSPECTIVE DESIGN RATIONALE
+1. Introduce the desired reward tilt gradually through a continuous family of target distributions.
+2. Express how the transport velocity changes along this family using reward-dependent conditional 
+statistics.
+3. Estimate those changes by regression and iterate the updates, avoiding direct differentiation 
+through the full generation process.
+Proposed method. Tilt Matching derives velocity evolution from a conditional covariance involving 
+reward and interpolant dynamics. Its iterative regression procedure uses scalar reward evaluations to 
+transport toward tilted targets, supporting both unnormalized sampling and generator fine-tuning.
+== page 16 ==
+FLOW MATCHING / METHODS & ARCHITECTURES 2025-2026
+Research review | 5 September 2026 16
+E / CONSTRAINTS, MULTIMARGINAL LEARNING, AND ADAPTATION
+29 Discrete Tilt Matching
+arxiv.org/abs/2604.18739 | First release: April 2026
+Method text (v1) | Section 3
+Claimed problem. Sequence likelihoods in masked generative language models require accounting for 
+many unmasking orders, making conventional reward-based updates difficult or noisy. The paper seeks 
+a tractable local objective for reward adaptation.
+RETROSPECTIVE DESIGN RATIONALE
+1. Work with local unmasking posteriors instead of the intractable full sequence likelihood.
+2. Tilt these local conditional distributions with reward information and fit them through weighted 
+cross-entropy.
+3. Apply the tilt incrementally and introduce control variates that reduce variance while preserving 
+the desired minimizer.
+Proposed method. Discrete Tilt Matching adapts masked discrete generators through reward-weighted 
+local posterior matching. Annealed updates and minimizer-preserving control variates make the 
+weighted cross-entropy objective practical; this is a discrete generative-flow relative rather than 
+ordinary continuous-state flow matching.
+30 LEAPS: A discrete neural sampler via locally equivariant networks
+arxiv.org/abs/2502.10843 | First release: February 2025
+Method text (v2) | Training and importance sampling; Sections 8-9
+Claimed problem. Sampling unnormalized discrete distributions is difficult when Markov chains mix 
+slowly and target training samples are unavailable. Generic neural transition-rate models also make the 
+correction terms needed for reliable importance weighting expensive.
+RETROSPECTIVE DESIGN RATIONALE
+1. Define an annealed continuous-time jump process and learn its generator by enforcing the 
+probability-evolution equation.
+2. Build local equivariance into the rate representation so forward and reverse neighbor 
+contributions can be evaluated efficiently.
+3. Use tractable importance-weight updates to account for remaining errors in the learned dynamics.
+Proposed method. LEAPS combines physics-informed training of a discrete Markov generator with 
+locally equivariant MLP, attention, and convolutional architectures. The resulting rate structure enables 
+efficient proactive importance sampling and integration with annealing or particle-based samplers for 
+data-free discrete sampling.

@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.venv/
+data/raw/*
+data/processed/*
+!data/**/.gitkeep
+models/*.pt
+models/*.ckpt
+results/logs/*.log
+*.h5ad
+.DS_Store
+.ipynb_checkpoints/
+paper/**/*.aux
+paper/**/*.log
+paper/**/*.out
+paper/**/*.bbl
+paper/**/*.blg
