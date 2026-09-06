@@ -20,12 +20,17 @@
 
 \newtheorem{proposition}{Proposition}
 % Figure path indirection. Defined once here so the include site below has unambiguous
-% single-brace syntax: writing a {{...}} artifact marker directly inside
-% \includegraphics{...} produces {{{...}}}, which graphicx cannot parse. Building inside
-% the repo, the relative path is what you want; the commented alternative resolves to the
-% stored artifact when the file is read outside the repo.
+% single-brace syntax: an artifact marker written directly inside \includegraphics{...}
+% yields {{{...}}}, which graphicx cannot parse.
+%
+% This is a LaTeX source file meant to be compiled with pdflatex, so the path is a plain
+% relative path and the figure must sit at paper/figures/fig2_case_studies.png (it does,
+% in the repo). Do not substitute a platform artifact marker here: nothing expands it at
+% compile time, so it would reach graphicx verbatim and fail. The figure is also stored as
+% an artifact (fig2_case_studies.png, artifact_id
+% e4061ed5-fad8-4faf-9652-a2dba830d479, version_id
+% 511f4f32-ae16-4029-b367-617206186d6b) if you need to retrieve the image itself.
 \newcommand{\figcases}{figures/fig2_case_studies.png}
-% \renewcommand{\figcases}{{artifact:art_e4061ed5-fad8-4faf-9652-a2dba830d479}}
 
 \newcommand{\XP}{X_{\mathcal{P}}}
 \newcommand{\Rd}{\mathbb{R}^d}
