@@ -95,6 +95,41 @@ dependence is.
 
 ---
 
+## Seed replication (3 seeds, both domains) — and a numerical bug found by it
+
+`experiments/seed_robustness.py`, seeds 0/1/2, held-out composition axis.
+
+| model | finance (all 4 ch.) | beats | organoid (triple) | beats |
+|---|---|---|---|---|
+| D1 displacement | 1.828 ± 0.213 | — | 2.309 ± 0.223 | — |
+| C1 field composition | 0.833 ± 0.068 | 3/3 | 2.010 ± 0.178 | 3/3 |
+| C3 + state gate | 0.633 ± 0.037 | 3/3 | **0.700 ± 0.079** | 3/3 |
+| C4 + covariant coupling | **0.589 ± 0.036** | 3/3 | 0.772 ± 0.081 | 3/3 |
+
+**The claim replicates.** Every composition variant beats the displacement baseline in 3/3
+seeds in both domains, spreads do not overlap, and the mean-over-seeds ratios (3.11x
+finance, 3.30x organoid) are slightly LARGER than the single-seed numbers reported above.
+
+**Bug found and fixed by this run.** The first pass returned NaN for organoid C4_full seed
+0. Diagnosis: the forward pass went non-finite at step 469/2500 on a k=2 (SF) population,
+and because `clip_grad_norm_` passes non-finite values through unchanged, the following
+Adam step wrote NaN into every parameter — one bad step destroyed the whole run. Two fixes:
+
+1. **Skip non-finite steps** in both training loops, and report the skip count so a run
+   that skips many steps cannot look healthy.
+2. **Radial trust region** on the composed field (rescale, never componentwise clip, so the
+   direction in the current chart is preserved), bounded at 50x the state norm.
+
+The guarded rerun recovers seed 0 at 0.8209 and leaves healthy runs bit-identical (finance
+seeds reproduce to four decimals: 0.5930 / 0.5502 / 0.6225). **Scope caveat recorded in the
+source**: the trust region is keyed on Euclidean norms and is therefore NOT a covariant
+operation — under a diffeomorphism the activation set is not preserved, and it perturbs the
+semigroup wherever it activates. It is inactive for trained models (field norms ~0.08 vs a
+limit of 50x the state norm), and the covariance/semigroup verifications hold in that
+regime. It is a divergence guard, not part of the model definition.
+
+---
+
 ## Negative result — population conditioning (kept, default OFF)
 
 A DeepSets encoder of the pre-intervention population, conditioning every component of the

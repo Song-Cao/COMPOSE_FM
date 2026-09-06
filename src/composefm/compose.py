@@ -369,7 +369,8 @@ class ComposeFM(nn.Module):
     """
 
     def __init__(self, d, n_pert, emb=32, hidden=128, depth=3,
-                 mode="full", use_connection=True, saturate=True, code=0):
+                 mode="full", use_connection=True, saturate=True, code=0,
+                 field_limit=50.0):
         super().__init__()
         assert mode in ("additive", "const", "gate", "full")
         self.d, self.n_pert, self.mode, self.code = d, n_pert, mode, code
@@ -382,6 +383,8 @@ class ComposeFM(nn.Module):
         self.conn = Connection(d) if (mode == "full" and use_connection) else None
         # exposure scale at which the bilinear coupling term saturates (learned)
         self.log_kappa_c = (nn.Parameter(torch.tensor(1.0)) if mode == "full" else None)
+        # trust-region multiple for the composed field (divergence guard, see field())
+        self.field_limit = float(field_limit)
 
     # ---------------------------------------------------------------- field
     def field(self, z, ps, taus, collect=None, u=None):
@@ -442,6 +445,34 @@ class ComposeFM(nn.Module):
             out = out + 0.5 * coup
             if collect is not None:
                 collect["l0"] = self.inter.l0_penalty(la)
+
+        # Trust region on the composed field. S_pq contains a product of a Jacobian and a
+        # field, so early in training -- before the L0 gate has learned which pairs are
+        # inactive -- a single unlucky initialisation can make the coupling large enough
+        # that the RK2 integrator diverges within one forward pass. Measured: with the
+        # coupling active this happened at step 469 of 2500 on one of three seeds
+        # (a k=2 population), the forward pass returned non-finite states, and the
+        # subsequent optimiser step poisoned every weight, so the whole run reported NaN.
+        # We therefore rescale (never clip componentwise, which would change the field's
+        # DIRECTION in the current chart) any field whose norm exceeds a generous multiple
+        # of the state scale.
+        #
+        # SCOPE OF THIS GUARD -- it is NOT a covariant operation. The rescale is keyed on
+        # Euclidean norms of z and of the output, so like any norm-based clip it depends on
+        # the chart: under a general diffeomorphism the set of states where it activates is
+        # not preserved, and it would therefore break the exact covariance that the rest of
+        # this operator is built to have. It also perturbs the exposure semigroup wherever
+        # it activates, since the rescaled field is no longer the field whose flow was
+        # being integrated. Both properties are verified elsewhere in the REGIME WHERE THE
+        # GUARD IS INACTIVE, which is the regime of a trained model: on the checks in this
+        # file the guard never activates (measured: field norms ~0.08 against a limit of
+        # 50x the state norm). Treat it strictly as a numerical divergence guard on
+        # pathological early-training iterates, not as part of the model definition; if it
+        # activates in a trained model, that is a bug to investigate rather than a bound to
+        # rely on.
+        nrm = out.norm(dim=-1, keepdim=True)
+        lim = self.field_limit * z.detach().norm(dim=-1, keepdim=True).clamp(min=1.0)
+        out = torch.where(nrm > lim, out * (lim / nrm.clamp(min=1e-12)), out)
         return out
 
     # ---------------------------------------------------------------- flow

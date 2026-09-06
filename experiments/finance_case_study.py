@@ -111,6 +111,7 @@ def train_model(model, z0, z1, tau, idx, steps=1500, lr=2e-3, is_disp=False,
     opt = torch.optim.Adam(model.parameters(), lr=lr)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=steps)
     t0 = time.time()
+    n_skipped = 0
     for s in range(steps):
         k = keys[rng.integers(len(keys))]
         pool = groups[k]
@@ -137,11 +138,24 @@ def train_model(model, z0, z1, tau, idx, steps=1500, lr=2e-3, is_disp=False,
         if "l0" in coll:
             loss = loss + l0_weight * coll["l0"]
         opt.zero_grad(); loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
-        opt.step(); sched.step()
+        gn = torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
+        # Never step on a non-finite loss or gradient. Clipping alone does NOT protect
+        # against this: a non-finite value passes through clip_grad_norm_ and the
+        # subsequent Adam step writes NaN into every parameter, so one bad step turns the
+        # whole run into NaN. Measured: 1 of 3 seeds on the organoid ladder with the
+        # coupling active. Skipping the step recovers that seed; the counter is reported
+        # so a run that skips many steps cannot look healthy.
+        if torch.isfinite(loss) and torch.isfinite(gn):
+            opt.step()
+        else:
+            n_skipped += 1
+        sched.step()
         if log_every and (s + 1) % log_every == 0:
             print(f"    step {s+1}/{steps} loss {loss.item():.4f} "
                   f"({time.time()-t0:.0f}s)", flush=True)
+    if n_skipped:
+        print(f"    [warn] skipped {n_skipped}/{steps} non-finite steps", flush=True)
+    model._n_skipped = n_skipped
     return model
 
 

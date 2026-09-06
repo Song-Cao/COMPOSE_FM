@@ -1,0 +1,44 @@
+/Users/songcao/.claude-science/conda/envs/gate0/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3036: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/Users/songcao/.claude-science/conda/envs/gate0/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3037: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+/Users/songcao/.claude-science/conda/envs/gate0/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3036: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/Users/songcao/.claude-science/conda/envs/gate0/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3037: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+    finance D1_displacement seed 0: 2.0279
+    finance D1_displacement seed 1: 1.8523
+    finance D1_displacement seed 2: 1.6038
+    finance C1_fields seed 0: 0.7937
+    finance C1_fields seed 1: 0.9109
+    finance C1_fields seed 2: 0.7932
+    finance C3_gate_nosat seed 0: 0.6037
+    finance C3_gate_nosat seed 1: 0.6751
+    finance C3_gate_nosat seed 2: 0.6201
+    finance C4_full seed 0: 0.5930
+    finance C4_full seed 1: 0.5502
+    finance C4_full seed 2: 0.6225
+    organoid D1_displacement seed 0: 2.0730
+    organoid D1_displacement seed 1: 2.3350
+    organoid D1_displacement seed 2: 2.5176
+    organoid C1_fields seed 0: 2.0493
+    organoid C1_fields seed 1: 1.8162
+    organoid C1_fields seed 2: 2.1654
+    organoid C3_gate_nosat seed 0: 0.7814
+    organoid C3_gate_nosat seed 1: 0.6229
+    organoid C3_gate_nosat seed 2: 0.6965
+    organoid C4_full seed 0: 0.8209
+    organoid C4_full seed 1: 0.6791
+    organoid C4_full seed 2: 0.8172
+
+=== SUMMARY (normalised energy distance, lower better) ===
+-- finance
+   D1_displacement  1.8280 +/- 0.2131   beats displacement in 0/3 seeds
+   C1_fields        0.8326 +/- 0.0678   beats displacement in 3/3 seeds
+   C3_gate_nosat    0.6330 +/- 0.0374   beats displacement in 3/3 seeds
+   C4_full          0.5886 +/- 0.0364   beats displacement in 3/3 seeds
+-- organoid
+   D1_displacement  2.3085 +/- 0.2235   beats displacement in 0/3 seeds
+   C1_fields        2.0103 +/- 0.1778   beats displacement in 3/3 seeds
+   C3_gate_nosat    0.7003 +/- 0.0793   beats displacement in 3/3 seeds
+   C4_full          0.7724 +/- 0.0808   beats displacement in 3/3 seeds
