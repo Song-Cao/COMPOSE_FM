@@ -1,0 +1,28 @@
+populations 666 | treatments [np.str_('C'), np.str_('CF'), np.str_('CS'), np.str_('CSF'), np.str_('F'), np.str_('L'), np.str_('O'), np.str_('S'), np.str_('SF'), np.str_('V'), np.str_('VS')]
+PCA evr (first 8): [0.3022 0.139  0.0664 0.0553 0.0398 0.0328 0.0283 0.0261]
+train 559 | held-out triple 26 | held-out top dose 81
+oracle (one fitted mean shift per condition): train 1.0958  triple 1.0000  top_dose 1.0000
+    step 833/2500 loss 0.1066 (5s)
+    step 1666/2500 loss 0.0471 (10s)
+    step 2499/2500 loss 0.5306 (14s)
+  D1_displacement  train 0.9583  TRIPLE 2.2327  top-dose 0.9779  (21s)
+    step 833/2500 loss 0.0798 (17s)
+    step 1666/2500 loss 0.0452 (35s)
+    step 2499/2500 loss 0.4876 (53s)
+  C1_fields        train 1.0058  TRIPLE 1.9468  top-dose 1.0127  (65s)
+    step 833/2500 loss 0.0801 (19s)
+    step 1666/2500 loss 0.0445 (37s)
+    step 2499/2500 loss 0.4951 (55s)
+  C2_const         train 1.0077  TRIPLE 1.9654  top-dose 1.0253  (67s)
+    step 833/2500 loss 0.0936 (25s)
+    step 1666/2500 loss 0.0518 (50s)
+    step 2499/2500 loss 0.4436 (77s)
+  C3_gate_nosat    train 0.9652  TRIPLE 0.7413  top-dose 1.1020  (92s)
+    step 833/2500 loss 0.0937 (29s)
+    step 1666/2500 loss 0.0535 (59s)
+    step 2499/2500 loss 0.4242 (92s)
+  C3_gate          train 0.9981  TRIPLE 0.8633  top-dose 1.0227  (114s)
+    step 833/2500 loss 0.1026 (101s)
+    step 1666/2500 loss 0.0536 (195s)
+    step 2499/2500 loss 0.4257 (293s)
+  C4_full          train 0.9987  TRIPLE 0.8672  top-dose 1.0224  (370s)

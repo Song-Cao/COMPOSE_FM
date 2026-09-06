@@ -64,6 +64,80 @@ def mlp(i, h, o, depth=2, act=nn.SiLU, ln=False):
     return nn.Sequential(*layers)
 
 
+class PopulationEncoder(nn.Module):
+    """Permutation-invariant code for the PRE-INTERVENTION STATE DISTRIBUTION.
+
+    Why the operator needs this (measured, and it is a structural point rather than a
+    tuning trick). The generators X_p(z) are functions of a single state z, so two
+    populations that occupy overlapping regions of state space but respond in DIFFERENT
+    directions to the same intervention cannot both be fitted. That is not hypothetical:
+    on the organoid ladder the mean pairwise cosine between the response directions of
+    different replicates of the SAME treatment is only +0.35 (S), +0.23 (F), +0.34 (CSF).
+    A model conditioned only on (intervention, exposure) must average over those
+    directions, and duly scores WORSE than predicting no change in-distribution
+    (normalised energy distance 1.08-1.12), while the same architecture fitted to a single
+    population reaches 0.032. The missing conditioning variable is the population itself.
+
+    So we condition the operator on a code u = rho(mean_i phi(z_i)) computed from the
+    pre-intervention sample -- a DeepSets encoder, hence permutation-invariant and
+    independent of the sample size. The composition operator becomes
+
+        X_P(z; u) = gamma(z, P, u) sum_p tau_p X_p(z; u) + 1/2 sum beta_pq(z, u) S_pq(z; u)
+
+    and every structural property is preserved: u is CONSTANT along the flow of a given
+    population, so each X_p(.; u) is still an autonomous vector field and the exposure
+    semigroup still holds exactly.
+
+    Relation to prior work. Conditioning a flow on its own population is the contribution
+    of Meta Flow Matching (Atanackovic et al., arXiv:2408.14608, ICLR 2025), which embeds
+    the population and conditions ONE velocity field on it. We use the same conditioning
+    idea and must cite it as such; what is new here is not the conditioning but the
+    COMPOSITION of several conditioned generators, with the contraction and coupling terms
+    that let unseen intervention SETS and unseen exposures be predicted. MFM does not
+    compose interventions.
+
+    MEASURED OUTCOME -- DEFAULT OFF (code=0). On the organoid ladder this component does
+    NOT pay for itself and we report that rather than quietly shipping it. With the full
+    control population encoded (800 cells, LayerNormed code, 800 training steps):
+
+        pop_code = 0    train 1.0915    held-out triple 0.9027
+        pop_code = 16   train 1.0803    held-out triple 1.2831
+
+    It buys a marginal in-distribution gain and materially DAMAGES the extrapolation that
+    the paper is about. The diagnosis is small-sample overfitting to replicate identity:
+    the control mean does carry real signal about the response direction (leave-one-out R2
+    +0.29 / +0.32 / +0.21 for S / F / CSF, mean cosine to the true shift rising 0.591 ->
+    0.701 for S and 0.482 -> 0.594 for F over a global mean shift), but with only 26
+    held-out triple populations the encoder memorises which replicate it is looking at
+    instead of learning that mapping. The honest conclusion is that population conditioning
+    needs either many more populations or an explicit invariance penalty; it is kept in the
+    codebase, off by default, as a documented negative result and a clean follow-up.
+    """
+
+    def __init__(self, d, code=16, hidden=64, use_second_moment=True):
+        super().__init__()
+        self.use_second_moment = use_second_moment
+        in_dim = d * (2 if use_second_moment else 1)
+        self.phi = mlp(in_dim, hidden, hidden, depth=2)
+        self.rho = mlp(hidden, hidden, code, depth=2)
+        self.norm = nn.LayerNorm(code)
+        self.code = code
+
+    def forward(self, z_pop):
+        """z_pop: (N, d) sample from the pre-intervention distribution -> (code,)
+
+        LayerNorm on the output matters: without it the code's scale drifts with the
+        sample size and the downstream networks -- whose inputs are unit-scaled states --
+        effectively ignore it. The pooled statistic must also be computed over as much of
+        the population as is available, not over the small minibatch used for the loss:
+        the informative signal here is the population MEAN (control mean predicts the
+        response direction with LOO R2 +0.29 / +0.32 / +0.21 on S / F / CSF), and a
+        256-cell subsample dilutes it.
+        """
+        h = torch.cat([z_pop, z_pop ** 2], -1) if self.use_second_moment else z_pop
+        return self.norm(self.rho(self.phi(h).mean(0)))
+
+
 class Generators(nn.Module):
     """Per-intervention autonomous vector fields X_p(z), as one conditioned network.
 
@@ -80,24 +154,27 @@ class Generators(nn.Module):
     """
 
     def __init__(self, d, n_pert, emb=32, hidden=128, depth=3, ln=True,
-                 out_gain=1e-2):
+                 out_gain=1e-2, code=0):
         super().__init__()
-        self.d, self.n_pert = d, n_pert
+        self.d, self.n_pert, self.code = d, n_pert, code
         self.emb = nn.Embedding(n_pert, emb)
         nn.init.normal_(self.emb.weight, std=0.1)
-        self.net = mlp(d + emb, hidden, d, depth=depth, ln=ln)
+        self.net = mlp(d + emb + code, hidden, d, depth=depth, ln=ln)
         nn.init.normal_(self.net[-1].weight, std=out_gain)
         nn.init.zeros_(self.net[-1].bias)
 
-    def forward(self, z, p):
-        """z: (B,d); p: int or (B,) long -> (B,d)"""
+    def forward(self, z, p, u=None):
+        """z: (B,d); p: int or (B,) long; u: (code,) or (B,code) -> (B,d)"""
         if not torch.is_tensor(p):
             p = torch.full((z.shape[0],), int(p), device=z.device, dtype=torch.long)
-        return self.net(torch.cat([z, self.emb(p)], -1))
+        parts = [z, self.emb(p)]
+        if self.code:
+            parts.append(u.expand(z.shape[0], -1) if u.dim() == 1 else u)
+        return self.net(torch.cat(parts, -1))
 
-    def all_fields(self, z, ps):
+    def all_fields(self, z, ps, u=None):
         """-> (B, k, d) for a list/tensor of intervention ids."""
-        return torch.stack([self(z, p) for p in ps], dim=1)
+        return torch.stack([self(z, p, u) for p in ps], dim=1)
 
 
 class ContractionGate(nn.Module):
@@ -131,9 +208,10 @@ class ContractionGate(nn.Module):
     """
 
     def __init__(self, d, emb=32, hidden=64, learn_scale=True, saturate=True,
-                 nu_init=0.5, kappa_init=1.0):
+                 nu_init=0.5, kappa_init=1.0, code=0):
         super().__init__()
-        self.net = mlp(d + d + 2, hidden, 1, depth=2)
+        self.code = code
+        self.net = mlp(d + d + 2 + code, hidden, 1, depth=2)
         nn.init.normal_(self.net[-1].weight, std=1e-2)   # small, NOT zero (see Generators)
         nn.init.constant_(self.net[-1].bias, 2.2)        # sigmoid(2.2) ~ 0.9: near-additive
         self.log_scale = nn.Parameter(torch.zeros(())) if learn_scale else None
@@ -147,12 +225,15 @@ class ContractionGate(nn.Module):
             inv = math.log(math.expm1(nu_init)) if nu_init > 0 else -3.0
             self.nu_raw = nn.Parameter(torch.tensor(float(inv)))
 
-    def forward(self, z, fields, taus):
-        """z (B,d); fields (B,k,d); taus (B,k) -> (B,1)"""
+    def forward(self, z, fields, taus, u=None):
+        """z (B,d); fields (B,k,d); taus (B,k); u (code,) -> (B,1)"""
         drive = (taus.unsqueeze(-1) * fields).sum(1)              # (B,d) summed drive
         k = taus.gt(0).sum(-1, keepdim=True).float()
         tot = taus.sum(-1, keepdim=True)
-        h = torch.cat([z, drive, k, tot], -1)
+        parts = [z, drive, k, tot]
+        if self.code:
+            parts.append(u.expand(z.shape[0], -1) if u.dim() == 1 else u)
+        h = torch.cat(parts, -1)
         g = torch.sigmoid(self.net(h))
         if self.log_scale is not None:
             g = g * torch.exp(self.log_scale).clamp(max=2.0)
@@ -181,17 +262,21 @@ class InteractionGate(nn.Module):
     """
 
     def __init__(self, d, emb=32, hidden=64, temp=2.0 / 3.0,
-                 stretch=(-0.1, 1.1)):
+                 stretch=(-0.1, 1.1), code=0):
         super().__init__()
-        self.amp = mlp(d + 2 * emb, hidden, 1, depth=2)
-        self.logit = mlp(d + 2 * emb, hidden, 1, depth=2)
+        self.code = code
+        self.amp = mlp(d + 2 * emb + code, hidden, 1, depth=2)
+        self.logit = mlp(d + 2 * emb + code, hidden, 1, depth=2)
         nn.init.normal_(self.amp[-1].weight, std=1e-2); nn.init.zeros_(self.amp[-1].bias)
         nn.init.normal_(self.logit[-1].weight, std=1e-2)
         nn.init.constant_(self.logit[-1].bias, -1.0)   # start mostly closed
         self.temp, self.lo, self.hi = temp, stretch[0], stretch[1]
 
-    def forward(self, z, e_p, e_q, sample=True):
-        h = torch.cat([z, e_p, e_q], -1)
+    def forward(self, z, e_p, e_q, sample=True, u=None):
+        parts = [z, e_p, e_q]
+        if self.code:
+            parts.append(u.expand(z.shape[0], -1) if u.dim() == 1 else u)
+        h = torch.cat(parts, -1)
         a = self.amp(h)
         la = self.logit(h)
         if sample and self.training:
@@ -284,24 +369,25 @@ class ComposeFM(nn.Module):
     """
 
     def __init__(self, d, n_pert, emb=32, hidden=128, depth=3,
-                 mode="full", use_connection=True, saturate=True):
+                 mode="full", use_connection=True, saturate=True, code=0):
         super().__init__()
         assert mode in ("additive", "const", "gate", "full")
-        self.d, self.n_pert, self.mode = d, n_pert, mode
-        self.gen = Generators(d, n_pert, emb=emb, hidden=hidden, depth=depth)
-        self.gate = (ContractionGate(d, emb=emb, saturate=saturate)
+        self.d, self.n_pert, self.mode, self.code = d, n_pert, mode, code
+        self.pop = PopulationEncoder(d, code=code) if code else None
+        self.gen = Generators(d, n_pert, emb=emb, hidden=hidden, depth=depth, code=code)
+        self.gate = (ContractionGate(d, emb=emb, saturate=saturate, code=code)
                      if mode in ("gate", "full") else None)
         self.const = nn.Parameter(torch.tensor(2.2)) if mode == "const" else None
-        self.inter = InteractionGate(d, emb=emb) if mode == "full" else None
+        self.inter = InteractionGate(d, emb=emb, code=code) if mode == "full" else None
         self.conn = Connection(d) if (mode == "full" and use_connection) else None
         # exposure scale at which the bilinear coupling term saturates (learned)
         self.log_kappa_c = (nn.Parameter(torch.tensor(1.0)) if mode == "full" else None)
 
     # ---------------------------------------------------------------- field
-    def field(self, z, ps, taus, collect=None):
-        """X_P(z). ps: (k,) ids; taus: (B,k) -> (B,d)"""
+    def field(self, z, ps, taus, collect=None, u=None):
+        """X_P(z; u). ps: (k,) ids; taus: (B,k); u: population code -> (B,d)"""
         B = z.shape[0]
-        fields = self.gen.all_fields(z, ps)                        # (B,k,d)
+        fields = self.gen.all_fields(z, ps, u)                     # (B,k,d)
         drive = (taus.unsqueeze(-1) * fields).sum(1)               # (B,d)
 
         if self.mode == "additive":
@@ -309,7 +395,7 @@ class ComposeFM(nn.Module):
         elif self.mode == "const":
             out = torch.sigmoid(self.const) * drive
         else:
-            g = self.gate(z, fields, taus)                         # (B,1)
+            g = self.gate(z, fields, taus, u)                      # (B,1)
             out = g * drive
             if collect is not None:
                 collect["gamma"] = g.detach()
@@ -331,13 +417,13 @@ class ComposeFM(nn.Module):
             Xa = fields[:, ia].permute(1, 0, 2).reshape(-1, self.d)   # (P*B, d)
             Xb = fields[:, ib].permute(1, 0, 2).reshape(-1, self.d)
 
-            _, jb = torch.func.jvp(lambda zz: self.gen(zz, pb), (zr,), (Xa,))
-            _, ja = torch.func.jvp(lambda zz: self.gen(zz, pa), (zr,), (Xb,))
+            _, jb = torch.func.jvp(lambda zz: self.gen(zz, pb, u), (zr,), (Xa,))
+            _, ja = torch.func.jvp(lambda zz: self.gen(zz, pa, u), (zr,), (Xb,))
             S = jb + ja
             if self.conn is not None:
                 S = S - 2.0 * self.conn.gamma(zr, Xa, Xb)
 
-            beta, la = self.inter(zr, self.gen.emb(pa), self.gen.emb(pb))
+            beta, la = self.inter(zr, self.gen.emb(pa), self.gen.emb(pb), u=u)
             # Exposure weight for the coupling term. The bilinear form tau_p * tau_q is
             # QUADRATIC in exposure, so outside the training range it overwhelms the
             # (saturating) first-order term: left unbounded it produced normalised energy
@@ -359,13 +445,22 @@ class ComposeFM(nn.Module):
         return out
 
     # ---------------------------------------------------------------- flow
-    def flow(self, z0, ps, taus, n_steps=8, collect=None):
-        """Integrate X_P for unit time with midpoint RK2 (exposure is inside taus)."""
+    def flow(self, z0, ps, taus, n_steps=8, collect=None, z_pop=None):
+        """Integrate X_P for unit time with midpoint RK2 (exposure is inside taus).
+
+        `z_pop` is the pre-intervention SAMPLE used to build the population code. It is
+        encoded ONCE, before integration, and held fixed along the trajectory -- so each
+        X_p(.; u) remains an autonomous field and the exposure semigroup is preserved.
+        Defaults to z0 itself.
+        """
+        u = None
+        if self.pop is not None:
+            u = self.pop(z0 if z_pop is None else z_pop)
         z = z0
         h = 1.0 / n_steps
         for _ in range(n_steps):
-            k1 = self.field(z, ps, taus, collect=collect)
-            k2 = self.field(z + 0.5 * h * k1, ps, taus)
+            k1 = self.field(z, ps, taus, collect=collect, u=u)
+            k2 = self.field(z + 0.5 * h * k1, ps, taus, u=u)
             z = z + h * k2
         return z
 

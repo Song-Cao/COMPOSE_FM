@@ -4,6 +4,129 @@ Every gate, its pre-registered criteria, its result, and the decision taken. App
 
 ---
 
+## Case study 1 — FINANCE (BTCUSDT aggTrades, 4 days, 34,545 windows)
+
+Run: `experiments/finance_case_study.py --steps 2000`, seed 0, CPU, ~25 min total.
+Metric: normalised energy distance ED(pred,true)/ED(no-change,true). 1.0 = no better than
+predicting no change; lower is better.
+
+| model | train | composition (k=4) | exposure (tau>=6) |
+|---|---|---|---|
+| D1 displacement (CPA-class) | 0.0555 | 2.0077 | 8.8090 |
+| C1 field composition | 0.0647 | 0.8624 | 7.1558 |
+| C2 + global constant | 0.0651 | 0.8822 | 5.9405 |
+| C3 + state gate, no saturation | 0.0667 | 0.7259 | 5.9490 |
+| C3 + saturating gate | 0.0749 | 0.7030 | 6.4051 |
+| C4 + covariant coupling | 0.0743 | **0.6913** | 6.3590 |
+
+**RESULT (composition): the headline claim holds; the ladder is NOT strictly monotone.**
+Composing generators beats adding displacements by 2.9x on the composition split (0.6913 vs
+2.0077). Most rungs help, but one does not: the global constant C2 (0.8822) is slightly
+WORSE than plain field composition C1 (0.8624), so a single scalar contraction buys nothing
+here — consistent with the real-Norman finding that a global constant learned nothing beyond
+field composition, and with Gate B's toy result where M2 and M3 tied to four decimals. The
+rungs that do help are state-dependence (C3 0.7259) and the covariant coupling (C4 0.6913).
+All models fit the training regime comparably (0.055-0.075), so this is a generalisation
+difference, not a capacity difference.
+
+**RESULT (exposure): NEGATIVE, and the cause is the data, not the model.** Every model
+scores ~6-9 on tau>=6. This is a distribution shift that no amount of architecture can
+bridge: an oracle single mean shift FITTED ON the exposure split scores 0.2866, but the
+same oracle TRANSFERRED FROM train scores 2.7877. The high-exposure regime has a different
+response law (return sd 0.924 vs 0.694 on train), so the exposure axis in crypto spot at
+10 s resolution is a distribution-shift test, not an extrapolation test. Reported as a
+negative result; the exposure claim is carried by the organoid dose ladder instead.
+Saturation gives no reliable gain here (6.41 with vs 5.95 without) and must not be sold as
+if it did.
+
+**Caveat on the k=4 "composition" split** — the normalising denominator is smaller there
+(ED(no-change) 0.154 vs 0.351 on train) because all-four-channels-active windows are the
+balanced ones. An oracle scores 0.724 there, so the split has limited headroom and the
+absolute numbers are compressed; the RANKING is what carries the claim.
+
+**Square-root law, recovered from raw trades (not assumed).** Binning by |signed volume|
+and fitting on bin means gives a log-log slope of 0.587 (1.0 = linear/additive, 0.5 =
+square-root law) across a 1,500x span of volume and 39x span of impact. This is the
+independently-established stylised fact that motivates a saturating exposure response; it
+was measured here, not imported.
+
+---
+
+## Case study 2 — BIOLOGY (organoid drug combinations, 666 populations)
+
+Run: `experiments/organoid_case_study.py --steps 2500`, seed 0, CPU, ~12 min total.
+Data: Trellis organoid mass cytometry (Ramos Zapatero et al., Cell 186(25) 2023), MFM
+preprocessed release. 559 train / 26 held-out triple / 81 held-out top dose.
+Oracle (one fitted mean shift per condition): train 1.0958, triple 1.0000, top_dose 1.0000.
+
+| model | train | held-out TRIPLE (C+S+F) | held-out top dose |
+|---|---|---|---|
+| D1 displacement (CPA-class) | 0.9583 | 2.2327 | 0.9779 |
+| C1 field composition | 1.0058 | 1.9468 | 1.0127 |
+| C2 + global constant | 1.0077 | 1.9654 | 1.0253 |
+| C3 + state gate, no saturation | 0.9652 | **0.7413** | 1.1020 |
+| C3 + saturating gate | 0.9981 | 0.8633 | 1.0227 |
+| C4 + covariant coupling | 0.9987 | 0.8672 | 1.0224 |
+
+**RESULT: the composition claim replicates on biology, on a genuinely unseen k=3 set.**
+The held-out triple was never trained on in any form. State-dependent contraction scores
+0.7413 versus 2.2327 for the displacement baseline — a 3.0x gain — and the state-gated
+variants are the ONLY models that beat the oracle's 1.0000, i.e. the only ones that extract
+transferable structure rather than a per-condition average. This is the same ordering as
+the finance composition split (2.9x), from a completely different domain, metric scale and
+state space, which is what the method-first framing requires.
+
+**Consistent negative across both domains: the global constant does not help.** C2 is worse
+than C1 on the triple (1.9654 vs 1.9468), matching finance (0.8822 vs 0.8624), Gate B's
+four-decimal tie, and the real-Norman result. One scalar is not the right object; state
+dependence is.
+
+**Honest negatives on this dataset.**
+1. Saturation HURTS here (0.7413 without vs 0.8633 with). The organoid dose ladder spans
+   4 levels mapped to tau in [0.25, 1.0] — no extrapolation beyond tau=1 — so a saturating
+   envelope only removes capacity it never needs. Saturation is justified by the finance
+   square-root measurement (slope 0.587 over a 1,500x volume span), not by this ladder.
+2. The covariant coupling gives no gain over the state gate (0.8672 vs 0.8633). With 26
+   held-out populations and k=3 the pairwise term is not identifiable here; the coupling's
+   support comes from the finance composition split (0.6913 vs 0.7030) and the covariance
+   theory, and must not be over-claimed from this dataset.
+3. Top-dose shows no gain for any variant (all ~0.98-1.10, oracle 1.0000). Only 81
+   populations at a single held-out level; treat as inconclusive, not as evidence.
+
+---
+
+## Negative result — population conditioning (kept, default OFF)
+
+A DeepSets encoder of the pre-intervention population, conditioning every component of the
+operator (`code=16`). On the organoid ladder, 800 steps:
+
+| | train | held-out triple |
+|---|---|---|
+| pop_code = 0 | 1.0915 | **0.9027** |
+| pop_code = 16 | 1.0803 | 1.2831 |
+
+Marginal in-distribution gain, material damage to the extrapolation the paper is about.
+The signal it targets is real — the control mean predicts response direction with LOO R2
++0.29 / +0.32 / +0.21 on S / F / CSF, and mean cosine to the true shift rises 0.591 ->
+0.701 (S) and 0.482 -> 0.594 (F) over a global mean shift — but with 26 held-out triple
+populations the encoder memorises replicate identity instead. Default off, documented in
+the `PopulationEncoder` docstring as a follow-up needing more populations or an explicit
+invariance penalty.
+
+---
+
+## Reading the organoid scores: the oracle reference matters
+
+Do not read a score above 1.0 as model failure on this dataset. An oracle that fits ONE
+mean shift per (treatment, dose) on train scores **1.0958 on the train split** — worse than
+predicting no change — because populations are different patients and the same treatment
+moves them in directions with mean pairwise cosine only +0.23 to +0.35. A trained model at
+0.98 is therefore beating the best possible fixed-shift predictor. The oracle scores 1.0000
+on the held-out triple (no fitted shift exists for an unseen combination), so the held-out
+splits are where the comparison is meaningful.
+
+---
+
 ## Gate A -- chart equivariance of the composition operator
 **Date:** 2026-09-05 · **Cost:** 0 GPU-h (CPU, analytic on toy ground truth)
 **Script:** `experiments/gate_a_chart.py` · **Result file:** `results/gate_a.json`

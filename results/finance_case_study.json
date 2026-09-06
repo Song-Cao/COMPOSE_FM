@@ -1,0 +1,113 @@
+{
+  "results": {
+    "D1_displacement": {
+      "train": 0.05551561991460437,
+      "train_nsets": 3,
+      "composition": 2.007717479713243,
+      "composition_nsets": 1,
+      "exposure": 8.809010248440414,
+      "exposure_nsets": 3,
+      "both": 30.275824553330832,
+      "both_nsets": 1,
+      "params": 14246,
+      "wall_s": 29.064992904663086
+    },
+    "C1_fields": {
+      "train": 0.06474850601208516,
+      "train_nsets": 3,
+      "composition": 0.8623794931936116,
+      "composition_nsets": 1,
+      "exposure": 7.155798955880924,
+      "exposure_nsets": 3,
+      "both": 15.693569035560191,
+      "both_nsets": 1,
+      "params": 14150,
+      "wall_s": 80.0252799987793
+    },
+    "C2_const": {
+      "train": 0.0650698549916093,
+      "train_nsets": 3,
+      "composition": 0.8822059760026734,
+      "composition_nsets": 1,
+      "exposure": 5.940480327807889,
+      "exposure_nsets": 3,
+      "both": 13.384815927234449,
+      "both_nsets": 1,
+      "params": 14151,
+      "wall_s": 78.69330215454102
+    },
+    "C3_gate_nosat": {
+      "train": 0.06667460448971552,
+      "train_nsets": 3,
+      "composition": 0.7258844521787379,
+      "composition_nsets": 1,
+      "exposure": 5.949042659088923,
+      "exposure_nsets": 3,
+      "both": 6.517510313810894,
+      "both_nsets": 1,
+      "params": 19336,
+      "nu": NaN,
+      "wall_s": 98.30533385276794
+    },
+    "C3_gate": {
+      "train": 0.07487207807017421,
+      "train_nsets": 3,
+      "composition": 0.7029984048019874,
+      "composition_nsets": 1,
+      "exposure": 6.405124187635319,
+      "exposure_nsets": 3,
+      "both": 18.484319540613882,
+      "both_nsets": 1,
+      "params": 19594,
+      "nu": 0.4584043323993683,
+      "wall_s": 105.27175498008728
+    },
+    "C4_full": {
+      "train": 0.07432556550390029,
+      "train_nsets": 3,
+      "composition": 0.6913496762315496,
+      "composition_nsets": 1,
+      "exposure": 6.359005215478472,
+      "exposure_nsets": 3,
+      "both": 17.83398562212214,
+      "both_nsets": 1,
+      "params": 43106,
+      "nu": 0.4570428431034088,
+      "wall_s": 1102.3334589004517
+    }
+  },
+  "n_windows": 34545,
+  "files": [
+    "BTCUSDT-aggTrades-2025-06-02.zip",
+    "BTCUSDT-aggTrades-2025-06-03.zip",
+    "BTCUSDT-aggTrades-2025-06-04.zip",
+    "BTCUSDT-aggTrades-2025-06-05.zip"
+  ],
+  "splits": {
+    "train": 10980,
+    "composition": 6373,
+    "exposure": 2303,
+    "both": 7774
+  },
+  "config": {
+    "quick": false,
+    "run_utc": "2026-09-05T23:51:32Z",
+    "steps": 2000,
+    "d_state": 6,
+    "seed": 0,
+    "k_train_max": 3,
+    "tau_train_max": 3.0,
+    "tau_test_min": 6.0,
+    "hidden": 96,
+    "depth": 2,
+    "flow_steps": 4,
+    "state": [
+      "log return",
+      "realised vol",
+      "flow imbalance",
+      "log intensity",
+      "size dispersion",
+      "sign autocorr"
+    ]
+  }
+}
