@@ -19,6 +19,14 @@
 \usepackage{xcolor}
 
 \newtheorem{proposition}{Proposition}
+% Figure path indirection. Defined once here so the include site below has unambiguous
+% single-brace syntax: writing a {{...}} artifact marker directly inside
+% \includegraphics{...} produces {{{...}}}, which graphicx cannot parse. Building inside
+% the repo, the relative path is what you want; the commented alternative resolves to the
+% stored artifact when the file is read outside the repo.
+\newcommand{\figcases}{figures/fig2_case_studies.png}
+% \renewcommand{\figcases}{{artifact:art_e4061ed5-fad8-4faf-9652-a2dba830d479}}
+
 \newcommand{\XP}{X_{\mathcal{P}}}
 \newcommand{\Rd}{\mathbb{R}^d}
 
@@ -200,7 +208,7 @@ inaction.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/fig2_case_studies.png}
+\includegraphics[width=\textwidth]{\figcases}
 \caption{Composing generators generalises to intervention sets never seen in training, in
 two unrelated domains. \textbf{(a)} Order-flow composition, $6{,}373$ held-out windows with
 all four channels active. \textbf{(b)} Organoid drug combinations, held-out triple
