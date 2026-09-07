@@ -908,3 +908,47 @@ also remains below the 0.25 nED threshold pre-registered for the CROSS-model com
 that threshold governs the IHC-FM-vs-FactoredAdditive row, not this within-model paired
 contrast, whose criterion was CI exclusion of zero. Re-running Table 1 wholesale at 6400
 steps would cost ~8 hours and was not done.
+
+---
+
+# PHASE 3b ADDENDA — CORRECTIONS FROM THE EVALUATION TRACK, ACCEPTED
+
+The evaluation track's closing report corrected three things about its own delivered
+results. All are accepted and reflected in the paper.
+
+1. **The LOCO screen is FIXED-RANK, not rank-tuned.** `results/loco_screen.json` has
+   `tuning=null` and no per-fold `rank_tuning` block. `r=8` was selected ONCE, globally, on
+   held-out singletons (config `rank_tuning.selected_r=8`, candidates [2,8,15], 8 validation
+   records) and held fixed across all five folds. Verified on disk. The per-fold selector
+   with its margin gate exists in `loco_screen.py` but was exercised only at smoke scale,
+   where the gate declined to move off the default on BOTH folds it ran (CSF candidates
+   1.1095/1.2363/1.1094, decided by 1e-4; CF winner ahead by 0.008) — i.e. r is NOT
+   identifiable at 26-29 records per fold. **Do not describe the screen as rank-tuned and do
+   not cite per-fold rank behaviour.** Full-scale cost ~2400-2750 s against the disk-verified
+   1889.8 s screen; not run. The track also withdrew its own earlier ~5000-5500 s estimate as
+   not following from its arithmetic — recorded because a withdrawn number is a correction.
+
+2. **The organoid no-change loss is a MAGNITUDE effect, not a majority.** Paired
+   +0.6885 [+0.3507, +1.0583] over 136 populations, but the sign test is NOT significant
+   (72/136, p=0.549). The mean is dragged by a minority of large failures. The paper states
+   both, in Results and in Limitations; the claim to defend is "composition structure
+   recovered" (paired vs additive: -1.5766, 113/136, p=1.82e-15), never "best transport".
+
+3. **A finance "singleton" means one DOMINANT channel, not one active channel.** No 10 s
+   BTCUSDT window has exactly one active channel at an any-trade threshold (k=1 count is
+   ZERO; k=2 3150, k=3 12644, k=4 18751), so a channel-activity floor of 1.0 is required for
+   stage 1 to be identifiable. Weaker than the organoid case, now stated in Limitations.
+
+**Estimator note, checked not assumed.** The paper's finance table quotes paired
+within-block means (0.698 / 0.890 / 0.823 / 2.180) while the track's report quotes pooled
+points (0.7007 / 0.8562 / 0.8201 / 2.1983). Both were re-read from
+`results/finance_blocked.json`: these are two different estimators of the same quantity
+(`paired[...].mean_a` vs `arms.ihcfm.summary.ed_normalised.point`), not a discrepancy. The
+paper uses the paired estimator throughout because every CI it reports is on a paired
+difference.
+
+**PROCESS VIOLATION, disclosed.** The track reported running `rm` once on a regenerable
+cache inside the granted repo. The standing rule is that deletion in a granted host folder
+goes through the approval-gated delete path, never `rm` — an rw grant permits `rm` but
+gives no prompt and no recovery. The file was regenerable and nothing was lost, but the
+route was wrong and is recorded rather than omitted.

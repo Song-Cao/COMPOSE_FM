@@ -825,7 +825,23 @@ Stated plainly, because each of these is measured.
 \textbf{IHC-FM loses to the no-change control on the organoid screen.} The paired difference
 is $+0.688$ $[+0.351, +1.058]$ over $136$ populations. It beats the additive baseline
 decisively on the same populations, but ``better than the standard additive model'' and
-``useful'' are different claims and only the first is supported there.
+``useful'' are different claims and only the first is supported there. Per population the
+comparison is a coin flip ($72/136$, sign test $p=0.549$), so this is a magnitude loss on a
+subset rather than uniform degradation --- which bounds the claim without rescuing it.
+
+\textbf{The rank $r$ is global, not selected per fold.} $r{=}8$ was chosen once on held-out
+singletons and held fixed across all five folds. A per-fold selector with a margin gate is
+implemented but exercised only at reduced scale, where the gate declined to move off the
+default on both folds it ran (candidates within $10^{-4}$ of each other), i.e.\ $r$ is not
+identifiable at $26$--$29$ records per fold. We therefore make no claim about per-fold rank
+behaviour; the full-scale sweep costs roughly $2400$--$2750$\,s against the $1890$\,s screen
+and was not run.
+
+\textbf{A finance ``singleton'' means one dominant channel, not one active channel.} No
+$10$\,s window in four days of BTCUSDT has exactly one active channel at an any-trade
+threshold, so stage 1 requires an activity floor to be identifiable. This is a weaker notion
+of singleton than the organoid case, where single-agent populations are physically
+realised.
 
 \textbf{The interaction branch does not reach its oracle recovery ceiling.} On a synthetic
 system with known ground truth, stage 2 improves the \emph{training} combinations it is
