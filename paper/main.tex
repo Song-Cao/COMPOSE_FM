@@ -749,13 +749,18 @@ $p=0.0078$).
 \begin{table}[h]
 \centering
 \caption{Step-budget sweep. Only the optimisation budget varies; architecture, folds,
-coupling and $r$ are fixed. Negative differences favour the full model.}
+coupling and $r$ are fixed. Negative differences favour the full model. \textbf{These are a
+different fold set from Table~\ref{\tabonelabel}} --- 4 folds $\times$ 2 seeds ($n=8$) here
+against 21 folds $\times$ 3 seeds there --- so the top row is not a restatement of
+Table~\ref{\tabonelabel}'s ablation but the same contrast at the same \emph{budget} on the
+smaller set: $+0.007$ $[-0.023, +0.037]$ here, $+0.015$ $[-0.024, +0.051]$ there. Both are
+null; the point of the sweep is the trend down the column, not either point estimate.}
 \label{tab:budget}
 \begin{tabular}{lcccc}
 \toprule
 steps & main effects only & full & paired diff [95\% CI] & favouring full \\
 \midrule
-$800$ (Table~\ref{\tabonelabel}) & $0.693$ & $0.699$ & $+0.007$ $[-0.023, +0.037]$ & $2/8$ \\
+$800$ (Table~\ref{\tabonelabel}'s \emph{budget}) & $0.693$ & $0.699$ & $+0.007$ $[-0.023, +0.037]$ & $2/8$ \\
 $2400$ & $0.653$ & $0.632$ & $-0.021$ $[-0.087, +0.045]$ & $5/8$ \\
 $6400$ & $0.611$ & $\mathbf{0.436}$ & $\mathbf{-0.175}$ $[-0.275, -0.076]$ & $\mathbf{8/8}$ \\
 \bottomrule
