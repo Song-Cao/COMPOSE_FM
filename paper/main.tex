@@ -769,8 +769,12 @@ $6400$ & $0.611$ & $\mathbf{0.436}$ & $\mathbf{-0.175}$ $[-0.275, -0.076]$ & $\m
 
 The mechanism is not the one the oracle decomposition suggested, and the difference matters.
 We expected the ablation to become informative once the arms reached the interaction-free
-oracle at $0.310$. They never do: the main-effects gap to $0.310$ barely moves across the
-sweep ($+0.383$, $+0.343$, $+0.301$) while the ablation effect grows by a factor of $26$.
+oracle at $0.310$. Neither arm ever reaches it, and --- decisively --- they do not approach
+it together: the \emph{main-effects} gap barely moves across the sweep ($+0.383$, $+0.343$,
+$+0.301$) while the \emph{full} arm's gap closes roughly threefold
+($+0.389$, $+0.322$, $+0.126$), which is precisely why the ablation effect grows by a
+factor of $26$. The improvement with budget is therefore specific to the interaction
+pathway rather than shared by both arms.
 The interaction branch therefore does not wait for the main effects to saturate --- it simply
 needs more optimisation steps than they do, and at $800$ steps it has not trained enough to
 contribute at all. \textbf{Under a shared step budget, an interaction branch is silently
@@ -1061,13 +1065,18 @@ interaction term from that oracle costs $0.292$ nED, so real interaction signal 
 (roughly $0.41$ of the additive velocity magnitude). But both IHC-FM arms sit at
 $0.625$/$0.640$, still above the interaction-free oracle at $0.310$, so neither has reached
 the ceiling main effects alone could deliver and the interaction branch has no headroom in
-which to demonstrate value. A step-budget sweep (\S\ref{sec:budget},
-Table~\ref{tab:budget}) then shows that this null is an \emph{undertraining} artifact rather
-than a property of the mechanism: at $6400$ steps the same contrast is $-0.175$
-$[-0.275, -0.076]$ on $8/8$ cells. Notably the gap to the $0.310$ oracle barely closes
-across that sweep, so the cause is not the headroom this panel suggests but the interaction
-branch converging more slowly than the main-effect branch under a shared budget. We report
-this rather than adjusting the architecture.}
+which to demonstrate value. \textbf{(d)} The step-budget sweep (\S\ref{sec:budget},
+Table~\ref{tab:budget}) shows that null is an \emph{undertraining} artifact rather than a
+property of the mechanism: the paired effect is monotone in the budget and reaches $-0.175$
+$[-0.275, -0.076]$ at $6400$ steps, favouring the full model on $8/8$ cells. This panel is
+a \emph{different and smaller} fold set (4 folds $\times$ 2 seeds against panel (c)'s
+$21 \times 3$), so its bars are not comparable to (c)'s and both arms are drawn at every
+budget; the annotated paired differences, not the vertical gaps, are the statistic.
+The two arms diverge rather than improving together: the \emph{main-effects} gap to the
+$0.310$ oracle barely closes ($+0.383$, $+0.343$, $+0.301$) while the full arm's closes
+roughly threefold ($+0.389 \to +0.126$). So the branch is not waiting on main-effect
+headroom --- it converges more slowly than the main-effect branch under a shared budget.
+We report this rather than adjusting the architecture.}
 \label{fig:table1}
 \end{figure}
 

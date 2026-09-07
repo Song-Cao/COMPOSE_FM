@@ -178,10 +178,8 @@ def panel_c(ax, T) -> None:
     with open(os.path.join(HERE, "results", "step_sweep_summary.json")) as _f:
         _ss = json.load(_f)
     _b = _ss["6400"]
-    bars = bars + [
-        ("main only\n6400 steps", _b["main_only"], bars[2][2], None),
-        ("full\n6400 steps", _b["full"], bars[3][2], None),
-    ]
+    # The step sweep is a DIFFERENT fold set (4 folds x 2 seeds), so it gets its own
+    # panel rather than sharing this axis -- see panel_d.
     x = np.arange(len(bars), dtype=float)
     for xx, (lab, v, col, ci) in zip(x, bars):
         ax.bar([xx], [v], width=0.62, color=col, edgecolor="white", linewidth=0.6,
@@ -217,19 +215,59 @@ def panel_c(ax, T) -> None:
     ax.set_xlim(-0.62, len(bars) - 0.30)
     ax.set_ylim(0, 1.12)
     ax.set_ylabel("Normalised energy distance")
-    ax.set_title("At the matched budget both arms sit above the oracle;\n"
-                 "at 8x the budget the branch separates (8/8 cells)", loc="left")
+    ax.set_title("At the matched budget both arms sit above the\n"
+                 "interaction-free oracle (21 folds x 3 seeds)", loc="left")
+
+
+def panel_d(ax, T) -> None:
+    """The step-budget sweep, on its OWN axis because it is a different fold set.
+
+    4 folds x 2 seeds, architecture/splits/coupling/r fixed, only the budget varying. Both
+    arms are drawn at every budget so the effect is read within this set: the Table 1 bars
+    in panel c come from 21 folds x 3 seeds and are NOT comparable to these.
+    """
+    with open(os.path.join(HERE, "results", "step_sweep_summary.json")) as f:
+        ss = json.load(f)
+    budgets = sorted(ss, key=int)
+    xs = np.arange(len(budgets), dtype=float)
+    mo = [ss[b]["main_only"] for b in budgets]
+    fu = [ss[b]["full"] for b in budgets]
+    ax.plot(xs, mo, marker="s", ms=4.5, lw=1.4, color=FOCAL_LIGHT,
+            label="main effects only", zorder=3)
+    ax.plot(xs, fu, marker="o", ms=4.5, lw=1.4, color=FOCAL,
+            label="full (interaction on)", zorder=3)
+    ax.axhline(0.310, color=BASELINE_GREYS[2], lw=0.9, ls=":", zorder=1)
+    ax.text(len(budgets) - 1.04, 0.318, "interaction-free oracle", fontsize=6.0,
+            color=NEUTRAL, ha="right", va="bottom")
+    # Annotate the paired effect, which is the actual statistic (not the bar difference).
+    for i, b in enumerate(budgets):
+        d = ss[b]["diff"]
+        sep = ss[b]["ci"][1] < 0
+        ax.annotate(f"{d:+.3f}" + ("*" if sep else ""),
+                    (xs[i], min(mo[i], fu[i])), textcoords="offset points",
+                    xytext=(0, -14), ha="center", va="top", fontsize=6.2,
+                    color=(ALARM if sep else NEUTRAL))
+    ax.set_xticks(xs)
+    ax.set_xticklabels([f"{b}\nsteps" for b in budgets])
+    ax.set_xlim(-0.45, len(budgets) - 0.55)
+    ax.set_ylim(0.24, 0.80)
+    ax.set_ylabel("Normalised energy distance")
+    ax.legend(loc="lower left", frameon=False, fontsize=6.4, handlelength=1.5,
+              borderaxespad=0.15)
+    ax.set_title("Paired effect is monotone in the budget;\n"
+                 "* = CI excludes zero (8/8 cells)", loc="left")
 
 
 def build(T) -> mpl.figure.Figure:
-    fig = plt.figure(figsize=(14.4, 4.8))
-    gs = fig.add_gridspec(1, 3, width_ratios=[1.05, 0.92, 1.34], wspace=0.46,
-                          left=0.135, right=0.988, top=0.830, bottom=0.225)
-    axes = [fig.add_subplot(gs[0, i]) for i in range(3)]
+    fig = plt.figure(figsize=(17.6, 4.8))
+    gs = fig.add_gridspec(1, 4, width_ratios=[1.05, 0.92, 1.10, 0.74], wspace=0.46,
+                          left=0.110, right=0.990, top=0.830, bottom=0.225)
+    axes = [fig.add_subplot(gs[0, i]) for i in range(4)]
     panel_a(axes[0], T)
     panel_b(axes[1], T)
     panel_c(axes[2], T)
-    for ax, L, dx in zip(axes, "abc", (-0.42, -0.36, -0.16)):
+    panel_d(axes[3], T)
+    for ax, L, dx in zip(axes, "abcd", (-0.42, -0.36, -0.18, -0.26)):
         panel_letter(ax, L, dx=dx, dy=1.035)
     return fig
 
