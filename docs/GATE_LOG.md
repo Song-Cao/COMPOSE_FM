@@ -717,7 +717,13 @@ benchmark at k=4 cannot rank the three neural models at all**. Note also that
 `LinearResponse` looks competitive on one fold (0.866) and is by far the worst pooled
 (1.484, sem 0.6733, sd 1.5056, per-fold range 0.438–4.738) — a single fold is actively
 misleading, not merely imprecise. All bracketed figures in the table above are **sems**
-(the sds are roughly 2.4x larger at n=6; e.g. FactoredAdditiveCFM sd 0.6096 vs sem 0.2726).
+The json's `std` and `sem` fields
+are **not two views of the same sd**, and the ratio between them is not 1/sqrt(n): `std`
+is the POPULATION sd (ddof=0) while `sem` is computed as `sd(ddof=1)/sqrt(n)`. For
+FactoredAdditiveCFM over its 6 folds the population sd is 0.6096, the sample sd is 0.6678,
+and the sem is 0.6678/sqrt(6) = 0.2726 — so `std/sem` reads 2.236 (= sqrt(5)) purely as an
+artifact of the two fields using different ddof, not because n=5 or because any divisor is
+sqrt(n-1). Quote the sem for inference and say which sd you mean.
 
 **Structural asymmetry that makes single-fold tables dishonest:** the four controls are
 effectively deterministic across seeds (measured std — NoChange and PerturbedMean bitwise
@@ -854,3 +860,51 @@ the recovery gap and both causes in the paper. Advance to Phase 3 with `r` corre
 the interaction-recovery metric reported alongside distributional scores, since a good
 distributional score with a wrong interaction field is a failure by this project's own
 standard.
+
+---
+
+# PHASE 4b — THE INTERACTION NULL WAS AN UNDERTRAINING ARTIFACT
+
+`experiments/step_sweep.py` -> `results/step_sweep.json`, `results/step_sweep_summary.json`.
+4 folds x 2 seeds at k=7, r=2, identical splits/protocol to Table 1 (same fold construction,
+same order>=2 filter, same training-median reference denominator), varying ONLY the step
+budget. Diagnostic follow-up to Table 1's null, run because the oracle decomposition said
+the null was not a floor effect.
+
+| steps | main-effects-only | full | paired diff | sem | 95% CI | folds favouring full |
+|---|---|---|---|---|---|---|
+| 800 (Table 1 budget) | 0.6925 | 0.6993 | +0.0068 | 0.0154 | [-0.023, +0.037] | 2/8 |
+| 2400 | 0.6534 | 0.6323 | -0.0211 | 0.0335 | [-0.087, +0.045] | 5/8 |
+| **6400** | 0.6108 | **0.4355** | **-0.1753** | 0.0507 | **[-0.275, -0.076]** | **8/8** |
+
+**RESULT: at 8x the workshop step budget the interaction hierarchy DOES pay for itself.**
+The paired difference is monotone in the budget (+0.007 -> -0.021 -> -0.175), the CI at
+6400 steps excludes zero (t = -3.46), and the full model wins on **every one of the 8
+fold-seed cells** (sign test p = 0.0078). Table 1's null (+0.015 [-0.024, +0.051] at 800
+steps) is therefore a statement about the optimisation budget, **not** about the mechanism.
+
+**The mechanism is NOT the one the oracle decomposition suggested, and this is the more
+useful finding.** The hypothesis was that the ablation would become informative once the
+arms reached the interaction-free oracle at 0.310. That is not what happened: the
+main-effects gap to 0.310 barely moves (+0.3825 -> +0.3434 -> +0.3008) while the ablation
+effect grows 26x. So the interaction branch does not need the main effects to saturate
+first — **it simply needs more optimisation steps than the main effects do**, and at 800
+steps it is not yet trained enough to contribute at all. Under a shared step budget, an
+interaction branch is silently undertrained relative to the main-effect branch it sits on
+top of. That is a practical warning for anyone parameter-matching a compositional model
+against flat baselines: matching parameters and steps does not match convergence.
+
+**CONSEQUENCE FOR THE PAPER, adopted.** Report BOTH: the ablation is null at the 800-step
+budget under which every Table 1 arm was compared (that comparison is fair and stays), and
+it is positive and sign-consistent at 6400 steps. The honest headline is that the
+interaction hierarchy's value is **budget-dependent, and invisible at the budget the
+baselines were matched at**. No architecture was changed to obtain this — only the step
+count, which is a protocol axis, not a model axis.
+
+**SCOPE LIMITS, stated.** n=8 cells (4 folds x 2 seeds), not the 21 folds of Table 1; one
+benchmark instance (d=6, k=7, true rank 2); r fixed at 2 rather than re-tuned per budget;
+and the arms never reach the 0.018 achievable floor at any budget tested. The -0.175 margin
+also remains below the 0.25 nED threshold pre-registered for the CROSS-model comparison —
+that threshold governs the IHC-FM-vs-FactoredAdditive row, not this within-model paired
+contrast, whose criterion was CI exclusion of zero. Re-running Table 1 wholesale at 6400
+steps would cost ~8 hours and was not done.
