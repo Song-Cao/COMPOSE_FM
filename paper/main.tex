@@ -507,8 +507,9 @@ $\epsilon=10^{-2}$ ($2.60\times10^{-3}$) and the two coordinate saturation gates
 (up to $2.20\times10^{-2}$). Float32 floors at $3.12\times10^{-7}$ for arithmetic reasons,
 not because the law fails --- inference in double recovers machine precision.
 \textbf{(b)} Structural guarantees. Six of eight hold \emph{bit-exactly} (interaction
-vanishing on singletons, 15/15 cases; zero-exposure embedding, 5/5; dropped-member
-contribution; zero-dose flow identity; Hill dose at $\tau=0$); permutation invariance of
+vanishing on singletons, 15/15 cases; second moment on singletons; zero-exposure embedding,
+5/5; dropped-member contribution; zero-dose flow identity; Hill dose at $\tau=0$);
+permutation invariance of
 the one-form and saturator direction preservation are rounding-level rather than exact
 ($7.8\times10^{-16}$, $2.2\times10^{-16}$), and are drawn as such. \textbf{(c)} Factored
 moments cost $O(kr)$ against $O(k^{2})$ for explicit pairwise accumulation: log-log slopes
@@ -724,6 +725,65 @@ $1.803$, $1.868$, $2.802$). The window-purged arm carries the largest shift by a
 (pre-state energy distance $2.522$ against $0.0023$ within-train). That axis therefore tests
 transfer under shift, not exposure extrapolation, and we do not report it as the latter.
 
+\subsection{The interaction hierarchy's value is budget-dependent, and invisible at the
+budget the baselines were matched at}
+\label{sec:budget}
+
+Under the shared $800$-step protocol of Table~\ref{\tabonelabel}, the within-model ablation
+is a null: disabling the interaction pathway changes the paired score by $+0.015$
+$[-0.024, +0.051]$, and the full model is nominally $0.015$ nED \emph{worse}. We report
+that, and we also report why it is the wrong number to conclude from.
+
+An oracle decomposition first rules out a floor effect. Integrating the true field on the
+same pre-cells a model sees gives an achievable floor of $0.018$ nED; deleting the true
+interaction term from that same oracle costs $0.292$ nED. So the benchmark does contain
+substantial interaction signal --- roughly $0.41$ of the additive velocity magnitude --- and
+a null cannot be blamed on there being nothing to find.
+
+Holding the architecture, the splits, the coupling and $r$ fixed and varying \emph{only} the
+step budget (4 folds $\times$ 2 seeds, Table~\ref{tab:budget}) resolves it. The paired effect
+is monotone in the budget and becomes decisive at $6400$ steps: $-0.175$ $[-0.275, -0.076]$,
+CI excluding zero, favouring the full model on \textbf{all $8$} fold--seed cells (sign test
+$p=0.0078$).
+
+\begin{table}[h]
+\centering
+\caption{Step-budget sweep. Only the optimisation budget varies; architecture, folds,
+coupling and $r$ are fixed. Negative differences favour the full model.}
+\label{tab:budget}
+\begin{tabular}{lcccc}
+\toprule
+steps & main effects only & full & paired diff [95\% CI] & favouring full \\
+\midrule
+$800$ (Table~\ref{\tabonelabel}) & $0.693$ & $0.699$ & $+0.007$ $[-0.023, +0.037]$ & $2/8$ \\
+$2400$ & $0.653$ & $0.632$ & $-0.021$ $[-0.087, +0.045]$ & $5/8$ \\
+$6400$ & $0.611$ & $\mathbf{0.436}$ & $\mathbf{-0.175}$ $[-0.275, -0.076]$ & $\mathbf{8/8}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The mechanism is not the one the oracle decomposition suggested, and the difference matters.
+We expected the ablation to become informative once the arms reached the interaction-free
+oracle at $0.310$. They never do: the main-effects gap to $0.310$ barely moves across the
+sweep ($+0.383$, $+0.343$, $+0.301$) while the ablation effect grows by a factor of $26$.
+The interaction branch therefore does not wait for the main effects to saturate --- it simply
+needs more optimisation steps than they do, and at $800$ steps it has not trained enough to
+contribute at all. \textbf{Under a shared step budget, an interaction branch is silently
+undertrained relative to the main-effect branch it sits on top of.} For anyone
+parameter-matching a compositional model against flat baselines, this is the practical
+warning: matching parameters and steps does not match convergence, and a compositional
+component can be scored as worthless by a protocol that is fair in every respect except
+the one that matters to it.
+
+We keep both numbers rather than promoting the favourable one. The $800$-step comparison is
+the fair one against baselines matched at that budget and it stays in
+Table~\ref{\tabonelabel}; the $6400$-step result establishes that the mechanism works when
+trained. No architecture was changed to obtain it --- only the step count, which is a
+protocol axis. Scope: $n=8$ cells rather than Table~\ref{\tabonelabel}'s $21$ folds, one
+benchmark instance, $r$ fixed at $2$ rather than re-tuned per budget, and no budget reaches
+the $0.018$ floor. Re-running the full nine-arm table at $6400$ steps costs roughly eight
+CPU-hours and we did not do it, so we make no claim about how the baselines would move.
+
 \begin{figure}[t]
 \centering
 \figorbox{\figcases}
@@ -768,6 +828,18 @@ failure begins before the interaction branch; and the kinematic composition defe
 $0.09$--$1.98\times$ the true interaction and near-orthogonal to it (maximum absolute cosine
 $0.158$), so an $m_{2}$-gated branch fitted against a straight observed-space interpolant
 necessarily absorbs a large non-interaction term. This is evidence about the interpolant.
+No budget in the sweep of \S\ref{sec:budget} reaches the $0.018$ achievable floor either,
+so the branch is demonstrably useful (\S\ref{sec:budget}) without being well-fitted.
+
+\textbf{The headline ablation is budget-dependent, and we report the unfavourable number
+alongside the favourable one.} At the $800$-step budget under which every arm in
+Table~\ref{\tabonelabel} was compared, the interaction hierarchy is a null
+($+0.015$ $[-0.024, +0.051]$). It becomes decisive only at $6400$ steps
+($-0.175$ $[-0.275, -0.076]$, $8/8$ cells). A reader who cares only about the matched-budget
+comparison should read the null as our result; we did not re-run the baselines at the larger
+budget, so we cannot say the ordering against them would be preserved. The sweep is also
+smaller than the main table ($8$ cells against $21$ folds, one benchmark instance,
+$r$ fixed).
 
 \textbf{The exposure axis is a distribution-shift test, not extrapolation.} See
 \S\ref{sec:exp}; the oracle-transfer ratios are $1.799$--$2.802$ and the window-purged arm's
@@ -984,7 +1056,13 @@ interaction term from that oracle costs $0.292$ nED, so real interaction signal 
 (roughly $0.41$ of the additive velocity magnitude). But both IHC-FM arms sit at
 $0.625$/$0.640$, still above the interaction-free oracle at $0.310$, so neither has reached
 the ceiling main effects alone could deliver and the interaction branch has no headroom in
-which to demonstrate value. We report this rather than adjusting the architecture.}
+which to demonstrate value. A step-budget sweep (\S\ref{sec:budget},
+Table~\ref{tab:budget}) then shows that this null is an \emph{undertraining} artifact rather
+than a property of the mechanism: at $6400$ steps the same contrast is $-0.175$
+$[-0.275, -0.076]$ on $8/8$ cells. Notably the gap to the $0.310$ oracle barely closes
+across that sweep, so the cause is not the headroom this panel suggests but the interaction
+branch converging more slowly than the main-effect branch under a shared budget. We report
+this rather than adjusting the architecture.}
 \label{fig:table1}
 \end{figure}
 
