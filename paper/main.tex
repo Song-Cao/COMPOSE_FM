@@ -831,11 +831,13 @@ subset rather than uniform degradation --- which bounds the claim without rescui
 
 \textbf{The rank $r$ is global, not selected per fold.} $r{=}8$ was chosen once on held-out
 singletons and held fixed across all five folds. A per-fold selector with a margin gate is
-implemented but exercised only at reduced scale, where the gate declined to move off the
-default on both folds it ran (candidates within $10^{-4}$ of each other), i.e.\ $r$ is not
-identifiable at $26$--$29$ records per fold. We therefore make no claim about per-fold rank
-behaviour; the full-scale sweep costs roughly $2400$--$2750$\,s against the $1890$\,s screen
-and was not run.
+implemented but exercised only at reduced scale ($8$ held-out records per fold, against
+$26$--$29$ at full scale), where the gate declined to move off the default on both folds it
+ran: the two nearest candidates on one fold were separated by $10^{-4}$ with overlapping
+CIs, and the nominal winner on the other led by $0.008$. That is the gate behaving as
+designed at $n{=}8$, and it is \emph{not} evidence about identifiability at full scale ---
+we make no claim about per-fold rank behaviour at any sample size. The full-scale sweep
+costs roughly $2400$--$2750$\,s against the $1890$\,s screen and was not run.
 
 \textbf{A finance ``singleton'' means one dominant channel, not one active channel.} No
 $10$\,s window in four days of BTCUSDT has exactly one active channel at an any-trade
@@ -1087,7 +1089,9 @@ property of the mechanism: the paired effect is monotone in the budget and reach
 $[-0.275, -0.076]$ at $6400$ steps, favouring the full model on $8/8$ cells. This panel is
 a \emph{different and smaller} fold set (4 folds $\times$ 2 seeds against panel (c)'s
 $21 \times 3$), so its bars are not comparable to (c)'s and both arms are drawn at every
-budget; the annotated paired differences, not the vertical gaps, are the statistic.
+budget; the annotated paired differences, not the vertical gaps, are the statistic. The
+$0.310$ oracle line is carried over from (c)'s fold set and is drawn as a cross-set
+reference, not as this panel's own oracle.
 The two arms diverge rather than improving together: the \emph{main-effects} gap to the
 $0.310$ oracle barely closes ($+0.383$, $+0.343$, $+0.301$) while the full arm's closes
 roughly threefold ($+0.389 \to +0.126$). So the branch is not waiting on main-effect

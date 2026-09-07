@@ -27,10 +27,17 @@ Panel a  the nine arms with grouped-bootstrap CIs and the no-change line at 1.0 
 Panel b  the two contrasts the paper turns on, as paired differences with CIs: IHC-FM
          full vs FactoredAdditiveCFM (the competitor) and full vs main-effects-only (the
          better-powered within-model ablation). The claim-margin threshold is drawn.
-Panel c  why the ablation null is informative: the achievable floor, the interaction-free
-         oracle, and where the two IHC-FM arms actually sit. The gap between the oracle
-         bars is the interaction signal that EXISTS; the models sit above both, so the
-         interaction branch has no headroom to demonstrate value.
+Panel c  why the ablation null is not a floor effect: the achievable floor, the
+         interaction-free oracle, and where the two IHC-FM arms actually sit (21 folds x
+         3 seeds). The gap between the oracle bars is the interaction signal that EXISTS,
+         so a null cannot be blamed on there being nothing to find.
+Panel d  what the null actually was -- undertraining. The step-budget sweep on its OWN
+         fold set (4 folds x 2 seeds), both arms at every budget, paired differences
+         annotated and starred where the CI excludes zero. The two arms DIVERGE with
+         budget: the full arm's gap to the interaction-free oracle closes ~3x while the
+         main-effects gap barely moves, so the gain is specific to the interaction
+         pathway rather than shared. Panel c's bars are a different set and are NOT
+         comparable to these.
 
 USAGE
     PYTHONPATH=src python experiments/make_fig2.py
@@ -172,14 +179,9 @@ def panel_c(ax, T) -> None:
         ("IHC-FM\nfull", rows["ihcfm_full"]["mean_normalised_ed"], FOCAL,
          (rows["ihcfm_full"]["ci_lo"], rows["ihcfm_full"]["ci_hi"])),
     ]
-    # The step-budget sweep (experiments/step_sweep.py) resolves this null: at 8x the
-    # matched budget the full arm separates from the ablation on 8/8 fold-seed cells. Those
-    # two bars are appended so the panel shows the resolution, not the superseded reading.
-    with open(os.path.join(HERE, "results", "step_sweep_summary.json")) as _f:
-        _ss = json.load(_f)
-    _b = _ss["6400"]
-    # The step sweep is a DIFFERENT fold set (4 folds x 2 seeds), so it gets its own
-    # panel rather than sharing this axis -- see panel_d.
+    # This panel is Table 1's oracle diagnosis ONLY (21 folds x 3 seeds). The step-budget
+    # sweep that resolves the null is a different fold set (4 folds x 2 seeds) and lives on
+    # its own axis -- see panel_d.
     x = np.arange(len(bars), dtype=float)
     for xx, (lab, v, col, ci) in zip(x, bars):
         ax.bar([xx], [v], width=0.62, color=col, edgecolor="white", linewidth=0.6,
@@ -236,8 +238,12 @@ def panel_d(ax, T) -> None:
             label="main effects only", zorder=3)
     ax.plot(xs, fu, marker="o", ms=4.5, lw=1.4, color=FOCAL,
             label="full (interaction on)", zorder=3)
+    # The 0.310 interaction-free oracle comes from table1.json's 21x3 set, NOT from this
+    # 4x2 sweep, so it is drawn as a cross-set reference and labelled as one. Without that
+    # label a reader would take it as this panel's own oracle.
     ax.axhline(0.310, color=BASELINE_GREYS[2], lw=0.9, ls=":", zorder=1)
-    ax.text(len(budgets) - 1.04, 0.318, "interaction-free oracle", fontsize=6.0,
+    ax.text(len(budgets) - 1.04, 0.318,
+            "interaction-free oracle (panel c set, 21x3)", fontsize=5.8,
             color=NEUTRAL, ha="right", va="bottom")
     # Annotate the paired effect, which is the actual statistic (not the bar difference).
     for i, b in enumerate(budgets):

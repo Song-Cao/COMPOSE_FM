@@ -922,9 +922,13 @@ results. All are accepted and reflected in the paper.
    records) and held fixed across all five folds. Verified on disk. The per-fold selector
    with its margin gate exists in `loco_screen.py` but was exercised only at smoke scale,
    where the gate declined to move off the default on BOTH folds it ran (CSF candidates
-   1.1095/1.2363/1.1094, decided by 1e-4; CF winner ahead by 0.008) — i.e. r is NOT
-   identifiable at 26-29 records per fold. **Do not describe the screen as rank-tuned and do
-   not cite per-fold rank behaviour.** Full-scale cost ~2400-2750 s against the disk-verified
+   1.1095/1.2363/1.1094 with overlapping CIs, decided by 1e-4; CF winner ahead by 0.008).
+   **CORRECTED — an earlier version of this line read "i.e. r is NOT identifiable at 26-29
+   records per fold". That inference does not hold: the smoke run used 8 held-out records
+   per fold, NOT the 26-29 of full scale (VS 29, CS 27, SF 27, CF 27, CSF 26), so it says
+   nothing about identifiability at full scale.** What the smoke run shows is the gate
+   behaving as designed at n=8. **Do not describe the screen as rank-tuned and do not cite
+   per-fold rank behaviour at any sample size.** Full-scale cost ~2400-2750 s against the disk-verified
    1889.8 s screen; not run. The track also withdrew its own earlier ~5000-5500 s estimate as
    not following from its arithmetic — recorded because a withdrawn number is a correction.
 
