@@ -1,0 +1,325 @@
+{
+  "n_tests": 53,
+  "n_passed": 53,
+  "n_failed": 0,
+  "tests": [
+    {
+      "test": "energy_point_masses_equals_2c",
+      "passed": true,
+      "got": 5.0,
+      "expected": 5.0
+    },
+    {
+      "test": "energy_identical_arrays_zero",
+      "passed": true,
+      "got": 0.0
+    },
+    {
+      "test": "energy_unbiased_mean_zero_under_H0",
+      "passed": true,
+      "mean": 0.001185609099817464,
+      "se": 0.0037325468750252816
+    },
+    {
+      "test": "energy_V_stat_biased_above_U_stat",
+      "passed": true,
+      "v_mean": 0.05753764377093921,
+      "u_mean": 0.001185609099817464
+    },
+    {
+      "test": "energy_permutation_invariant",
+      "passed": true,
+      "delta": 0.0
+    },
+    {
+      "test": "energy_translation_invariant",
+      "passed": true,
+      "delta": 0.0
+    },
+    {
+      "test": "energy_report_perfect_prediction_zero",
+      "passed": true,
+      "normalised": 0.0,
+      "denom": 0.37932042033580604
+    },
+    {
+      "test": "energy_report_nochange_prediction_is_one",
+      "passed": true,
+      "normalised": 1.0
+    },
+    {
+      "test": "energy_report_always_ships_denominator",
+      "passed": true,
+      "keys": [
+        "absolute",
+        "denominator",
+        "denominator_degenerate",
+        "denominator_is_small",
+        "denominator_vs_reference",
+        "normalised"
+      ]
+    },
+    {
+      "test": "denominator_collapse_flag_fires_on_finance_k4_case",
+      "passed": true,
+      "n_below": 1.0,
+      "threshold": 0.1755,
+      "inflation": 2.279220779220779
+    },
+    {
+      "test": "denominator_collapse_flag_names_the_records",
+      "passed": true,
+      "flagged": [
+        {
+          "row": 0,
+          "denominator": 0.154,
+          "inflation": 2.279220779220779,
+          "unit": "k4",
+          "condition": "k=4"
+        }
+      ]
+    },
+    {
+      "test": "denominator_collapse_flag_quiet_on_healthy_split",
+      "passed": true,
+      "n_below": 0.0
+    },
+    {
+      "test": "energy_report_flag_none_without_reference_true_with",
+      "passed": true,
+      "noref": "None",
+      "withref": "True"
+    },
+    {
+      "test": "sliced_w2_translation_closed_form",
+      "passed": true,
+      "got": 0.7347768820430105,
+      "expected": 0.7347768820430105
+    },
+    {
+      "test": "sliced_w2_identical_zero",
+      "passed": true,
+      "got": 0.0
+    },
+    {
+      "test": "sliced_w2_unequal_sizes_close",
+      "passed": true,
+      "got": 0.7059200903783625,
+      "expected": 0.7347768820430105
+    },
+    {
+      "test": "mmd_V_stat_identical_arrays_zero",
+      "passed": true,
+      "got": 0.0
+    },
+    {
+      "test": "mmd_unbiased_mean_zero_under_H0",
+      "passed": true,
+      "mean": -0.0005253407629086363,
+      "se": 0.000763692789789439
+    },
+    {
+      "test": "mmd_far_clouds_near_upper_bound",
+      "passed": true,
+      "got": 1.245415645269452
+    },
+    {
+      "test": "mmd_permutation_invariant",
+      "passed": true,
+      "delta": 0.0
+    },
+    {
+      "test": "delta_perfect_r2_one_cosine_one",
+      "passed": true,
+      "r2": 1.0,
+      "cos": 1.0,
+      "top": 1.0
+    },
+    {
+      "test": "delta_doubled_shift_cosine_one_r2_known",
+      "passed": true,
+      "cos": 1.0,
+      "r2": -7.553440592356075e-05,
+      "r2_expected": -7.553440592200644e-05,
+      "l2": 2.000000000000001
+    },
+    {
+      "test": "delta_flipped_shift_cosine_minus_one",
+      "passed": true,
+      "cos": -1.0
+    },
+    {
+      "test": "delta_nochange_gives_nan_cosine_zero_norm",
+      "passed": true,
+      "cos": "nan",
+      "l2": 0.0
+    },
+    {
+      "test": "delta_permutation_invariant",
+      "passed": true,
+      "cos_delta": 0.0
+    },
+    {
+      "test": "spearman_survives_monotone_distortion_pearson_drops",
+      "passed": true,
+      "spearman": 1.0,
+      "pearson": 0.978066602803484
+    },
+    {
+      "test": "residual_perfect_prediction_cosine_one",
+      "passed": true,
+      "got": 0.9999999999999999
+    },
+    {
+      "test": "residual_mean_response_predictor_scores_zero",
+      "passed": true,
+      "ratio": 0.0,
+      "cos": "nan"
+    },
+    {
+      "test": "residual_shared_fraction_large_by_construction",
+      "passed": true,
+      "frac": 0.9623450116471447
+    },
+    {
+      "test": "residual_orthogonal_to_global_dir",
+      "passed": true,
+      "max_abs_proj": 3.3306690738754696e-16
+    },
+    {
+      "test": "crps_point_forecast_equals_abs_error",
+      "passed": true,
+      "got": 2.0
+    },
+    {
+      "test": "crps_two_point_closed_form",
+      "passed": true,
+      "got": 0.5
+    },
+    {
+      "test": "crps_gaussian_closed_form_y0",
+      "passed": true,
+      "got": 0.4681186089022278,
+      "expected": 0.46738995451021825
+    },
+    {
+      "test": "crps_gaussian_closed_form_y1.5",
+      "passed": true,
+      "got": 0.8946359231811052,
+      "expected": 0.8962885043931006
+    },
+    {
+      "test": "crps_gaussian_closed_form_y-3",
+      "passed": true,
+      "got": 1.9901354757793521,
+      "expected": 1.9888480079549058
+    },
+    {
+      "test": "crps_prefers_correctly_sharp_forecast",
+      "passed": true,
+      "tight": 0.585000228472312,
+      "wide": 1.0779173461920242
+    },
+    {
+      "test": "pit_equals_target_quantile",
+      "passed": true,
+      "got": 0.6
+    },
+    {
+      "test": "pit_calibrated_coverage_matches_nominal",
+      "passed": true,
+      "max_deviation": 0.018000000000000016,
+      "ks": 0.02033333333333337
+    },
+    {
+      "test": "pit_detects_overconfident_forecast",
+      "passed": true,
+      "central90": 0.336,
+      "ks": 0.29766666666666663
+    },
+    {
+      "test": "quantile_loss_median_closed_form",
+      "passed": true,
+      "got": 2.0,
+      "expected": 2.0
+    },
+    {
+      "test": "quantile_loss_upper_tail_closed_form",
+      "passed": true,
+      "got": 2.8800000000000003
+    },
+    {
+      "test": "row_bootstrap_understates_interval_vs_group",
+      "passed": true,
+      "width_group": 1.0469352439782018,
+      "width_row": 0.1754668639598834,
+      "ratio": 0.16760049388836581
+    },
+    {
+      "test": "group_bootstrap_covers_truth",
+      "passed": true,
+      "lo": -0.3561922893316606,
+      "truth": 0.18900407597282118,
+      "hi": 0.6907429546465412
+    },
+    {
+      "test": "bootstrap_constant_values_zero_width",
+      "passed": true,
+      "point": 2.5,
+      "width": 0.0
+    },
+    {
+      "test": "bootstrap_rejects_misaligned_groups",
+      "passed": true
+    },
+    {
+      "test": "paired_constant_offset_exact",
+      "passed": true,
+      "mean_diff": -0.3,
+      "width": 2.220446049250313e-16,
+      "n_lower": 20.0,
+      "p": 1.9073486328125e-06
+    },
+    {
+      "test": "paired_identical_models_zero",
+      "passed": true,
+      "mean_diff": 0.0,
+      "p": NaN
+    },
+    {
+      "test": "paired_antisymmetric",
+      "passed": true,
+      "a": -0.3,
+      "b": 0.3
+    },
+    {
+      "test": "pairing_detects_offset_marginals_cannot",
+      "passed": true,
+      "paired_lo": -0.05000000000000017,
+      "paired_hi": -0.049999999999999954,
+      "marginals_overlap": 1.0
+    },
+    {
+      "test": "sign_test_exact_small_n",
+      "passed": true,
+      "got": 0.0625
+    },
+    {
+      "test": "driver_perfect_records_score_zero_ed",
+      "passed": true,
+      "max_ed": 0.0,
+      "n_units": 6.0
+    },
+    {
+      "test": "residualised_report_perfect_is_one",
+      "passed": true,
+      "got": 1.0000000000000002
+    },
+    {
+      "test": "mean_response_predictor_scores_one_on_residualised",
+      "passed": true,
+      "got": 1.0
+    }
+  ],
+  "run_utc": "2026-09-07T09:19:44Z"
+}

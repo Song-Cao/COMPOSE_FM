@@ -1,0 +1,62 @@
+loading windows
+  loaded cache finance_blocked_10s.npz: 34545 windows
+
+building purged splits
+  [chronological ] train  17960 / test   7919 | blocks 25/11 | shared bins 0 | min gap 31.0 | tau_max med 3.20 -> 2.67
+  [held_out_day  ] train  17960 / test   8636 | blocks 25/12 | shared bins 0 | min gap None | tau_max med 3.20 -> 2.69
+  [exposure_window] train   3583 / test   5293 | blocks 25/25 | shared bins 0 | min gap 3.0 | tau_max med 1.12 -> 10.71
+  [exposure_block] train  17781 / test   7918 | blocks 25/11 | shared bins 0 | min gap 31.0 | tau_max med 2.36 -> 5.04
+  [chronological ] populations train 597 (195 singleton) / test 268 over 11 blocks
+  [held_out_day  ] populations train 597 (195 singleton) / test 231 over 12 blocks
+  [exposure_window] populations train 60 (57 singleton) / test 225 over 24 blocks
+  [exposure_block] populations train 598 (215 singleton) / test 267 over 11 blocks
+
+training IHC-FM on the chronological training side
+/Users/songcao/workdir/FM_project/src/composefm/ihcfm_hierarchy.py:933: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/miniforge3/conda-bld/libtorch_1786372171327/work/torch/csrc/autograd/generated/python_variable_methods.cpp:823.)
+  hist.append(float(loss))
+  trained in 49s (skipped 0)
+
+training IHC-FM on the exposure_window training side
+  trained in 8s (skipped 0)
+
+training IHC-FM on the exposure_block training side
+  trained in 43s (skipped 0)
+
+scoring [chronological] with the chronological-trained model (268 populations)
+    ihcfm           normED 0.7007 [0.6360, 0.7856]  absED 0.6068  denom 0.9976  (n_blocks 11)
+    perturbed_mean  normED 1.6898 [1.5681, 1.8399]  absED 1.5034  denom 0.9976  (n_blocks 11)
+    no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.9976  denom 0.9976  (n_blocks 11)
+    PAIRED ihcfm - perturbed_mean: -0.9929 [-1.0982, -0.8730] sign p=0.000977 over 11 blocks
+    PAIRED ihcfm - no_change: -0.3019 [-0.3630, -0.2203] sign p=0.000977 over 11 blocks
+    CRPS 0.51997 [0.45208, 0.61178] vs no-change 0.51531 | PIT central-90 0.785 | KS 0.400
+    ORACLES transferred 0.9461 vs in-split 0.5258 (ratio 1.80) | measured shift ratio 18.82 | VERDICT distribution_shift
+
+scoring [held_out_day] with the chronological-trained model (231 populations)
+    ihcfm           normED 0.8562 [0.8055, 0.9284]  absED 0.8233  denom 1.0820  (n_blocks 12)
+    perturbed_mean  normED 1.5265 [1.3954, 1.6358]  absED 1.3868  denom 1.0820  (n_blocks 12)
+    no_change       normED 1.0000 [1.0000, 1.0000]  absED 1.0820  denom 1.0820  (n_blocks 12)
+    PAIRED ihcfm - perturbed_mean: -0.6222 [-0.7639, -0.4761] sign p=0.000488 over 12 blocks
+    PAIRED ihcfm - no_change: -0.1102 [-0.1833, -0.0190] sign p=0.00635 over 12 blocks
+    CRPS 0.80687 [0.61952, 0.99271] vs no-change 0.80636 | PIT central-90 0.769 | KS 0.416
+    ORACLES transferred 0.9668 vs in-split 0.5363 (ratio 1.80) | measured shift ratio 10.28 | VERDICT distribution_shift
+
+scoring [exposure_window] with the exposure_window-trained model (225 populations)
+    ihcfm           normED 2.1983 [2.1276, 2.2656]  absED 3.1057  denom 1.4843  (n_blocks 24)
+    perturbed_mean  normED 1.9404 [1.8279, 2.0444]  absED 2.8279  denom 1.4843  (n_blocks 24)
+    no_change       normED 1.0000 [1.0000, 1.0000]  absED 1.4843  denom 1.4843  (n_blocks 24)
+    PAIRED ihcfm - perturbed_mean: +0.2541 [+0.1839, +0.3316] sign p=0.000277 over 24 blocks
+    PAIRED ihcfm - no_change: +1.1798 [+1.1189, +1.2393] sign p=1.19e-07 over 24 blocks
+    CRPS 0.93251 [0.84307, 1.01141] vs no-change 0.80365 | PIT central-90 0.447 | KS 0.598
+    ORACLES transferred 1.0713 vs in-split 0.3824 (ratio 2.80) | measured shift ratio 1077.22 | VERDICT distribution_shift
+
+scoring [exposure_block] with the exposure_block-trained model (267 populations)
+    ihcfm           normED 0.8201 [0.7142, 0.9203]  absED 0.7092  denom 0.9539  (n_blocks 11)
+    perturbed_mean  normED 1.4076 [1.2696, 1.5580]  absED 1.2027  denom 0.9539  (n_blocks 11)
+    no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.9539  denom 0.9539  (n_blocks 11)
+    PAIRED ihcfm - perturbed_mean: -0.5799 [-0.6789, -0.4863] sign p=0.000977 over 11 blocks
+    PAIRED ihcfm - no_change: -0.1773 [-0.2870, -0.0675] sign p=0.0654 over 11 blocks
+    CRPS 0.80198 [0.73840, 0.88080] vs no-change 0.83067 | PIT central-90 0.691 | KS 0.399
+    ORACLES transferred 0.9517 vs in-split 0.5096 (ratio 1.87) | measured shift ratio 153.10 | VERDICT distribution_shift
+
+wrote results/finance_blocked.json (354s)

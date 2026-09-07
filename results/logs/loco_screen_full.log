@@ -1,0 +1,76 @@
+rank check: k=6 r=15 required>=15 OK
+preparing populations (max_cells=400)
+/Users/songcao/workdir/FM_project/experiments/loco_screen.py:170: DeprecationWarning: numpy.core.numeric is deprecated and has been renamed to numpy._core.numeric. The numpy._core namespace contains private NumPy internals and its use is discouraged, as NumPy internals can change without warning in any release. In practice, most real-world usage of numpy.core is to access functionality in the public NumPy API. If that is the case, use the public NumPy API. If not, you are using NumPy internals. If you would still like to access an internal attribute, use numpy._core.numeric._frombuffer.
+  splits = pickle.load(f)
+  records with a matched PDO control: 87 | populations: 666
+  matrix (24756030, 44) memory-mapped (float64)
+  PCA on controls only: 60000 of 645097 control cells | evr [0.3021 0.1393 0.0661 0.0557 0.0397 0.0327 0.0281 0.0263]
+  prepared in 19s
+  666 populations | 87 records | PCA evr sum 0.6899
+
+=== LOCO screen: 5 held-out combinations ===
+  [VS] order 2 doses [2, 3, 4] multi-dose | train 580 | held 86 pops / 29 records | feasible True
+/Users/songcao/workdir/FM_project/src/composefm/ihcfm_hierarchy.py:933: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/miniforge3/conda-bld/libtorch_1786372171327/work/torch/csrc/autograd/generated/python_variable_methods.cpp:823.)
+  hist.append(float(loss))
+    trained in 64s (skipped 0 non-finite steps)
+      ihcfm           normED 1.2917 [1.0488, 1.5302]  absED 0.1843  denom 0.2280  (n_units 29)
+      perturbed_mean  normED 1.4618 [1.2249, 1.7551]  absED 0.1954  denom 0.2280  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.2280  denom 0.2280  (n_units 29)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -0.1663 [-0.4199, +0.0496] sign p=1 over 29 records
+  [CS] order 2 doses [3] DOSE-CONFOUNDED | train 639 | held 27 pops / 27 records | feasible True
+    trained in 50s (skipped 0 non-finite steps)
+      ihcfm           normED 0.8254 [0.6502, 1.0099]  absED 0.1363  denom 0.2365  (n_units 27)
+      perturbed_mean  normED 2.0111 [1.1818, 3.0113]  absED 0.2029  denom 0.2365  (n_units 27)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.2365  denom 0.2365  (n_units 27)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -1.1856 [-2.0107, -0.4829] sign p=4.92e-05 over 27 records
+  [SF] order 2 doses [3] DOSE-CONFOUNDED | train 639 | held 27 pops / 27 records | feasible True
+    trained in 57s (skipped 0 non-finite steps)
+      ihcfm           normED 1.3771 [0.8635, 1.9973]  absED 0.1193  denom 0.2063  (n_units 27)
+      perturbed_mean  normED 4.4719 [2.3783, 7.0904]  absED 0.2640  denom 0.2063  (n_units 27)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.2063  denom 0.2063  (n_units 27)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -3.0948 [-5.0898, -1.4772] sign p=1.49e-08 over 27 records
+  [CF] order 2 doses [3] DOSE-CONFOUNDED | train 639 | held 27 pops / 27 records | feasible True
+    trained in 57s (skipped 0 non-finite steps)
+      ihcfm           normED 0.9077 [0.7661, 1.0279]  absED 0.1027  denom 0.1309  (n_units 27)
+      perturbed_mean  normED 2.1516 [1.4098, 3.0874]  absED 0.1338  denom 0.1309  (n_units 27)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1309  denom 0.1309  (n_units 27)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -1.2439 [-2.1180, -0.5947] sign p=0.0522 over 27 records
+  [CSF] order 3 doses [4] DOSE-CONFOUNDED | train 640 | held 26 pops / 26 records | feasible True
+    trained in 50s (skipped 0 non-finite steps)
+      ihcfm           normED 1.6502 [1.0915, 2.2642]  absED 0.1383  denom 0.1863  (n_units 26)
+      perturbed_mean  normED 6.4837 [3.6473, 9.5317]  absED 0.3671  denom 0.1863  (n_units 26)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1863  denom 0.1863  (n_units 26)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -4.8336 [-7.4766, -2.4863] sign p=8.05e-07 over 26 records
+
+=== leave-replicate-out: 3 folds, code_dim 0 vs 16 ===
+  [repfold0] held 235 pops / 29 records (70 combination pops) | train 431
+    code_dim=0
+    trained in 69s (skipped 0 non-finite steps)
+      ihcfm           normED 1.0863 [0.9188, 1.3260]  absED 0.1167  denom 0.1751  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1751  denom 0.1751  (n_units 29)
+    code_dim=16
+    trained in 75s (skipped 0 non-finite steps)
+      ihcfm           normED 1.1513 [0.9499, 1.4256]  absED 0.1205  denom 0.1751  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1751  denom 0.1751  (n_units 29)
+  [repfold1] held 207 pops / 29 records (53 combination pops) | train 459
+    code_dim=0
+    trained in 72s (skipped 0 non-finite steps)
+      ihcfm           normED 1.2653 [1.0338, 1.5185]  absED 0.1245  denom 0.1557  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1557  denom 0.1557  (n_units 29)
+    code_dim=16
+    trained in 71s (skipped 0 non-finite steps)
+      ihcfm           normED 1.2367 [1.0311, 1.4729]  absED 0.1252  denom 0.1557  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1557  denom 0.1557  (n_units 29)
+  [repfold2] held 224 pops / 29 records (70 combination pops) | train 442
+    code_dim=0
+    trained in 80s (skipped 0 non-finite steps)
+      ihcfm           normED 0.9532 [0.8124, 1.1444]  absED 0.1078  denom 0.1659  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1659  denom 0.1659  (n_units 29)
+    code_dim=16
+    trained in 73s (skipped 0 non-finite steps)
+      ihcfm           normED 0.9274 [0.8179, 1.0561]  absED 0.1068  denom 0.1659  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1659  denom 0.1659  (n_units 29)
+
+wrote results/loco_screen.json  (1930s total)
+wrote results/loco_screen_predictions.npz (118.8 MB, 3243 prediction records) -- every score in the json is recomputable from these alone

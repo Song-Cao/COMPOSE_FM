@@ -1,0 +1,14 @@
+preparing populations (max_cells=400)
+  loaded cache organoid_loco_d8_PDO_n400_s0.npz: 666 populations
+  666 populations | 87 records | PCA evr sum 0.6899
+rank: k=6 r=8 -> 8/15 pairs representable (fully unaliased: False) -- reported, not enforced
+
+=== LOCO screen: 5 held-out combinations ===
+  [VS] order 2 doses [2, 3, 4] multi-dose | train 580 | held 86 pops / 29 records | feasible True
+/Users/songcao/workdir/FM_project/src/composefm/ihcfm_hierarchy.py:933: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/miniforge3/conda-bld/libtorch_1786372171327/work/torch/csrc/autograd/generated/python_variable_methods.cpp:823.)
+  hist.append(float(loss))
+    r=  2  val normED 1.2345 [0.5982, 2.0684]  denom 0.2010  pairs 2/15  (55s)
+    r=  8  val normED 1.2293 [0.5274, 2.0638]  denom 0.2010  pairs 8/15  (49s)
+    r= 15  val normED 1.2208 [0.5377, 2.0564]  denom 0.2010  pairs 15/15  (54s)
+    trained in 200s (skipped 0 non-finite steps)

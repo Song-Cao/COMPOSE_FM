@@ -465,7 +465,8 @@ with self-test json under `results/`.
 - **MetricRadialSat earns its place, measured**: direction preserved (min cosine
   0.9999999999999998, max cross-product norm 2.78e-17); norm bounded under 50x stress
   (raw metric norm 15.68 -> saturated 2.03 against ceiling ~2.01); and it stays covariant
-  under stress (7.26e-16). The contrast that justifies it: `t5_coord_gate_breaks_covariance`
+  under stress (8.64e-16 at 50x drive, 9.61e-16 at 1000x; the 7.26e-16 figure is the
+  UNSTRESSED arm). The contrast that justifies it: `t5_coord_gate_breaks_covariance`
   and `t5_coord_norm_breaks_covariance` are both TRUE — the old coordinate scalar gate
   destroys covariance where the metric-radial form preserves it.
 - Velocity eval at d=6, k=4, batch=256: 1.70 ms (float32) / 2.02 ms (float64).
@@ -483,18 +484,76 @@ with self-test json under `results/`.
   NOT evidence of sub-linear scaling.
 - **CFM objective correct**: I-CFM linear interpolant, conditional velocity target matches
   the analytic `x1 - x0` at **6.66e-16**; marginal-velocity cosine >= 0.99993 across t.
-  Coupling selected on held-out COMBINATION loss: `sinkhorn_uot` (0.858) vs `ot` (0.860)
-  vs `independent` (6.987) — an 8.14x spread, so the coupling choice is load-bearing and
-  is now a selected, reported hyperparameter rather than an assumption.
+
+### CORRECTION (this entry previously selected the coupling on CFM loss — that was unsound)
+
+An earlier version of this entry read: "Coupling selected on held-out COMBINATION loss:
+`sinkhorn_uot` (0.858) vs `ot` (0.860) vs `independent` (6.987) — an 8.14x spread, so the
+coupling choice is load-bearing." **CFM loss is not comparable across couplings**, so both
+the selection and the "8.14x" advertisement were wrong. Loss magnitude tracks how many
+source/target pairs are trivially identical, not predictive accuracy:
+
+Coupling sweep (`hierarchical_schedule.coupling_sensitivity`, three arms), with the
+identity-pair fractions from a separate experiment (`cfm_correctness.training`) alongside:
+
+| coupling | identity-pair fraction | val combo CFM loss | normalised ED | ED(no-change) denom |
+|---|---|---|---|---|
+| ot | 0.7949 | 0.8600 | **1.1188** | 0.03636 |
+| sinkhorn_uot | 0.2285 | 0.8579 | 0.8387 | 0.03636 |
+| independent | 0.0039 | 6.9873 | **0.8094** | 0.03636 |
+
+The `paired` coupling was NOT one of the swept arms (it has no ED figure here); it appears
+only in the identity-fraction experiment, at fraction 1.0, where its training `final_loss`
+reaches **6.43e-05** — a different metric from the sweep's val-combination loss, quoted
+here only because it is the clearest demonstration that loss magnitude tracks trivial
+pairing.
+
+On the **distributional** metric the ranking inverts: `independent` is best (0.8094),
+`sinkhorn_uot` close behind (0.8387), and `ot` is **worse than predicting no change**
+(1.1188 > 1.0). The `paired` arm reaches loss 6.43e-05 purely because every pair is an
+identity. **Rule adopted: never select or compare couplings on CFM loss. Select on a
+distributional metric (normalised ED, reported with its denominator) and/or on
+ground-truth interaction recovery.**
+
+Re-selected on comparable metrics, the coupling IS load-bearing, but for a different
+reason than claimed — interaction recovery (ground-truth cosine, scale-free and
+comparable across couplings), mean over 7 combinations, 3 seeds:
+
+| r | independent | sinkhorn_uot |
+|---|---|---|
+| 2 | +0.0799 | **+0.5930** |
+| 4 | +0.2586 | +0.4414 |
+| 6 | — | +0.5121 |
+| 8 | +0.4361 | **+0.6427** |
+
+`sinkhorn_uot` wins at every r, and on normalised ED it is within 0.03 of `independent`.
+**Selected: `sinkhorn_uot`, on interaction recovery, with the ED near-tie recorded.**
 
 ## FAILURE — the interaction branch does not recover the true interaction field
 
-Measured with the selected OT coupling, d=6, k=4, r_true=2, 6 training combinations:
+**PROVENANCE CORRECTION.** The measurements in this section were first run and first
+written up as being "with the selected OT coupling". They were not: the calls passed no
+`objective=`, so `train_hierarchical` instantiated `CFMObjective(seed=seed)`, whose default
+is `coupling="independent"` — the arm the table above shows is worst on interaction
+recovery. Every number below has been **re-measured under the selected `sinkhorn_uot`
+coupling**, and both sets are reported because the difference is the finding.
+
+d=6, k=4, r_true=2, 6 training combinations, 3 seeds:
 
 | | mean cosine vs truth | mean rel L2 |
 |---|---|---|
-| all combinations | **+0.161** | 1.842 |
+| all combinations, `independent` (mislabeled as OT in the first write-up) | +0.161 | 1.842 |
+| all combinations, **selected `sinkhorn_uot`, r=8** | **+0.6427** | — |
+| all combinations, selected `sinkhorn_uot`, r=2 | +0.5930 | — |
 | oracle ceiling for any CFM-interpolant readout | **+0.939** | 0.407 |
+
+Under the correct coupling the branch reaches **+0.64 against an oracle ceiling of +0.94**,
+so the failure is much smaller than first recorded but the gap is still real. Held-out
+combination CFM loss also falls to 1.23–1.35 (held-out finals 1.2263 / 1.2512 / 1.3463),
+from 6.69–6.82 at stage 3 under `independent` (finals 6.817 / 6.694 / 6.816, mean 6.7757;
+that arm's held-out trajectory peaks at 8.17, while 9.31–9.44 are its TRAINING-combination
+losses, not held-out ones), confirming
+the earlier loss figures were the wrong-arm artefact the coupling correction above predicts.
 
 The oracle ceiling is below 1.0 because the benchmark truth is an ODE **generator** while
 the branch is an **interpolant velocity**; it was measured, not assumed. The model sits far
@@ -511,10 +570,20 @@ below even that ceiling, so the gap is real.
    `||main(pair)||/||true|| = 1.11`. The earlier "main branch is wrong on the held-out
    pair" reading (cosine -0.318) is a symptom of the aliasing below, not a cause.
 3. **Not stage-2 leakage into main effects.** A hard freeze of the main group in stage 2
-   was implemented (`freeze_main_stage2`, default OFF) and tested over 3 seeds: it lowers
-   singleton drift 0.2497 -> 0.2207 but makes held-out combination loss WORSE
-   (6.7757 +- 0.0708 -> 6.9876 +- 0.2073). Retained as an ablation arm, not adopted.
-4. **Not undertraining.** 0 non-finite steps; training-combination loss falls 9.31 -> 7.30.
+   was implemented (`freeze_main_stage2`, default OFF) and tested over 3 seeds under BOTH
+   couplings. It consistently lowers singleton drift and consistently worsens held-out
+   loss, so the soft anchor is the better schedule and the conclusion is coupling-robust:
+
+   | coupling | freeze | held-out combo loss | singleton drift |
+   |---|---|---|---|
+   | independent | off | 6.7757 +- 0.0708 | 0.2497 |
+   | independent | on | 6.9876 +- 0.2073 | 0.2207 |
+   | **sinkhorn_uot (selected)** | **off** | **1.2746 +- 0.0633** | 0.2925 |
+   | sinkhorn_uot (selected) | on | 1.4596 +- 0.0861 | 0.2484 |
+
+   Retained as an ablation arm, not adopted.
+4. **Not undertraining.** 0 non-finite steps; training-combination loss falls
+   1.87 -> 1.55 under the selected coupling (9.31 -> 7.30 under `independent`).
 
 ### Cause 1 (structural, and it is an architectural REQUIREMENT we had wrong)
 
@@ -529,11 +598,33 @@ The second moment uses `e_p ⊙ e_q`, and the rank of the resulting pair-basis s
 | 8, 12, 16 | 6.0 | yes |
 
 With `r < k(k-1)/2` distinct pairs are **aliased onto the same interaction direction**, so
-the model structurally cannot assign them different fields. Recovery duly rises with r:
-**+0.0799 (r=2) -> +0.2586 (r=4) -> +0.4361 (r=8)**, mean over seeds 0/1/2. The default
-r=4 at k=4 was mis-specified. **Requirement for the paper and for all runs: `r >= k(k-1)/2`
-whenever pairs must be individually resolved.** This is a specification fix, NOT a
-simplification — no component is removed.
+the model cannot assign them different fields *through the second moment alone*. This
+rank arithmetic is pure linear algebra and coupling-independent — it stands.
+
+### RETRACTION of the `r >= k(k-1)/2` performance requirement
+
+An earlier version of this entry promoted that arithmetic into a hard requirement, citing
+recovery rising **+0.0799 (r=2) -> +0.2586 (r=4) -> +0.4361 (r=8)**. Those runs used the
+`independent` coupling (see the provenance correction above). **Re-measured under the
+selected `sinkhorn_uot` coupling, the monotone trend does not survive:**
+
+| r | pair-basis rank (of 6) | recovery, `independent` | recovery, **selected** |
+|---|---|---|---|
+| 2 | 2.0 | +0.0799 | **+0.5930** |
+| 4 | 4.0 | +0.2586 | +0.4414 |
+| 6 | 6.0 | — | +0.5121 |
+| 8 | 6.0 | +0.4361 | **+0.6427** |
+
+Under the selected coupling **r=2 (rank-deficient, aliasing all 6 pairs onto 2 directions)
+beats both r=4 and r=6**, and only r=8 is clearly best. So aliasing in the second moment is
+NOT the binding constraint on recovery: the state-dependent one-form head can evidently
+separate pairs that the moment aliases. `r` is therefore a **tunable capacity
+hyperparameter, selected empirically, not a correctness requirement** — and the earlier
+claim that "the default r=4 at k=4 was mis-specified" is withdrawn.
+
+**Retained conclusion:** r=8 is the best-performing setting measured here and is used
+downstream; the rank arithmetic is reported as a structural property of the moment
+construction, with the explicit caveat that it did not predict performance.
 
 ### Cause 2 (identifiability, and it bounds what this benchmark can show)
 
@@ -545,7 +636,85 @@ is the honest limit of a k=4 benchmark, and the fix is more combinations per pai
 direction (larger k, or more pairs observed per embedding dimension) — an evaluation-design
 change, not an architecture change.
 
-**Decision.** Set `r >= k(k-1)/2` for all subsequent runs. Keep every component. Report
+---
+
+# PHASE 3a — BASELINE LADDER, and a statistical-power finding that governs Table 1
+
+`src/composefm/baselines.py` (93 kB), `results/baselines_selftest.json`.
+
+## Parameter matching is honest
+
+IHC-FM at d=6, k=4, r=8, hidden=64: **22,135 total parameters** (one-form 17,664; ambient
+metric 3,717; saturator 257; decoder 453; embed 32; dose 12; velocity core 17,708). The
+three neural baselines are matched to the **total** — the conservative direction, since it
+gives them more capacity than IHC-FM's velocity core: DeepSetsEndpoint 22,096 (0.998x),
+MonolithicCFM 22,250 (1.005x), FactoredAdditiveCFM 21,991 (0.993x). All CFM rows share
+identical coupling kwargs. Shared protocol: 800 steps (= 300+300+200), batch 128, lr 3e-3,
+clip 5.0, 16 integration steps, Adam, 0 non-finite steps.
+
+## Single-fold table (seed 0), ranked on normalised ED — NOT on CFM loss
+
+| model | params | held-out combination normalised ED | train-subset ED |
+|---|---|---|---|
+| FactoredAdditiveCFM | 21,991 | **0.647** | 0.797 |
+| DeepSetsEndpoint | 22,096 | 0.713 | 1.063 |
+| MonolithicCFM | 22,250 | 0.828 | 1.471 |
+| LinearResponse | 0 | 0.866 | 2.599 |
+| MatchingMean | 0 | 0.889 | 1.335 |
+| NoChange | 0 | 1.000 | 1.000 |
+| PerturbedMean | 0 | 1.011 | 0.953 |
+
+Sanity floors hold: NoChange is exactly 1.000 with 0 parameters, and all three neural
+models beat it on this fold. The metric policy is enforced in code and recorded in the
+json: **CFM loss is a within-coupling training diagnostic and is never a ranking key.**
+Ranking by CFM loss instead would give a *different* order (MonolithicCFM, FactoredAdditive,
+MatchingMean, NoChange, LinearResponse, PerturbedMean, DeepSets) — recorded to make the
+point concrete: at least one model's place depends on the metric chosen, and the
+distributional one is the defensible choice.
+
+## THE POWER FINDING — a single LOCO fold cannot order these models
+
+Across seeds 0/1/2 on one fold (n=2 held-out populations) the neural rows swing wildly
+while the controls are deterministic:
+
+| model | seed 0 | seed 1 | seed 2 | mean +- sd |
+|---|---|---|---|---|
+| FactoredAdditiveCFM | 0.647 | 1.510 | 0.871 | 1.009 +- 0.45 |
+| DeepSetsEndpoint | 0.713 | 1.142 | 1.368 | 1.074 +- 0.27 |
+| MonolithicCFM | 0.828 | 1.444 | 0.824 | — |
+| NoChange / MatchingMean / PerturbedMean / LinearResponse | deterministic (sd <= 1.2e-10) | | | |
+
+Two pre-registered checks consequently FAIL, and both failures are reported rather than
+reframed: `neural_beat_nochange_every_seed` (false) and
+`best_flow_baseline_separated_from_best_control` (false). A 6-fold sweep (12 held-out
+populations) recovers the mean ordering — all three neural models beat NoChange on the
+mean, and the best flow model beats the best control on a paired test — but the
+correctly-powered paired test **still does not separate adjacent models**; the track's own
+power calculation puts the required n at **~270+ folds**.
+
+**CONSEQUENCE FOR TABLE 1, adopted:** no headline claim may rest on a single fold or a
+single seed. Table 1 must report **multi-fold, multi-seed means with paired CIs over
+independent units**, and where adjacent models are statistically indistinguishable the
+table must say so instead of implying a ranking. `FactoredAdditiveCFM` (0.647 best-fold,
+strong on the mean) is the competitor IHC-FM has to beat, and beating it must be
+demonstrated with paired statistics, not a single number.
+
+## Two components verified structurally, one diagnosed
+
+- FactoredAdditiveCFM is **bit-exactly** additive (0.0), zero-exposure-vanishing (0.0) and
+  permutation-invariant (0.0) — it is a correct implementation of the factored competitor,
+  not a weakened straw man.
+- **DeepSetsEndpoint required a documented exception to the shared-coupling rule.** Trained
+  under the shared `sinkhorn_uot` coupling it scores 1.923 (worse than no change); trained
+  on paired data it scores 0.713. Diagnosed cause, measured: an endpoint regressor has no
+  integration step, so it applies the coupling's barycentric projection directly as a map
+  and inherits a **2.14x displacement inflation** (mean displacement 0.868 under
+  sinkhorn_uot vs 0.406 paired) while collapsing predictive variance. A CFM model integrates
+  and does not. This is why the shared-coupling requirement carries a "where applicable"
+  clause; the arm was selected on held-out distributional score, and the exception is
+  recorded in the json rather than hidden.
+
+**Decision.** Keep every component. Report
 the recovery gap and both causes in the paper. Advance to Phase 3 with `r` corrected and
 the interaction-recovery metric reported alongside distributional scores, since a good
 distributional score with a wrong interaction field is a failure by this project's own

@@ -1,0 +1,60 @@
+preparing populations (max_cells=400)
+  loaded cache organoid_loco_d8_PDO_n400_s0.npz: 666 populations
+  666 populations | 87 records | PCA evr sum 0.6899
+
+=== selecting r by held-out distributional score (not by formula) ===
+  tuning pool: 473 populations (0 combination) -- excludes all screened combinations ['CF', 'CS', 'CSF', 'SF', 'VS']
+/Users/songcao/workdir/FM_project/src/composefm/ihcfm_hierarchy.py:933: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/miniforge3/conda-bld/libtorch_1786372171327/work/torch/csrc/autograd/generated/python_variable_methods.cpp:823.)
+  hist.append(float(loss))
+    r=  2  val normED 0.9112 [0.8039, 0.9896]  denom 0.1563  pairs 2/15  (36s)
+    r=  8  val normED 0.8719 [0.7389, 0.9910]  denom 0.1563  pairs 8/15  (32s)
+    r= 15  val normED 0.8852 [0.7442, 1.0178]  denom 0.1563  pairs 15/15  (33s)
+  selected r=8 on 8 validation records
+rank: k=6 r=8 -> 8/15 pairs representable (fully unaliased: False) -- reported, not enforced
+
+=== LOCO screen: 5 held-out combinations ===
+  [VS] order 2 doses [2, 3, 4] multi-dose | train 580 | held 86 pops / 29 records | feasible True
+    trained in 37s (skipped 0 non-finite steps)
+      ihcfm           normED 1.3714 [1.0923, 1.6861]  absED 0.2081  denom 0.2280  (n_units 29)
+      perturbed_mean  normED 1.4618 [1.2249, 1.7551]  absED 0.1954  denom 0.2280  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.2280  denom 0.2280  (n_units 29)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -0.0777 [-0.3860, +0.2030] sign p=0.458 over 29 records
+  [CS] order 2 doses [3] DOSE-CONFOUNDED | train 639 | held 27 pops / 27 records | feasible True
+    trained in 62s (skipped 0 non-finite steps)
+      ihcfm           normED 0.8938 [0.6668, 1.1389]  absED 0.1455  denom 0.2365  (n_units 27)
+      perturbed_mean  normED 2.0111 [1.1818, 3.0113]  absED 0.2029  denom 0.2365  (n_units 27)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.2365  denom 0.2365  (n_units 27)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -1.1173 [-1.9215, -0.4879] sign p=4.92e-05 over 27 records
+  [SF] order 2 doses [3] DOSE-CONFOUNDED | train 639 | held 27 pops / 27 records | feasible True
+    trained in 58s (skipped 0 non-finite steps)
+      ihcfm           normED 2.0226 [1.1341, 3.1334]  absED 0.1453  denom 0.2063  (n_units 27)
+      perturbed_mean  normED 4.4719 [2.3783, 7.0904]  absED 0.2640  denom 0.2063  (n_units 27)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.2063  denom 0.2063  (n_units 27)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -2.4493 [-3.9389, -1.2392] sign p=1.49e-08 over 27 records
+  [CF] order 2 doses [3] DOSE-CONFOUNDED | train 639 | held 27 pops / 27 records | feasible True
+    trained in 60s (skipped 0 non-finite steps)
+      ihcfm           normED 1.0442 [0.7633, 1.3931]  absED 0.0819  denom 0.1309  (n_units 27)
+      perturbed_mean  normED 2.1516 [1.4098, 3.0874]  absED 0.1338  denom 0.1309  (n_units 27)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1309  denom 0.1309  (n_units 27)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -1.1074 [-1.7649, -0.5831] sign p=0.000311 over 27 records
+  [CSF] order 3 doses [4] DOSE-CONFOUNDED | train 640 | held 26 pops / 26 records | feasible True
+    trained in 49s (skipped 0 non-finite steps)
+      ihcfm           normED 3.1772 [1.9415, 4.5707]  absED 0.2146  denom 0.1863  (n_units 26)
+      perturbed_mean  normED 6.4837 [3.6473, 9.5317]  absED 0.3671  denom 0.1863  (n_units 26)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1863  denom 0.1863  (n_units 26)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -3.3066 [-5.1955, -1.5968] sign p=0.000534 over 26 records
+
+=== leave-replicate-out: 3 folds, code_dim 0 vs 16 ===
+  [repfold0] held 235 pops / 29 records (70 combination pops) | train 431
+    code_dim=0
+    trained in 41s (skipped 0 non-finite steps)
+      ihcfm           normED 1.1553 [0.9242, 1.4760]  absED 0.1146  denom 0.1751  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1751  denom 0.1751  (n_units 29)
+    code_dim=16
+    trained in 45s (skipped 0 non-finite steps)
+      ihcfm           normED 1.1820 [0.9541, 1.4940]  absED 0.1172  denom 0.1751  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1751  denom 0.1751  (n_units 29)
+  [repfold1] held 207 pops / 29 records (53 combination pops) | train 459
+    code_dim=0
+    trained in 48s (skipped 0 non-finite steps)

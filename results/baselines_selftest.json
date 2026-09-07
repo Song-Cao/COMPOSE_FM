@@ -1,0 +1,2014 @@
+{
+  "torch": "2.13.0",
+  "config": {
+    "d": 6,
+    "k": 4,
+    "r_true": 2,
+    "r_emb": 8,
+    "hidden_reference": 64,
+    "n_cells": 200,
+    "steps": 800,
+    "seed": 0,
+    "held_out": [
+      [
+        0,
+        1
+      ]
+    ],
+    "n_train_populations": 20,
+    "n_heldout_populations": 2,
+    "taus": [
+      0.6,
+      1.0
+    ]
+  },
+  "rank_sufficiency": {
+    "k": 4,
+    "r": 8,
+    "saturation_rank": 6,
+    "pair_basis_rank": 6,
+    "full_pair_rank": true,
+    "sufficient": true,
+    "is_correctness_requirement": false,
+    "note": "rank saturates at min(r, k(k-1)/2). REPORTING ONLY: the r >= k(k-1)/2 requirement is RETRACTED -- r=2 outperformed r=4 and r=6 on measured recovery, so r is a tunable capacity hyperparameter selected on a held-out distributional score"
+  },
+  "ranking_key": "heldout_combination_normalised_ed",
+  "metric_policy": {
+    "ranking_metric": "normalised energy distance (ED(pred,post)/ED(pre,post))",
+    "cfm_loss_role": "reported as a WITHIN-COUPLING training diagnostic only; it is never a ranking or selection key",
+    "cfm_loss_comparable_across_couplings": false,
+    "reason": "CFM loss tracks the identity-pair fraction a coupling produces (paired 1.0, ot 0.795, sinkhorn 0.229, independent 0.0039), so it rewards couplings that pair points with themselves. On the distributional metric the coupling ranking inverts and 'ot' (1.1188) is worse than no change.",
+    "all_cfm_rows_share_one_coupling": true,
+    "shared_coupling": {
+      "coupling": "sinkhorn",
+      "sigma": 0.0,
+      "sinkhorn_eps": 0.05,
+      "sinkhorn_iters": 25,
+      "unbalanced_tau": 1.0
+    },
+    "ranking_if_cfm_loss_were_used": [
+      "MonolithicCFM",
+      "FactoredAdditiveCFM",
+      "MatchingMean",
+      "NoChange",
+      "LinearResponse",
+      "PerturbedMean",
+      "DeepSetsEndpoint"
+    ],
+    "rankings_agree": false,
+    "divergence_note": "recorded to make the point concrete rather than asserted: if these two orderings differ, at least one model's place in the table depends on which metric is chosen, and the distributional one is the defensible choice"
+  },
+  "reference_ihcfm_parameters": {
+    "config": {
+      "d": 6,
+      "D": 6,
+      "k": 4,
+      "r": 8,
+      "hidden": 64,
+      "depth": 2,
+      "code_dim": 0
+    },
+    "components": {
+      "one_form": 17664,
+      "embed": 32,
+      "dose": 12,
+      "encoder": 0,
+      "decoder": 453,
+      "ambient_metric": 3717,
+      "saturator": 257
+    },
+    "core": 17708,
+    "total": 22135,
+    "matching_target": "total",
+    "matching_note": "neural baselines are matched to 'total', which gives them MORE capacity than IHC-FM's velocity core -- the conservative direction for a baseline"
+  },
+  "parameter_matching_target": 22135,
+  "shared_protocol": {
+    "train": {
+      "steps": 800,
+      "batch": 128,
+      "lr": 0.003,
+      "grad_clip": 5.0,
+      "weight_decay": 0.0,
+      "n_int_steps": 16,
+      "seed": 0,
+      "optimiser": "Adam",
+      "note": "steps = 300+300+200 total of IHC-FM's schedule"
+    },
+    "objective": {
+      "path": "linear (I-CFM)",
+      "sigma": 0.0,
+      "coupling": "sinkhorn",
+      "sinkhorn_eps": 0.05,
+      "sinkhorn_iters": 25,
+      "unbalanced_tau": 1.0,
+      "conditional_velocity": "x1 - x0 (t-independent for this path)"
+    },
+    "note": "every neural baseline: same CFMObjective instance settings, same coupling, same Adam/lr/steps/batch, same finite-step guards, float64 RK4 at inference"
+  },
+  "table": [
+    {
+      "model": "NoChange",
+      "n_parameters": 0,
+      "param_ratio_to_ihcfm": 0.0,
+      "is_flow": false,
+      "has_velocity": true,
+      "heldout_combination_normalised_ed": 1.0,
+      "heldout_combination_ed_std": 0.0,
+      "heldout_cfm_loss": 1.4273627552693666,
+      "train_subset_normalised_ed": 1.0,
+      "wall_clock_s": 6.9141387939453125e-06
+    },
+    {
+      "model": "MatchingMean",
+      "n_parameters": 0,
+      "param_ratio_to_ihcfm": 0.0,
+      "is_flow": false,
+      "has_velocity": true,
+      "heldout_combination_normalised_ed": 0.889318660529139,
+      "heldout_combination_ed_std": 0.06713885455934604,
+      "heldout_cfm_loss": 1.399583304158555,
+      "train_subset_normalised_ed": 1.3345051427192038,
+      "wall_clock_s": 0.00045108795166015625
+    },
+    {
+      "model": "PerturbedMean",
+      "n_parameters": 0,
+      "param_ratio_to_ihcfm": 0.0,
+      "is_flow": false,
+      "has_velocity": true,
+      "heldout_combination_normalised_ed": 1.011231621544569,
+      "heldout_combination_ed_std": 0.053223502924558075,
+      "heldout_cfm_loss": 1.5359417195475118,
+      "train_subset_normalised_ed": 0.9529323406002406,
+      "wall_clock_s": 0.0007081031799316406
+    },
+    {
+      "model": "LinearResponse",
+      "n_parameters": 0,
+      "param_ratio_to_ihcfm": 0.0,
+      "is_flow": false,
+      "has_velocity": true,
+      "heldout_combination_normalised_ed": 0.8657466609627116,
+      "heldout_combination_ed_std": 0.23914104037950595,
+      "heldout_cfm_loss": 1.5182658782033984,
+      "train_subset_normalised_ed": 2.599025333315085,
+      "wall_clock_s": 0.004014253616333008
+    },
+    {
+      "model": "DeepSetsEndpoint",
+      "n_parameters": 22096,
+      "param_ratio_to_ihcfm": 0.9982380844815902,
+      "is_flow": false,
+      "has_velocity": false,
+      "heldout_combination_normalised_ed": 0.7131432878241009,
+      "heldout_combination_ed_std": 0.036694551472449544,
+      "heldout_cfm_loss": NaN,
+      "train_subset_normalised_ed": 1.0626590712938866,
+      "wall_clock_s": 8.700981140136719
+    },
+    {
+      "model": "MonolithicCFM",
+      "n_parameters": 22250,
+      "param_ratio_to_ihcfm": 1.0051953919132595,
+      "is_flow": true,
+      "has_velocity": true,
+      "heldout_combination_normalised_ed": 0.827535391118003,
+      "heldout_combination_ed_std": 0.2744491507466265,
+      "heldout_cfm_loss": 1.1429804885661086,
+      "train_subset_normalised_ed": 1.4707593770602883,
+      "wall_clock_s": 7.826418876647949
+    },
+    {
+      "model": "FactoredAdditiveCFM",
+      "n_parameters": 21991,
+      "param_ratio_to_ihcfm": 0.9934944657781793,
+      "is_flow": true,
+      "has_velocity": true,
+      "heldout_combination_normalised_ed": 0.6473773786152678,
+      "heldout_combination_ed_std": 0.08525184752694881,
+      "heldout_cfm_loss": 1.26449608164624,
+      "train_subset_normalised_ed": 0.7965569625856994,
+      "wall_clock_s": 9.474705934524536
+    }
+  ],
+  "ranking_best_to_worst": [
+    "FactoredAdditiveCFM",
+    "DeepSetsEndpoint",
+    "MonolithicCFM",
+    "LinearResponse",
+    "MatchingMean",
+    "NoChange",
+    "PerturbedMean"
+  ],
+  "detail": {
+    "NoChange": {
+      "describe": {
+        "name": "NoChange",
+        "is_flow": false,
+        "has_velocity": true,
+        "is_neural": false,
+        "n_parameters": 0,
+        "d": 6,
+        "k": 4
+      },
+      "parameter_matching": null,
+      "fit_report": {
+        "model": "identity map",
+        "note": "zero parameters; calibrates the metric",
+        "n_train_populations": 20,
+        "n_parameters": 0,
+        "fit_wall_clock_s": 5.0067901611328125e-06
+      },
+      "wall_clock_s": 6.9141387939453125e-06,
+      "heldout": {
+        "per_population": [
+          {
+            "label": "X0+X1@tau0.6",
+            "P": [
+              0,
+              1
+            ],
+            "order": 2,
+            "tau": 0.6,
+            "energy_distance": 0.011599083625601025,
+            "energy_distance_null": 0.011599083625601025,
+            "normalised_energy_distance": 1.0
+          },
+          {
+            "label": "X0+X1@tau1",
+            "P": [
+              0,
+              1
+            ],
+            "order": 2,
+            "tau": 1.0,
+            "energy_distance": 0.035553493388898794,
+            "energy_distance_null": 0.035553493388898794,
+            "normalised_energy_distance": 1.0
+          }
+        ],
+        "cfm_loss": 1.4273627552693666,
+        "mean_normalised_ed_all": 1.0,
+        "std_normalised_ed_all": 0.0,
+        "n_all": 2,
+        "mean_normalised_ed_combinations": 1.0,
+        "std_normalised_ed_combinations": 0.0,
+        "n_combinations": 2
+      },
+      "train_subset": {
+        "per_population": [
+          {
+            "label": "X0@tau0.6",
+            "P": [
+              0
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.009131452628340586,
+            "energy_distance_null": 0.009131452628340586,
+            "normalised_energy_distance": 1.0
+          },
+          {
+            "label": "X0@tau1",
+            "P": [
+              0
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.016147685898288522,
+            "energy_distance_null": 0.016147685898288522,
+            "normalised_energy_distance": 1.0
+          },
+          {
+            "label": "X1@tau0.6",
+            "P": [
+              1
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.0038462139123440764,
+            "energy_distance_null": 0.0038462139123440764,
+            "normalised_energy_distance": 1.0
+          },
+          {
+            "label": "X1@tau1",
+            "P": [
+              1
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.007497880180089123,
+            "energy_distance_null": 0.007497880180089123,
+            "normalised_energy_distance": 1.0
+          },
+          {
+            "label": "X2@tau0.6",
+            "P": [
+              2
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.04257084768254993,
+            "energy_distance_null": 0.04257084768254993,
+            "normalised_energy_distance": 1.0
+          },
+          {
+            "label": "X2@tau1",
+            "P": [
+              2
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.08633741259805694,
+            "energy_distance_null": 0.08633741259805694,
+            "normalised_energy_distance": 1.0
+          },
+          {
+            "label": "X3@tau0.6",
+            "P": [
+              3
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.003123515125447618,
+            "energy_distance_null": 0.003123515125447618,
+            "normalised_energy_distance": 1.0
+          },
+          {
+            "label": "X3@tau1",
+            "P": [
+              3
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.005139687620054456,
+            "energy_distance_null": 0.005139687620054456,
+            "normalised_energy_distance": 1.0
+          }
+        ],
+        "cfm_loss": 1.4152489676508107,
+        "mean_normalised_ed_all": 1.0,
+        "std_normalised_ed_all": 0.0,
+        "n_all": 8,
+        "mean_normalised_ed_singletons": 1.0,
+        "std_normalised_ed_singletons": 0.0,
+        "n_singletons": 8
+      },
+      "heldout_normalised_ed": 1.0,
+      "heldout_cfm_loss": 1.4273627552693666
+    },
+    "MatchingMean": {
+      "describe": {
+        "name": "MatchingMean",
+        "is_flow": false,
+        "has_velocity": true,
+        "is_neural": false,
+        "n_parameters": 0,
+        "d": 6,
+        "k": 4
+      },
+      "parameter_matching": null,
+      "fit_report": {
+        "model": "x + mean training displacement",
+        "delta": [
+          -0.03716096275042685,
+          0.0020511072492491803,
+          -0.026989208567029965,
+          0.04264640769421724,
+          -0.048614892177484506,
+          -0.030269244319901096
+        ],
+        "delta_norm": 0.08492298013440695,
+        "n_conditions_averaged": 20,
+        "weighting": "uniform over conditions, not over cells",
+        "n_train_populations": 20,
+        "n_parameters": 0,
+        "fit_wall_clock_s": 0.0004467964172363281
+      },
+      "wall_clock_s": 0.00045108795166015625,
+      "heldout": {
+        "per_population": [
+          {
+            "label": "X0+X1@tau0.6",
+            "P": [
+              0,
+              1
+            ],
+            "order": 2,
+            "tau": 0.6,
+            "energy_distance": 0.011094030701845892,
+            "energy_distance_null": 0.011599083625601025,
+            "normalised_energy_distance": 0.956457515088485
+          },
+          {
+            "label": "X0+X1@tau1",
+            "P": [
+              0,
+              1
+            ],
+            "order": 2,
+            "tau": 1.0,
+            "energy_distance": 0.029231364296033124,
+            "energy_distance_null": 0.035553493388898794,
+            "normalised_energy_distance": 0.8221798059697929
+          }
+        ],
+        "cfm_loss": 1.399583304158555,
+        "mean_normalised_ed_all": 0.889318660529139,
+        "std_normalised_ed_all": 0.06713885455934604,
+        "n_all": 2,
+        "mean_normalised_ed_combinations": 0.889318660529139,
+        "std_normalised_ed_combinations": 0.06713885455934604,
+        "n_combinations": 2
+      },
+      "train_subset": {
+        "per_population": [
+          {
+            "label": "X0@tau0.6",
+            "P": [
+              0
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.012573406924780262,
+            "energy_distance_null": 0.009131452628340586,
+            "normalised_energy_distance": 1.3769339267836913
+          },
+          {
+            "label": "X0@tau1",
+            "P": [
+              0
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.017171153915072068,
+            "energy_distance_null": 0.016147685898288522,
+            "normalised_energy_distance": 1.063381714459285
+          },
+          {
+            "label": "X1@tau0.6",
+            "P": [
+              1
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.006482483914102666,
+            "energy_distance_null": 0.0038462139123440764,
+            "normalised_energy_distance": 1.6854194961173945
+          },
+          {
+            "label": "X1@tau1",
+            "P": [
+              1
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.009158438538569236,
+            "energy_distance_null": 0.007497880180089123,
+            "normalised_energy_distance": 1.2214703781063057
+          },
+          {
+            "label": "X2@tau0.6",
+            "P": [
+              2
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.04460576833532537,
+            "energy_distance_null": 0.04257084768254993,
+            "normalised_energy_distance": 1.0478008018057288
+          },
+          {
+            "label": "X2@tau1",
+            "P": [
+              2
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.0923045344236817,
+            "energy_distance_null": 0.08633741259805694,
+            "normalised_energy_distance": 1.06911397557632
+          },
+          {
+            "label": "X3@tau0.6",
+            "P": [
+              3
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.006122397766691545,
+            "energy_distance_null": 0.003123515125447618,
+            "normalised_energy_distance": 1.9600986455329459
+          },
+          {
+            "label": "X3@tau1",
+            "P": [
+              3
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.006433975081180154,
+            "energy_distance_null": 0.005139687620054456,
+            "normalised_energy_distance": 1.25182220337196
+          }
+        ],
+        "cfm_loss": 1.3983165005628404,
+        "mean_normalised_ed_all": 1.3345051427192038,
+        "std_normalised_ed_all": 0.30863842243362327,
+        "n_all": 8,
+        "mean_normalised_ed_singletons": 1.3345051427192038,
+        "std_normalised_ed_singletons": 0.30863842243362327,
+        "n_singletons": 8
+      },
+      "heldout_normalised_ed": 0.889318660529139,
+      "heldout_cfm_loss": 1.399583304158555
+    },
+    "PerturbedMean": {
+      "describe": {
+        "name": "PerturbedMean",
+        "is_flow": false,
+        "has_velocity": true,
+        "is_neural": false,
+        "n_parameters": 0,
+        "d": 6,
+        "k": 4
+      },
+      "parameter_matching": null,
+      "fit_report": {
+        "model": "sum of per-intervention mean displacements (CPA-style additive)",
+        "n_interventions_identified": 4,
+        "exposures_per_intervention": {
+          "0": [
+            0.6,
+            1.0
+          ],
+          "1": [
+            0.6,
+            1.0
+          ],
+          "2": [
+            0.6,
+            1.0
+          ],
+          "3": [
+            0.6,
+            1.0
+          ]
+        },
+        "derived_from_combinations": [],
+        "dose_model": "linear in tau through the origin, clamped outside range",
+        "delta_norms": {
+          "0": {
+            "0.6": 0.025529311149649674,
+            "1.0": 0.037623950572413835
+          },
+          "1": {
+            "0.6": 0.021470631578425967,
+            "1.0": 0.021132610568285973
+          },
+          "2": {
+            "0.6": 0.07870265892556688,
+            "1.0": 0.10063701122599288
+          },
+          "3": {
+            "0.6": 0.01865488051117076,
+            "1.0": 0.024328228943001875
+          }
+        },
+        "n_train_populations": 20,
+        "n_parameters": 0,
+        "fit_wall_clock_s": 0.0007059574127197266
+      },
+      "wall_clock_s": 0.0007081031799316406,
+      "heldout": {
+        "per_population": [
+          {
+            "label": "X0+X1@tau0.6",
+            "P": [
+              0,
+              1
+            ],
+            "order": 2,
+            "tau": 0.6,
+            "energy_distance": 0.012346704004416953,
+            "energy_distance_null": 0.011599083625601025,
+            "normalised_energy_distance": 1.064455124469127
+          },
+          {
+            "label": "X0+X1@tau1",
+            "P": [
+              0,
+              1
+            ],
+            "order": 2,
+            "tau": 1.0,
+            "energy_distance": 0.03406053531186792,
+            "energy_distance_null": 0.035553493388898794,
+            "normalised_energy_distance": 0.9580081186200108
+          }
+        ],
+        "cfm_loss": 1.5359417195475118,
+        "mean_normalised_ed_all": 1.011231621544569,
+        "std_normalised_ed_all": 0.053223502924558075,
+        "n_all": 2,
+        "mean_normalised_ed_combinations": 1.011231621544569,
+        "std_normalised_ed_combinations": 0.053223502924558075,
+        "n_combinations": 2
+      },
+      "train_subset": {
+        "per_population": [
+          {
+            "label": "X0@tau0.6",
+            "P": [
+              0
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.00883538125313521,
+            "energy_distance_null": 0.009131452628340586,
+            "normalised_energy_distance": 0.9675767495867545
+          },
+          {
+            "label": "X0@tau1",
+            "P": [
+              0
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.015405610983699525,
+            "energy_distance_null": 0.016147685898288522,
+            "normalised_energy_distance": 0.9540445040073731
+          },
+          {
+            "label": "X1@tau0.6",
+            "P": [
+              1
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.0037003488452684863,
+            "energy_distance_null": 0.0038462139123440764,
+            "normalised_energy_distance": 0.9620756748324764
+          },
+          {
+            "label": "X1@tau1",
+            "P": [
+              1
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.007250523648852258,
+            "energy_distance_null": 0.007497880180089123,
+            "normalised_energy_distance": 0.9670098047320458
+          },
+          {
+            "label": "X2@tau0.6",
+            "P": [
+              2
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.04010922644426396,
+            "energy_distance_null": 0.04257084768254993,
+            "normalised_energy_distance": 0.9421758933098481
+          },
+          {
+            "label": "X2@tau1",
+            "P": [
+              2
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.08234114427152717,
+            "energy_distance_null": 0.08633741259805694,
+            "normalised_energy_distance": 0.9537133647363935
+          },
+          {
+            "label": "X3@tau0.6",
+            "P": [
+              3
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.002944680203083916,
+            "energy_distance_null": 0.003123515125447618,
+            "normalised_energy_distance": 0.9427456198605493
+          },
+          {
+            "label": "X3@tau1",
+            "P": [
+              3
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.00480107016515241,
+            "energy_distance_null": 0.005139687620054456,
+            "normalised_energy_distance": 0.9341171137364845
+          }
+        ],
+        "cfm_loss": 1.3653879828418378,
+        "mean_normalised_ed_all": 0.9529323406002406,
+        "std_normalised_ed_all": 0.011573484661330407,
+        "n_all": 8,
+        "mean_normalised_ed_singletons": 0.9529323406002406,
+        "std_normalised_ed_singletons": 0.011573484661330407,
+        "n_singletons": 8
+      },
+      "heldout_normalised_ed": 1.011231621544569,
+      "heldout_cfm_loss": 1.5359417195475118
+    },
+    "LinearResponse": {
+      "describe": {
+        "name": "LinearResponse",
+        "is_flow": false,
+        "has_velocity": true,
+        "is_neural": false,
+        "n_parameters": 0,
+        "d": 6,
+        "k": 4
+      },
+      "parameter_matching": null,
+      "fit_report": {
+        "model": "ridge: displacement ~ [1, mask, mask*tau, z0]",
+        "n_features": 15,
+        "n_rows": 4000,
+        "alpha_selected": 10.0,
+        "alphas_searched": [
+          0.0001,
+          0.001,
+          0.01,
+          0.1,
+          1.0,
+          10.0,
+          100.0
+        ],
+        "selection": "generalised cross-validation on TRAINING conditions only",
+        "effective_dof": 14.009363157112437,
+        "train_displacement_mse": 0.5003366822659131,
+        "structure_note": "linear in the set: no interaction term exists, so X0+X1 is forced to equal the sum of its parts",
+        "n_train_populations": 20,
+        "n_parameters": 0,
+        "fit_wall_clock_s": 0.004010915756225586
+      },
+      "wall_clock_s": 0.004014253616333008,
+      "heldout": {
+        "per_population": [
+          {
+            "label": "X0+X1@tau0.6",
+            "P": [
+              0,
+              1
+            ],
+            "order": 2,
+            "tau": 0.6,
+            "energy_distance": 0.012815684844766473,
+            "energy_distance_null": 0.011599083625601025,
+            "normalised_energy_distance": 1.1048877013422176
+          },
+          {
+            "label": "X0+X1@tau1",
+            "P": [
+              0,
+              1
+            ],
+            "order": 2,
+            "tau": 1.0,
+            "energy_distance": 0.022278018788851828,
+            "energy_distance_null": 0.035553493388898794,
+            "normalised_energy_distance": 0.6266056205832057
+          }
+        ],
+        "cfm_loss": 1.5182658782033984,
+        "mean_normalised_ed_all": 0.8657466609627116,
+        "std_normalised_ed_all": 0.23914104037950595,
+        "n_all": 2,
+        "mean_normalised_ed_combinations": 0.8657466609627116,
+        "std_normalised_ed_combinations": 0.23914104037950595,
+        "n_combinations": 2
+      },
+      "train_subset": {
+        "per_population": [
+          {
+            "label": "X0@tau0.6",
+            "P": [
+              0
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.013348194691566562,
+            "energy_distance_null": 0.009131452628340586,
+            "normalised_energy_distance": 1.4617821758324407
+          },
+          {
+            "label": "X0@tau1",
+            "P": [
+              0
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.016685384250993973,
+            "energy_distance_null": 0.016147685898288522,
+            "normalised_energy_distance": 1.0332987869650376
+          },
+          {
+            "label": "X1@tau0.6",
+            "P": [
+              1
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.012318780778416638,
+            "energy_distance_null": 0.0038462139123440764,
+            "normalised_energy_distance": 3.202832983074764
+          },
+          {
+            "label": "X1@tau1",
+            "P": [
+              1
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.014509676491572865,
+            "energy_distance_null": 0.007497880180089123,
+            "normalised_energy_distance": 1.9351704939355803
+          },
+          {
+            "label": "X2@tau0.6",
+            "P": [
+              2
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.015959869673509264,
+            "energy_distance_null": 0.04257084768254993,
+            "normalised_energy_distance": 0.3749013830431974
+          },
+          {
+            "label": "X2@tau1",
+            "P": [
+              2
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.04762898688998929,
+            "energy_distance_null": 0.08633741259805694,
+            "normalised_energy_distance": 0.5516610407555947
+          },
+          {
+            "label": "X3@tau0.6",
+            "P": [
+              3
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.021379725707958652,
+            "energy_distance_null": 0.003123515125447618,
+            "normalised_energy_distance": 6.844764583906029
+          },
+          {
+            "label": "X3@tau1",
+            "P": [
+              3
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.027691563827773713,
+            "energy_distance_null": 0.005139687620054456,
+            "normalised_energy_distance": 5.387791219008037
+          }
+        ],
+        "cfm_loss": 1.5634887738391,
+        "mean_normalised_ed_all": 2.599025333315085,
+        "std_normalised_ed_all": 2.221825077067731,
+        "n_all": 8,
+        "mean_normalised_ed_singletons": 2.599025333315085,
+        "std_normalised_ed_singletons": 2.221825077067731,
+        "n_singletons": 8
+      },
+      "heldout_normalised_ed": 0.8657466609627116,
+      "heldout_cfm_loss": 1.5182658782033984
+    },
+    "DeepSetsEndpoint": {
+      "describe": {
+        "name": "DeepSetsEndpoint",
+        "is_flow": false,
+        "has_velocity": false,
+        "is_neural": true,
+        "n_parameters": 22096,
+        "d": 6,
+        "k": 4
+      },
+      "parameter_matching": {
+        "hidden": 70,
+        "n_parameters": 22096,
+        "target": 22135,
+        "abs_error": 39,
+        "rel_error": 0.0017619155184097582,
+        "within_tol": true,
+        "tol": 0.2,
+        "searched": true
+      },
+      "fit_report": {
+        "steps": 800,
+        "applied": 800,
+        "skipped_nonfinite": 0,
+        "mean_loss_first_decile": 0.6550551182590425,
+        "mean_loss_last_decile": 0.12068051488604396,
+        "final_loss": 0.12365663051605225,
+        "train_wall_clock_s": 3.820831060409546,
+        "config": {
+          "steps": 800,
+          "batch": 128,
+          "lr": 0.003,
+          "grad_clip": 5.0,
+          "weight_decay": 0.0,
+          "n_int_steps": 16,
+          "seed": 0,
+          "optimiser": "Adam",
+          "note": "steps = 300+300+200 total of IHC-FM's schedule"
+        },
+        "endpoint_supervision": "paired",
+        "supervision_coupling": "paired",
+        "shared_objective_coupling": "sinkhorn",
+        "supervision_note": "paired: a minibatch coupling is a device for learning a velocity field; an endpoint regressor applies its barycentric projection directly as a map, which overshoots and collapses variance (diagnosed, both arms measured)",
+        "n_train_populations": 20,
+        "n_parameters": 22096,
+        "fit_wall_clock_s": 8.700976133346558
+      },
+      "wall_clock_s": 8.700981140136719,
+      "heldout": {
+        "per_population": [
+          {
+            "label": "X0+X1@tau0.6",
+            "P": [
+              0,
+              1
+            ],
+            "order": 2,
+            "tau": 0.6,
+            "energy_distance": 0.007846185461374944,
+            "energy_distance_null": 0.011599083625601025,
+            "normalised_energy_distance": 0.6764487363516513
+          },
+          {
+            "label": "X0+X1@tau1",
+            "P": [
+              0,
+              1
+            ],
+            "order": 2,
+            "tau": 1.0,
+            "energy_distance": 0.02665935466217606,
+            "energy_distance_null": 0.035553493388898794,
+            "normalised_energy_distance": 0.7498378392965503
+          }
+        ],
+        "cfm_loss": NaN,
+        "mean_normalised_ed_all": 0.7131432878241009,
+        "std_normalised_ed_all": 0.036694551472449544,
+        "n_all": 2,
+        "mean_normalised_ed_combinations": 0.7131432878241009,
+        "std_normalised_ed_combinations": 0.036694551472449544,
+        "n_combinations": 2
+      },
+      "train_subset": {
+        "per_population": [
+          {
+            "label": "X0@tau0.6",
+            "P": [
+              0
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.01381551273194992,
+            "energy_distance_null": 0.009131452628340586,
+            "normalised_energy_distance": 1.512958922775526
+          },
+          {
+            "label": "X0@tau1",
+            "P": [
+              0
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.013537876280707906,
+            "energy_distance_null": 0.016147685898288522,
+            "normalised_energy_distance": 0.8383787228696821
+          },
+          {
+            "label": "X1@tau0.6",
+            "P": [
+              1
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.004710855920621704,
+            "energy_distance_null": 0.0038462139123440764,
+            "normalised_energy_distance": 1.2248034113502209
+          },
+          {
+            "label": "X1@tau1",
+            "P": [
+              1
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.006916665775415609,
+            "energy_distance_null": 0.007497880180089123,
+            "normalised_energy_distance": 0.9224828363866165
+          },
+          {
+            "label": "X2@tau0.6",
+            "P": [
+              2
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.03358123777757527,
+            "energy_distance_null": 0.04257084768254993,
+            "normalised_energy_distance": 0.7888317852627689
+          },
+          {
+            "label": "X2@tau1",
+            "P": [
+              2
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.04402139839088193,
+            "energy_distance_null": 0.08633741259805694,
+            "normalised_energy_distance": 0.5098762757209688
+          },
+          {
+            "label": "X3@tau0.6",
+            "P": [
+              3
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.005512987718464757,
+            "energy_distance_null": 0.003123515125447618,
+            "normalised_energy_distance": 1.7649947245492252
+          },
+          {
+            "label": "X3@tau1",
+            "P": [
+              3
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.004825888574115034,
+            "energy_distance_null": 0.005139687620054456,
+            "normalised_energy_distance": 0.9389458914360835
+          }
+        ],
+        "cfm_loss": NaN,
+        "mean_normalised_ed_all": 1.0626590712938866,
+        "std_normalised_ed_all": 0.3853800586984655,
+        "n_all": 8,
+        "mean_normalised_ed_singletons": 1.0626590712938866,
+        "std_normalised_ed_singletons": 0.3853800586984655,
+        "n_singletons": 8
+      },
+      "heldout_normalised_ed": 0.7131432878241009,
+      "heldout_cfm_loss": NaN
+    },
+    "MonolithicCFM": {
+      "describe": {
+        "name": "MonolithicCFM",
+        "is_flow": true,
+        "has_velocity": true,
+        "is_neural": true,
+        "n_parameters": 22250,
+        "d": 6,
+        "k": 4
+      },
+      "parameter_matching": {
+        "hidden": 134,
+        "n_parameters": 22250,
+        "target": 22135,
+        "abs_error": 115,
+        "rel_error": 0.005195391913259544,
+        "within_tol": true,
+        "tol": 0.2,
+        "searched": true
+      },
+      "fit_report": {
+        "steps": 800,
+        "applied": 800,
+        "skipped_nonfinite": 0,
+        "mean_loss_first_decile": 1.7379914805293084,
+        "mean_loss_last_decile": 1.4054661333560943,
+        "final_loss": 0.914131760597229,
+        "train_wall_clock_s": 7.824798822402954,
+        "config": {
+          "steps": 800,
+          "batch": 128,
+          "lr": 0.003,
+          "grad_clip": 5.0,
+          "weight_decay": 0.0,
+          "n_int_steps": 16,
+          "seed": 0,
+          "optimiser": "Adam",
+          "note": "steps = 300+300+200 total of IHC-FM's schedule"
+        },
+        "n_train_populations": 20,
+        "n_parameters": 22250,
+        "fit_wall_clock_s": 7.826413154602051
+      },
+      "wall_clock_s": 7.826418876647949,
+      "heldout": {
+        "per_population": [
+          {
+            "label": "X0+X1@tau0.6",
+            "P": [
+              0,
+              1
+            ],
+            "order": 2,
+            "tau": 0.6,
+            "energy_distance": 0.01278201085520747,
+            "energy_distance_null": 0.011599083625601025,
+            "normalised_energy_distance": 1.1019845418646295
+          },
+          {
+            "label": "X0+X1@tau1",
+            "P": [
+              0,
+              1
+            ],
+            "order": 2,
+            "tau": 1.0,
+            "energy_distance": 0.01966414799053462,
+            "energy_distance_null": 0.035553493388898794,
+            "normalised_energy_distance": 0.5530862403713764
+          }
+        ],
+        "cfm_loss": 1.1429804885661086,
+        "mean_normalised_ed_all": 0.827535391118003,
+        "std_normalised_ed_all": 0.2744491507466265,
+        "n_all": 2,
+        "mean_normalised_ed_combinations": 0.827535391118003,
+        "std_normalised_ed_combinations": 0.2744491507466265,
+        "n_combinations": 2
+      },
+      "train_subset": {
+        "per_population": [
+          {
+            "label": "X0@tau0.6",
+            "P": [
+              0
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.01018319622107855,
+            "energy_distance_null": 0.009131452628340586,
+            "normalised_energy_distance": 1.115178125052497
+          },
+          {
+            "label": "X0@tau1",
+            "P": [
+              0
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.015776160220037472,
+            "energy_distance_null": 0.016147685898288522,
+            "normalised_energy_distance": 0.9769920172716248
+          },
+          {
+            "label": "X1@tau0.6",
+            "P": [
+              1
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.01041929519923146,
+            "energy_distance_null": 0.0038462139123440764,
+            "normalised_energy_distance": 2.7089744451788476
+          },
+          {
+            "label": "X1@tau1",
+            "P": [
+              1
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.009951839430936804,
+            "energy_distance_null": 0.007497880180089123,
+            "normalised_energy_distance": 1.3272870720666161
+          },
+          {
+            "label": "X2@tau0.6",
+            "P": [
+              2
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.015846135857627175,
+            "energy_distance_null": 0.04257084768254993,
+            "normalised_energy_distance": 0.37222974688668486
+          },
+          {
+            "label": "X2@tau1",
+            "P": [
+              2
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.029441088610969057,
+            "energy_distance_null": 0.08633741259805694,
+            "normalised_energy_distance": 0.3410003580722506
+          },
+          {
+            "label": "X3@tau0.6",
+            "P": [
+              3
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.009338214683154877,
+            "energy_distance_null": 0.003123515125447618,
+            "normalised_energy_distance": 2.9896492599236755
+          },
+          {
+            "label": "X3@tau1",
+            "P": [
+              3
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.009944082537564292,
+            "energy_distance_null": 0.005139687620054456,
+            "normalised_energy_distance": 1.9347639920301094
+          }
+        ],
+        "cfm_loss": 1.158972153163773,
+        "mean_normalised_ed_all": 1.4707593770602883,
+        "std_normalised_ed_all": 0.9306889006214937,
+        "n_all": 8,
+        "mean_normalised_ed_singletons": 1.4707593770602883,
+        "std_normalised_ed_singletons": 0.9306889006214937,
+        "n_singletons": 8
+      },
+      "heldout_normalised_ed": 0.827535391118003,
+      "heldout_cfm_loss": 1.1429804885661086
+    },
+    "FactoredAdditiveCFM": {
+      "describe": {
+        "name": "FactoredAdditiveCFM",
+        "is_flow": true,
+        "has_velocity": true,
+        "is_neural": true,
+        "n_parameters": 21991,
+        "d": 6,
+        "k": 4
+      },
+      "parameter_matching": {
+        "hidden": 133,
+        "n_parameters": 21991,
+        "target": 22135,
+        "abs_error": 144,
+        "rel_error": 0.006505534221820646,
+        "within_tol": true,
+        "tol": 0.2,
+        "searched": true
+      },
+      "fit_report": {
+        "steps": 800,
+        "applied": 800,
+        "skipped_nonfinite": 0,
+        "mean_loss_first_decile": 1.676587801426649,
+        "mean_loss_last_decile": 1.42779568657279,
+        "final_loss": 0.8576040267944336,
+        "train_wall_clock_s": 9.472551345825195,
+        "config": {
+          "steps": 800,
+          "batch": 128,
+          "lr": 0.003,
+          "grad_clip": 5.0,
+          "weight_decay": 0.0,
+          "n_int_steps": 16,
+          "seed": 0,
+          "optimiser": "Adam",
+          "note": "steps = 300+300+200 total of IHC-FM's schedule"
+        },
+        "n_train_populations": 20,
+        "n_parameters": 21991,
+        "fit_wall_clock_s": 9.474699974060059
+      },
+      "wall_clock_s": 9.474705934524536,
+      "heldout": {
+        "per_population": [
+          {
+            "label": "X0+X1@tau0.6",
+            "P": [
+              0,
+              1
+            ],
+            "order": 2,
+            "tau": 0.6,
+            "energy_distance": 0.008497827660582935,
+            "energy_distance_null": 0.011599083625601025,
+            "normalised_energy_distance": 0.7326292261422166
+          },
+          {
+            "label": "X0+X1@tau1",
+            "P": [
+              0,
+              1
+            ],
+            "order": 2,
+            "tau": 1.0,
+            "energy_distance": 0.01998552635327977,
+            "energy_distance_null": 0.035553493388898794,
+            "normalised_energy_distance": 0.562125531088319
+          }
+        ],
+        "cfm_loss": 1.26449608164624,
+        "mean_normalised_ed_all": 0.6473773786152678,
+        "std_normalised_ed_all": 0.08525184752694881,
+        "n_all": 2,
+        "mean_normalised_ed_combinations": 0.6473773786152678,
+        "std_normalised_ed_combinations": 0.08525184752694881,
+        "n_combinations": 2
+      },
+      "train_subset": {
+        "per_population": [
+          {
+            "label": "X0@tau0.6",
+            "P": [
+              0
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.005315846935939561,
+            "energy_distance_null": 0.009131452628340586,
+            "normalised_energy_distance": 0.582146910497151
+          },
+          {
+            "label": "X0@tau1",
+            "P": [
+              0
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.008318519635026167,
+            "energy_distance_null": 0.016147685898288522,
+            "normalised_energy_distance": 0.515152430349654
+          },
+          {
+            "label": "X1@tau0.6",
+            "P": [
+              1
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.005869461627701522,
+            "energy_distance_null": 0.0038462139123440764,
+            "normalised_energy_distance": 1.526036190775561
+          },
+          {
+            "label": "X1@tau1",
+            "P": [
+              1
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.01254145899650716,
+            "energy_distance_null": 0.007497880180089123,
+            "normalised_energy_distance": 1.6726672999938614
+          },
+          {
+            "label": "X2@tau0.6",
+            "P": [
+              2
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.0103013924090809,
+            "energy_distance_null": 0.04257084768254993,
+            "normalised_energy_distance": 0.2419823181792903
+          },
+          {
+            "label": "X2@tau1",
+            "P": [
+              2
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.026772083342512243,
+            "energy_distance_null": 0.08633741259805694,
+            "normalised_energy_distance": 0.3100866998082215
+          },
+          {
+            "label": "X3@tau0.6",
+            "P": [
+              3
+            ],
+            "order": 1,
+            "tau": 0.6,
+            "energy_distance": 0.002230696698283907,
+            "energy_distance_null": 0.003123515125447618,
+            "normalised_energy_distance": 0.7141622846997533
+          },
+          {
+            "label": "X3@tau1",
+            "P": [
+              3
+            ],
+            "order": 1,
+            "tau": 1.0,
+            "energy_distance": 0.00416428575423522,
+            "energy_distance_null": 0.005139687620054456,
+            "normalised_energy_distance": 0.8102215663821021
+          }
+        ],
+        "cfm_loss": 1.1922635996651754,
+        "mean_normalised_ed_all": 0.7965569625856994,
+        "std_normalised_ed_all": 0.49699741020447563,
+        "n_all": 8,
+        "mean_normalised_ed_singletons": 0.7965569625856994,
+        "std_normalised_ed_singletons": 0.49699741020447563,
+        "n_singletons": 8
+      },
+      "heldout_normalised_ed": 0.6473773786152678,
+      "heldout_cfm_loss": 1.26449608164624
+    }
+  },
+  "structural_checks_factored": {
+    "additivity_defect_max_abs": 0.0,
+    "zero_exposure_defect_max_abs": 0.0,
+    "permutation_defect_max_abs": 0.0,
+    "note": "these are bit-exact consequences of the a_p gate and the sum over members; a non-zero value means the gate is mis-wired"
+  },
+  "deepsets_supervision_diagnosis": {
+    "arms": {
+      "paired": {
+        "heldout_normalised_ed": 0.7131432878241009,
+        "train_subset_normalised_ed": 1.0626590712938866,
+        "train_loss_last_decile": 0.12068051488604396,
+        "n_parameters": 22096,
+        "pred_sd": [
+          0.7138365587437009,
+          0.8419851354125635,
+          0.8425814764328439,
+          0.8878710813374493,
+          0.7866844508616953,
+          0.8215268075373577
+        ],
+        "observed_post_sd": [
+          0.7887255846216931,
+          0.9494960652890682,
+          0.7546866275261079,
+          0.9824623128826969,
+          0.7670901787398079,
+          0.8485073442025923
+        ]
+      },
+      "coupled": {
+        "heldout_normalised_ed": 1.9227188518422333,
+        "train_subset_normalised_ed": 4.990846746829014,
+        "train_loss_last_decile": 1.585771845281124,
+        "n_parameters": 22096,
+        "pred_sd": [
+          0.6672161961785794,
+          0.7609559240905588,
+          0.7175208257292859,
+          0.7903614346099582,
+          0.6992861836185983,
+          0.7734057094989473
+        ],
+        "observed_post_sd": [
+          0.7887255846216931,
+          0.9494960652890682,
+          0.7546866275261079,
+          0.9824623128826969,
+          0.7670901787398079,
+          0.8485073442025923
+        ]
+      }
+    },
+    "mean_displacement_norm_by_coupling": {
+      "sinkhorn_uot": 0.8679762396240305,
+      "paired": 0.4061576061668202
+    },
+    "inflation_factor": 2.137042927290468,
+    "reading": "an endpoint regressor has no integration step, so it applies the coupling's barycentric projection directly as a map: it inherits the displacement inflation and collapses variance. A CFM model does not, which is why the shared-coupling requirement carries a 'where applicable' clause and this is where it does not apply.",
+    "arm_selected_on": "held-out normalised energy distance (distributional)",
+    "train_loss_across_arms_comparable": false,
+    "train_loss_caveat": "the arms train under different couplings, so train_loss_last_decile is a WITHIN-ARM diagnostic only. CFM loss tracks the identity-pair fraction (paired 1.0 vs sinkhorn 0.229) and must never rank arms or models.",
+    "default_arm": "paired"
+  },
+  "control_normalised_ed": {
+    "NoChange": 1.0,
+    "MatchingMean": 0.889318660529139,
+    "PerturbedMean": 1.011231621544569,
+    "LinearResponse": 0.8657466609627116
+  },
+  "neural_normalised_ed": {
+    "DeepSetsEndpoint": 0.7131432878241009,
+    "MonolithicCFM": 0.827535391118003,
+    "FactoredAdditiveCFM": 0.6473773786152678
+  },
+  "checks": {
+    "nochange_normalised_ed_is_one": true,
+    "nochange_has_zero_parameters": true,
+    "some_neural_beats_nochange": true,
+    "all_neural_beat_nochange": true,
+    "all_neural_within_20pct_of_ihcfm_params": true,
+    "table_ranked_on_distributional_metric_not_cfm_loss": true,
+    "cfm_rows_share_identical_coupling_kwargs": true,
+    "no_nonfinite_training_steps": true,
+    "factored_velocity_exactly_additive": true,
+    "factored_zero_exposure_vanishes": true,
+    "factored_permutation_invariant": true,
+    "deepsets_declines_velocity": true,
+    "deepsets_paired_arm_beats_coupled_arm": true,
+    "flow_baselines_beat_best_control": true,
+    "neural_beat_nochange_every_seed": false,
+    "best_flow_baseline_separated_from_best_control": false,
+    "single_fold_cannot_order_neural_models": true,
+    "fold_sweep_neural_mean_beats_nochange": true,
+    "fold_sweep_best_flow_beats_best_control_paired": true
+  },
+  "wall_clock_s": 56.46398425102234,
+  "seed_robustness": {
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "per_seed": [
+      {
+        "NoChange": 1.0,
+        "MatchingMean": 0.889318660529139,
+        "PerturbedMean": 1.011231621544569,
+        "LinearResponse": 0.8657466609627116,
+        "DeepSetsEndpoint": 0.7131432878241009,
+        "MonolithicCFM": 0.827535391118003,
+        "FactoredAdditiveCFM": 0.6473773786152678
+      },
+      {
+        "NoChange": 1.0,
+        "MatchingMean": 0.889318660529139,
+        "PerturbedMean": 1.011231621544569,
+        "LinearResponse": 0.8657466607446596,
+        "DeepSetsEndpoint": 1.142290325120931,
+        "MonolithicCFM": 1.4443495953934662,
+        "FactoredAdditiveCFM": 1.5100330474843349
+      },
+      {
+        "NoChange": 1.0,
+        "MatchingMean": 0.889318660529139,
+        "PerturbedMean": 1.011231621544569,
+        "LinearResponse": 0.8657466610241014,
+        "DeepSetsEndpoint": 1.3680165076774955,
+        "MonolithicCFM": 0.82373467558918,
+        "FactoredAdditiveCFM": 0.8714702022613725
+      }
+    ],
+    "aggregate": {
+      "NoChange": {
+        "mean": 1.0,
+        "std": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "MatchingMean": {
+        "mean": 0.8893186605291389,
+        "std": 1.1102230246251565e-16,
+        "min": 0.889318660529139,
+        "max": 0.889318660529139,
+        "values": [
+          0.889318660529139,
+          0.889318660529139,
+          0.889318660529139
+        ]
+      },
+      "PerturbedMean": {
+        "mean": 1.011231621544569,
+        "std": 0.0,
+        "min": 1.011231621544569,
+        "max": 1.011231621544569,
+        "values": [
+          1.011231621544569,
+          1.011231621544569,
+          1.011231621544569
+        ]
+      },
+      "LinearResponse": {
+        "mean": 0.8657466609104908,
+        "std": 1.1990881278173013e-10,
+        "min": 0.8657466607446596,
+        "max": 0.8657466610241014,
+        "values": [
+          0.8657466609627116,
+          0.8657466607446596,
+          0.8657466610241014
+        ]
+      },
+      "DeepSetsEndpoint": {
+        "mean": 1.0744833735408426,
+        "std": 0.2716162372812378,
+        "min": 0.7131432878241009,
+        "max": 1.3680165076774955,
+        "values": [
+          0.7131432878241009,
+          1.142290325120931,
+          1.3680165076774955
+        ]
+      },
+      "MonolithicCFM": {
+        "mean": 1.0318732207002164,
+        "std": 0.2916689688896157,
+        "min": 0.82373467558918,
+        "max": 1.4443495953934662,
+        "values": [
+          0.827535391118003,
+          1.4443495953934662,
+          0.82373467558918
+        ]
+      },
+      "FactoredAdditiveCFM": {
+        "mean": 1.009626876120325,
+        "std": 0.3654760828078094,
+        "min": 0.6473773786152678,
+        "max": 1.5100330474843349,
+        "values": [
+          0.6473773786152678,
+          1.5100330474843349,
+          0.8714702022613725
+        ]
+      }
+    },
+    "ranking_by_mean": [
+      "LinearResponse",
+      "MatchingMean",
+      "NoChange",
+      "FactoredAdditiveCFM",
+      "PerturbedMean",
+      "MonolithicCFM",
+      "DeepSetsEndpoint"
+    ],
+    "adjacent_separation": [
+      {
+        "better": "LinearResponse",
+        "worse": "MatchingMean",
+        "separated": true,
+        "gap_of_means": 0.023571999618648087
+      },
+      {
+        "better": "MatchingMean",
+        "worse": "NoChange",
+        "separated": true,
+        "gap_of_means": 0.11068133947086112
+      },
+      {
+        "better": "NoChange",
+        "worse": "FactoredAdditiveCFM",
+        "separated": false,
+        "gap_of_means": 0.00962687612032509
+      },
+      {
+        "better": "FactoredAdditiveCFM",
+        "worse": "PerturbedMean",
+        "separated": false,
+        "gap_of_means": 0.0016047454242438253
+      },
+      {
+        "better": "PerturbedMean",
+        "worse": "MonolithicCFM",
+        "separated": false,
+        "gap_of_means": 0.02064159915564745
+      },
+      {
+        "better": "MonolithicCFM",
+        "worse": "DeepSetsEndpoint",
+        "separated": false,
+        "gap_of_means": 0.04261015284062619
+      }
+    ],
+    "held_fixed": "benchmark system, populations and LOCO split",
+    "varied": "model init + training/coupling RNG",
+    "note": "adjacent rows with separated=False are ordered but NOT statistically separated at this seed count and must not be reported as a ranking"
+  },
+  "expected_failures": {
+    "neural_beat_nochange_every_seed": "single-fold worst-case guarantee; fails because the neural rows' across-seed range on one fold (n=2 held-out populations) exceeds the gap to NoChange. Pooled over 6 folds all three beat NoChange on the mean.",
+    "best_flow_baseline_separated_from_best_control": "same cause. The controls are deterministic (zero seed variance) while the flow rows are not, so a worst-vs-best comparison on one fold cannot separate them. See loco_fold_sweep.adjacent_separation_paired for the correctly-powered paired test, which also does not separate them -- with 6 folds the required n is ~270+."
+  },
+  "loco_fold_sweep": {
+    "config": {
+      "d": 6,
+      "k": 4,
+      "r_true": 2,
+      "r_emb": 8,
+      "steps": 800,
+      "seed": 0,
+      "n_cells": 200,
+      "taus": [
+        0.6,
+        1.0
+      ]
+    },
+    "folds": [
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        3
+      ]
+    ],
+    "n_folds": 6,
+    "n_heldout_populations_total": 12,
+    "reference_ihcfm_parameters": {
+      "config": {
+        "d": 6,
+        "D": 6,
+        "k": 4,
+        "r": 8,
+        "hidden": 64,
+        "depth": 2,
+        "code_dim": 0
+      },
+      "components": {
+        "one_form": 17664,
+        "embed": 32,
+        "dose": 12,
+        "encoder": 0,
+        "decoder": 453,
+        "ambient_metric": 3717,
+        "saturator": 257
+      },
+      "core": 17708,
+      "total": 22135,
+      "matching_target": "total",
+      "matching_note": "neural baselines are matched to 'total', which gives them MORE capacity than IHC-FM's velocity core -- the conservative direction for a baseline"
+    },
+    "parameter_matching_target": 22135,
+    "aggregate": {
+      "NoChange": {
+        "mean": 1.0,
+        "std": 0.0,
+        "sem": 0.0,
+        "min": 1.0,
+        "max": 1.0,
+        "per_fold": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "cfm_mean": 1.841264839601763,
+        "cfm_per_fold": [
+          1.4273627552693666,
+          2.70623776243947,
+          1.3455156326352373,
+          2.404717379839692,
+          1.2067225888303492,
+          1.9570329185964623
+        ]
+      },
+      "MatchingMean": {
+        "mean": 1.0861133845634685,
+        "std": 0.28404115037069855,
+        "sem": 0.12702706412722434,
+        "min": 0.889318660529139,
+        "max": 1.7044182112393869,
+        "per_fold": [
+          0.889318660529139,
+          1.0390077414673407,
+          1.0553854679150172,
+          0.8939367382647043,
+          1.7044182112393869,
+          0.9346134879652228
+        ],
+        "cfm_mean": 1.8479695047521814,
+        "cfm_per_fold": [
+          1.4480942879281224,
+          2.5969202669005345,
+          1.3195385160731625,
+          2.3901453323555013,
+          1.3705100787837534,
+          1.962608546472013
+        ]
+      },
+      "PerturbedMean": {
+        "mean": 1.040803879073432,
+        "std": 0.029224502257367585,
+        "sem": 0.013069594731213998,
+        "min": 1.011231621544569,
+        "max": 1.0973684809835316,
+        "per_fold": [
+          1.011231621544569,
+          1.0345150624715866,
+          1.0187743990150526,
+          1.0576630014818171,
+          1.0252707089440358,
+          1.0973684809835316
+        ],
+        "cfm_mean": 1.8981494395515224,
+        "cfm_per_fold": [
+          1.4848964158709475,
+          2.7137340426354584,
+          1.3880096701797513,
+          2.555781029516294,
+          1.2350773279387717,
+          2.011398151167911
+        ]
+      },
+      "LinearResponse": {
+        "mean": 1.4836593835438106,
+        "std": 1.5055507359546731,
+        "sem": 0.6733027578338973,
+        "min": 0.438308321809764,
+        "max": 4.737655805305215,
+        "per_fold": [
+          0.8657466609627116,
+          0.8028021699550996,
+          1.6029721546814781,
+          0.45447118854859536,
+          4.737655805305215,
+          0.438308321809764
+        ],
+        "cfm_mean": 1.775604078468494,
+        "cfm_per_fold": [
+          1.4273129668771505,
+          2.2312971637414654,
+          1.5281014969619249,
+          1.9883041947698186,
+          1.7732123928948458,
+          1.70539625556576
+        ]
+      },
+      "DeepSetsEndpoint": {
+        "mean": 0.8085945466336626,
+        "std": 0.3458432582311087,
+        "sem": 0.15466580699295454,
+        "min": 0.33559222813625944,
+        "max": 1.3087959562523332,
+        "per_fold": [
+          0.7131432878241009,
+          0.4611391930270249,
+          1.3087959562523332,
+          0.33559222813625944,
+          0.8992515178494203,
+          1.1336450967128366
+        ],
+        "cfm_mean": NaN,
+        "cfm_per_fold": [
+          NaN,
+          NaN,
+          NaN,
+          NaN,
+          NaN,
+          NaN
+        ]
+      },
+      "MonolithicCFM": {
+        "mean": 0.8175511087775386,
+        "std": 0.46529436359771476,
+        "sem": 0.20808596531039877,
+        "min": 0.27256189726564317,
+        "max": 1.5925348709237697,
+        "per_fold": [
+          0.827535391118003,
+          0.27256189726564317,
+          1.5925348709237697,
+          0.4151009756902886,
+          1.2350275500267838,
+          0.5625459676407432
+        ],
+        "cfm_mean": 1.4127256462631657,
+        "cfm_per_fold": [
+          1.2969309429908729,
+          1.7652193258805813,
+          1.138335779503119,
+          1.6103548775177783,
+          1.204250904807024,
+          1.4612620468796187
+        ]
+      },
+      "FactoredAdditiveCFM": {
+        "mean": 0.7907010485100531,
+        "std": 0.6095831262409699,
+        "sem": 0.272613861642329,
+        "min": 0.18041420862779123,
+        "max": 1.937713011366422,
+        "per_fold": [
+          0.6473773786152678,
+          0.5706992092409813,
+          1.182272535040219,
+          0.18041420862779123,
+          1.937713011366422,
+          0.22572994816963704
+        ],
+        "cfm_mean": 1.486007690879304,
+        "cfm_per_fold": [
+          1.2499922608512342,
+          2.0605703838298184,
+          1.220501566306155,
+          1.4593352467659257,
+          1.3627332635671394,
+          1.5629134239555516
+        ]
+      }
+    },
+    "ranking_by_mean": [
+      "FactoredAdditiveCFM",
+      "DeepSetsEndpoint",
+      "MonolithicCFM",
+      "NoChange",
+      "PerturbedMean",
+      "MatchingMean",
+      "LinearResponse"
+    ],
+    "adjacent_separation_paired": [
+      {
+        "better": "FactoredAdditiveCFM",
+        "worse": "DeepSetsEndpoint",
+        "mean_paired_gap": 0.01789349812360948,
+        "paired_gap_sem": 0.2554217474845502,
+        "folds_where_better_wins": 4,
+        "n_folds": 6,
+        "separated_2sem": false
+      },
+      {
+        "better": "DeepSetsEndpoint",
+        "worse": "MonolithicCFM",
+        "mean_paired_gap": 0.008956562143876004,
+        "paired_gap_sem": 0.13831061677594486,
+        "folds_where_better_wins": 4,
+        "n_folds": 6,
+        "separated_2sem": false
+      },
+      {
+        "better": "MonolithicCFM",
+        "worse": "NoChange",
+        "mean_paired_gap": 0.18244889122246144,
+        "paired_gap_sem": 0.20808596531039877,
+        "folds_where_better_wins": 4,
+        "n_folds": 6,
+        "separated_2sem": false
+      },
+      {
+        "better": "NoChange",
+        "worse": "PerturbedMean",
+        "mean_paired_gap": 0.040803879073432116,
+        "paired_gap_sem": 0.013069594731213998,
+        "folds_where_better_wins": 6,
+        "n_folds": 6,
+        "separated_2sem": true
+      },
+      {
+        "better": "PerturbedMean",
+        "worse": "MatchingMean",
+        "mean_paired_gap": 0.04530950549003635,
+        "paired_gap_sem": 0.1314587924992771,
+        "folds_where_better_wins": 3,
+        "n_folds": 6,
+        "separated_2sem": false
+      },
+      {
+        "better": "MatchingMean",
+        "worse": "LinearResponse",
+        "mean_paired_gap": 0.3975459989803421,
+        "paired_gap_sem": 0.5491788431304602,
+        "folds_where_better_wins": 2,
+        "n_folds": 6,
+        "separated_2sem": false
+      }
+    ],
+    "ranking_key": "mean normalised energy distance over folds",
+    "cfm_mean_role": "within-coupling training diagnostic; NOT the ranking key and not comparable across couplings",
+    "comparison": "paired across folds; fold is a shared nuisance factor",
+    "note": "controls are deterministic given the benchmark and have zero seed variance; neural rows do not, so a single-fold table flatters whichever neural row drew well",
+    "wall_clock_s": 151.9213511943817
+  }
+}
