@@ -696,12 +696,48 @@ mean, and the best flow model beats the best control on a paired test — but th
 correctly-powered paired test **still does not separate adjacent models**; the track's own
 power calculation puts the required n at **~270+ folds**.
 
+### The 6-fold pooled sweep — the ordering FLIPS and the neural rows are inseparable
+
+Pooled over all 6 LOCO folds (12 held-out populations), normalised ED mean [sem]:
+
+| model | pooled mean [sem] | single-fold (seed 0) |
+|---|---|---|
+| FactoredAdditiveCFM | 0.7907 [0.2726] | 0.647 |
+| DeepSetsEndpoint | 0.8086 [0.1547] | 0.713 |
+| MonolithicCFM | 0.8176 [0.2081] | 0.828 |
+| NoChange | 1.0000 [0.0] | 1.000 |
+| PerturbedMean | 1.0408 [0.0131] | 1.011 |
+| MatchingMean | 1.0861 [0.1270] | 0.889 |
+| LinearResponse | 1.4837 [1.5056] | 0.866 |
+
+Adjacent paired separation: FactoredAdditive vs DeepSets gap **+0.0179** against sem
+0.2554 (wins 4/6, not separated); DeepSets vs Monolithic gap **+0.0090** against sem 0.1383
+(not separated). Required n at the observed effect size is **~270–450 folds**, so **this
+benchmark at k=4 cannot rank the three neural models at all**. Note also that
+`LinearResponse` looks competitive on one fold (0.866) and is by far the worst pooled
+(1.484 [1.506]) — a single fold is actively misleading, not merely imprecise.
+
+**Structural asymmetry that makes single-fold tables dishonest:** the four controls are
+effectively deterministic across seeds (measured std — NoChange and PerturbedMean bitwise
+0.0, MatchingMean 1.11e-16, LinearResponse 1.20e-10) while every neural row has std
+0.27–0.37. A single-fold table therefore flatters whichever neural row drew well.
+
 **CONSEQUENCE FOR TABLE 1, adopted:** no headline claim may rest on a single fold or a
 single seed. Table 1 must report **multi-fold, multi-seed means with paired CIs over
 independent units**, and where adjacent models are statistically indistinguishable the
-table must say so instead of implying a ranking. `FactoredAdditiveCFM` (0.647 best-fold,
-strong on the mean) is the competitor IHC-FM has to beat, and beating it must be
-demonstrated with paired statistics, not a single number.
+table must say so instead of implying a ranking. `FactoredAdditiveCFM` (0.7907 pooled) is
+the competitor IHC-FM has to beat, and beating it must be demonstrated with paired
+statistics, not a single number.
+
+**PRE-REGISTERED THRESHOLD:** if IHC-FM full's margin over `FactoredAdditiveCFM` is under
+**~0.25 normalised ED** at the achieved n, the comparison is underpowered and the two must
+be reported as statistically indistinguishable — in the table caption and in
+`results/table1.json`. A well-characterised negative is an acceptable outcome; an
+overclaimed positive is not. Mitigation adopted: raise the synthetic benchmark's `k` (k=6
+gives 15 pairs, k=7 gives 21) to buy folds cheaply, since each fold costs seconds at d=6.
+The **main-effects-only vs full** ablation is a within-model paired comparison on identical
+folds and seeds, so it is better powered than any cross-model row and is the primary
+evidence that the interaction hierarchy pays for itself.
 
 ## Two components verified structurally, one diagnosed
 
