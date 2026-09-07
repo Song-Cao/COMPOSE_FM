@@ -1,0 +1,3061 @@
+{
+ "meta": {
+  "source": "results/loco_screen_predictions.npz",
+  "note": "re-scored from SAVED predictions; no model was retrained",
+  "metrics": [
+   "ed_absolute",
+   "ed_normalised",
+   "ed_denominator",
+   "sw_pred",
+   "sw_denominator",
+   "sw_normalised",
+   "mmd_pred",
+   "mmd_denominator",
+   "pearson_delta",
+   "spearman_delta",
+   "r2_delta",
+   "cosine_delta",
+   "top_overlap",
+   "l2_ratio"
+  ],
+  "n_boot": 200,
+  "eval_max_n": 400,
+  "n_slices": 64,
+  "seed": 0,
+  "unit_definition": "the replicate record; every CI resamples units, never rows, because rows within a unit share a control draw and a plate",
+  "selection_policy": "normalised ED with its no-change denominator is the project's selection metric; the rest of the suite is reported to expose failure modes a single distance hides",
+  "residualised_note": "ed_vs_mean_response is the harder bar: it asks whether the arm beats predicting the AVERAGE observed response, not merely no change",
+  "smoke": true,
+  "wall_clock_s": 62.40363883972168
+ },
+ "per_split": {
+  "loco_CF": {
+   "arms": {
+    "ihcfm": {
+     "summary": {
+      "ed_absolute": {
+       "point": 0.0818700196208639,
+       "lo": 0.06066407810870902,
+       "hi": 0.10359094703280433,
+       "se": 0.011205271324200855,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_normalised": {
+       "point": 1.0442159945292913,
+       "lo": 0.7237905506699991,
+       "hi": 1.343055678993591,
+       "se": 0.1531995505548887,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_denominator": {
+       "point": 0.13085146549114177,
+       "lo": 0.09021138602878594,
+       "hi": 0.1629393128588044,
+       "se": 0.019615283520806482,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_pred": {
+       "point": 0.1982294723429406,
+       "lo": 0.17464593442978446,
+       "hi": 0.21916768516413296,
+       "se": 0.011805116980024353,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_denominator": {
+       "point": 0.22750489505694577,
+       "lo": 0.19189517251368984,
+       "hi": 0.25791932520667715,
+       "se": 0.016983715990928017,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_normalised": {
+       "point": 0.95719848603577,
+       "lo": 0.833031682303264,
+       "hi": 1.085203346127734,
+       "se": 0.062298960761111015,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "mmd_pred": {
+       "point": 0.010703282893312896,
+       "lo": 0.007236351010702197,
+       "hi": 0.013969796775018365,
+       "se": 0.0017385805662278597,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "mmd_denominator": {
+       "point": 0.01982097589912314,
+       "lo": 0.0127396374651418,
+       "hi": 0.025190987714030003,
+       "se": 0.0034804705937330534,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "pearson_delta": {
+       "point": 0.5097282180474183,
+       "lo": 0.3459390836053591,
+       "hi": 0.6631635597686399,
+       "se": 0.07948998802929277,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "spearman_delta": {
+       "point": 0.45326278659611996,
+       "lo": 0.2881613756613756,
+       "hi": 0.5944223985890653,
+       "se": 0.08128447498430828,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "r2_delta": {
+       "point": -0.5494213838246528,
+       "lo": -1.256948929626498,
+       "hi": 0.08917267140263224,
+       "se": 0.3167664559149982,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "cosine_delta": {
+       "point": 0.511442990431202,
+       "lo": 0.3520406586938492,
+       "hi": 0.6645501470374381,
+       "se": 0.07898598055635184,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "top_overlap": {
+       "point": 0.5370370370370371,
+       "lo": 0.3888888888888889,
+       "hi": 0.6481481481481481,
+       "se": 0.06461783099968721,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "l2_ratio": {
+       "point": 1.097121912975866,
+       "lo": 0.9401755317815594,
+       "hi": 1.2849242639842835,
+       "se": 0.08721148620206366,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "n_records": 27,
+      "n_units": 27
+     },
+     "n_records": 27,
+     "n_units": 27,
+     "denominator_check": {
+      "n_records": 27,
+      "reference": 0.09505150724090816,
+      "threshold": 0.04752575362045408,
+      "collapse_ratio": 0.5,
+      "median_denominator": 0.09505150724090816,
+      "min_denominator": 0.01566788939382935,
+      "max_denominator": 0.3274493826238243,
+      "n_below_threshold": 11,
+      "fraction_below": 0.4074074074074074,
+      "inflation_at_min": 6.066644003648846,
+      "collapsed": true,
+      "flagged": [
+       {
+        "row": 1,
+        "denominator": 0.018485184025491375,
+        "inflation": 5.142037380305793,
+        "unit": "rep6",
+        "condition": "CF",
+        "pop_index": 49,
+        "dose": 3
+       },
+       {
+        "row": 2,
+        "denominator": 0.02536456394863995,
+        "inflation": 3.7474134163463444,
+        "unit": "rep11",
+        "condition": "CF",
+        "pop_index": 88,
+        "dose": 3
+       },
+       {
+        "row": 4,
+        "denominator": 0.01566788939382935,
+        "inflation": 6.066644003648846,
+        "unit": "rep13",
+        "condition": "CF",
+        "pop_index": 106,
+        "dose": 3
+       },
+       {
+        "row": 8,
+        "denominator": 0.041507203456038866,
+        "inflation": 2.290000272882252,
+        "unit": "rep25",
+        "condition": "CF",
+        "pop_index": 189,
+        "dose": 3
+       },
+       {
+        "row": 10,
+        "denominator": 0.03664226077688282,
+        "inflation": 2.5940404665444405,
+        "unit": "rep27",
+        "condition": "CF",
+        "pop_index": 205,
+        "dose": 3
+       },
+       {
+        "row": 11,
+        "denominator": 0.03996447854824936,
+        "inflation": 2.3783997863540716,
+        "unit": "rep33",
+        "condition": "CF",
+        "pop_index": 247,
+        "dose": 3
+       },
+       {
+        "row": 14,
+        "denominator": 0.04579021057362764,
+        "inflation": 2.07580410856752,
+        "unit": "rep46",
+        "condition": "CF",
+        "pop_index": 344,
+        "dose": 3
+       },
+       {
+        "row": 15,
+        "denominator": 0.0242668311708214,
+        "inflation": 3.9169311630271166,
+        "unit": "rep47",
+        "condition": "CF",
+        "pop_index": 353,
+        "dose": 3
+       },
+       {
+        "row": 21,
+        "denominator": 0.01868114396059939,
+        "inflation": 5.088098857403078,
+        "unit": "rep194",
+        "condition": "CF",
+        "pop_index": 523,
+        "dose": 3
+       },
+       {
+        "row": 23,
+        "denominator": 0.04273497361972023,
+        "inflation": 2.2242088666470186,
+        "unit": "rep197",
+        "condition": "CF",
+        "pop_index": 551,
+        "dose": 3
+       },
+       {
+        "row": 25,
+        "denominator": 0.031208413542216817,
+        "inflation": 3.0457013494879623,
+        "unit": "rep223",
+        "condition": "CF",
+        "pop_index": 598,
+        "dose": 3
+       }
+      ],
+      "note": "normalised scores on the records listed in `flagged` divide by a denominator smaller than the reference split's; read ed_absolute for those rows"
+     },
+     "residualised": {
+      "shift_level": {
+       "cosine_res_pooled": 0.29784379527609545,
+       "pearson_res_pooled": 0.2987100644338067,
+       "cosine_res_mean": 0.2719172588120055,
+       "n_conditions_with_residual": 27,
+       "shared_direction_fraction": 0.7225953687623882,
+       "residual_norm_ratio": 0.7457947529597658,
+       "global_dir": [
+        0.06828008232065277,
+        0.2992383329271596,
+        -0.5356852801686447,
+        -0.3415180732867175,
+        -0.2227666889835785,
+        -0.4733627609864944,
+        -0.17682627406977514,
+        0.44411271574180966
+       ],
+       "per_condition": [
+        {
+         "cosine_res": 0.8912736975682682,
+         "obs_res_l2": 1.0024533447475752,
+         "pred_res_l2": 0.3072236316915323
+        },
+        {
+         "cosine_res": 0.23061249904382433,
+         "obs_res_l2": 0.17183988315370538,
+         "pred_res_l2": 0.29315025102662
+        },
+        {
+         "cosine_res": -0.553263913053895,
+         "obs_res_l2": 0.2334978398345103,
+         "pred_res_l2": 0.2537726558427573
+        },
+        {
+         "cosine_res": 0.9005994844741887,
+         "obs_res_l2": 0.33834707318407725,
+         "pred_res_l2": 0.256771809014207
+        },
+        {
+         "cosine_res": 0.5137573097983925,
+         "obs_res_l2": 0.1279399512076779,
+         "pred_res_l2": 0.2524855981351045
+        },
+        {
+         "cosine_res": 0.8738381674326439,
+         "obs_res_l2": 0.3643140434862118,
+         "pred_res_l2": 0.27229904908227176
+        },
+        {
+         "cosine_res": 0.49610932469098934,
+         "obs_res_l2": 0.5666023992357431,
+         "pred_res_l2": 0.29122839559985986
+        },
+        {
+         "cosine_res": 0.6719286836865546,
+         "obs_res_l2": 0.37426284096935836,
+         "pred_res_l2": 0.2928063446971597
+        },
+        {
+         "cosine_res": 0.02871665969284788,
+         "obs_res_l2": 0.2747355235744382,
+         "pred_res_l2": 0.26633276066814915
+        },
+        {
+         "cosine_res": 0.7575068679046444,
+         "obs_res_l2": 0.2816109894978994,
+         "pred_res_l2": 0.25702231184666197
+        },
+        {
+         "cosine_res": -0.09141835923930058,
+         "obs_res_l2": 0.3109809255542068,
+         "pred_res_l2": 0.27801417766731273
+        },
+        {
+         "cosine_res": 0.4593960506168535,
+         "obs_res_l2": 0.30461689481372217,
+         "pred_res_l2": 0.27145147976032125
+        },
+        {
+         "cosine_res": 0.2685063585945266,
+         "obs_res_l2": 0.44931497522872815,
+         "pred_res_l2": 0.49161877798633585
+        },
+        {
+         "cosine_res": 0.8241695626900876,
+         "obs_res_l2": 0.45600957646991136,
+         "pred_res_l2": 0.47260544385084335
+        },
+        {
+         "cosine_res": 0.5906902585193832,
+         "obs_res_l2": 0.31545017037046647,
+         "pred_res_l2": 0.29618042678601597
+        },
+        {
+         "cosine_res": -0.16421114415034269,
+         "obs_res_l2": 0.1658340505568085,
+         "pred_res_l2": 0.3033274842084986
+        },
+        {
+         "cosine_res": -0.7505331466669328,
+         "obs_res_l2": 0.7529084254317346,
+         "pred_res_l2": 0.27497702042006106
+        },
+        {
+         "cosine_res": -0.42297951521558463,
+         "obs_res_l2": 0.5395762546795182,
+         "pred_res_l2": 0.26886623478897426
+        },
+        {
+         "cosine_res": 0.022685544472591405,
+         "obs_res_l2": 0.417524855902114,
+         "pred_res_l2": 0.1461226383581088
+        },
+        {
+         "cosine_res": 0.5494066257008164,
+         "obs_res_l2": 0.3631134925580111,
+         "pred_res_l2": 0.1887290409022349
+        },
+        {
+         "cosine_res": 0.6299035617310712,
+         "obs_res_l2": 0.7400120660989913,
+         "pred_res_l2": 0.5625934403041442
+        },
+        {
+         "cosine_res": 0.5746307280753167,
+         "obs_res_l2": 0.15543210603733057,
+         "pred_res_l2": 0.25561796733125547
+        },
+        {
+         "cosine_res": 0.48231881803746524,
+         "obs_res_l2": 0.22246863493762095,
+         "pred_res_l2": 0.5160476100795084
+        },
+        {
+         "cosine_res": 0.330668259220063,
+         "obs_res_l2": 0.31698185234780485,
+         "pred_res_l2": 0.298799222598596
+        },
+        {
+         "cosine_res": -0.11757706965540846,
+         "obs_res_l2": 0.2476094893439514,
+         "pred_res_l2": 0.20665729494967924
+        },
+        {
+         "cosine_res": -0.13614875415000913,
+         "obs_res_l2": 0.25302049683517874,
+         "pred_res_l2": 0.30593991650005037
+        },
+        {
+         "cosine_res": -0.5188205718949054,
+         "obs_res_l2": 0.4011928760980127,
+         "pred_res_l2": 0.27677697283453606
+        }
+       ]
+      },
+      "mean_response_shift": [
+       0.021486076500204933,
+       0.09416300470865159,
+       -0.16856709187440208,
+       -0.10746740776294449,
+       -0.07009924356448503,
+       -0.1489557151841291,
+       -0.055642915514766626,
+       0.13975143937774714
+      ],
+      "ed_vs_mean_response": {
+       "point": 0.8510805767106516,
+       "lo": 0.7045904086373027,
+       "hi": 0.9940158680786327,
+       "se": 0.07718802917217713,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "interpretation": "ed_vs_mean_response < 1 means the arm beats predicting the mean observed response; the ordinary no-change ratio can be well below 1 while this is above 1"
+     }
+    },
+    "perturbed_mean": {
+     "summary": {
+      "ed_absolute": {
+       "point": 0.13375186828433824,
+       "lo": 0.10961692028777542,
+       "hi": 0.1564157221250872,
+       "se": 0.01283071294559328,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_normalised": {
+       "point": 2.1516268711119237,
+       "lo": 1.484748758703346,
+       "hi": 3.0078864378985166,
+       "se": 0.39226420952472013,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_denominator": {
+       "point": 0.13085146549114177,
+       "lo": 0.09021138602878594,
+       "hi": 0.1629393128588044,
+       "se": 0.019615283520806482,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_pred": {
+       "point": 0.24127429258620883,
+       "lo": 0.21871377955462482,
+       "hi": 0.26343236185054947,
+       "se": 0.011467965142193748,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_denominator": {
+       "point": 0.22750489505694577,
+       "lo": 0.19189517251368984,
+       "hi": 0.25791932520667715,
+       "se": 0.016983715990928017,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_normalised": {
+       "point": 1.2098357563166557,
+       "lo": 1.0529037211258345,
+       "hi": 1.390696917885355,
+       "se": 0.09079685114520315,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "mmd_pred": {
+       "point": 0.019856250778166898,
+       "lo": 0.015708378117552352,
+       "hi": 0.023633526862264283,
+       "se": 0.0021429340398895665,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "mmd_denominator": {
+       "point": 0.01982097589912314,
+       "lo": 0.0127396374651418,
+       "hi": 0.025190987714030003,
+       "se": 0.0034804705937330534,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "pearson_delta": {
+       "point": 0.3930032549633059,
+       "lo": 0.24844409042269755,
+       "hi": 0.5337250950251081,
+       "se": 0.07297705877335738,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "spearman_delta": {
+       "point": 0.38271604938271614,
+       "lo": 0.18584656084656084,
+       "hi": 0.5195326278659612,
+       "se": 0.08476659077526158,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "r2_delta": {
+       "point": -2.765906430018299,
+       "lo": -5.04921117293913,
+       "hi": -1.0235080519352313,
+       "se": 1.0173029245949032,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "cosine_delta": {
+       "point": 0.3886713919697052,
+       "lo": 0.22319387308018168,
+       "hi": 0.5257472568538002,
+       "se": 0.07343114863674245,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "top_overlap": {
+       "point": 0.4074074074074074,
+       "lo": 0.2962962962962963,
+       "hi": 0.5370370370370371,
+       "se": 0.06098076155737981,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "l2_ratio": {
+       "point": 1.451206547850752,
+       "lo": 1.102504323653218,
+       "hi": 1.8376226294922045,
+       "se": 0.1843478524840358,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "n_records": 27,
+      "n_units": 27
+     },
+     "n_records": 27,
+     "n_units": 27,
+     "denominator_check": {
+      "n_records": 27,
+      "reference": 0.09505150724090816,
+      "threshold": 0.04752575362045408,
+      "collapse_ratio": 0.5,
+      "median_denominator": 0.09505150724090816,
+      "min_denominator": 0.01566788939382935,
+      "max_denominator": 0.3274493826238243,
+      "n_below_threshold": 11,
+      "fraction_below": 0.4074074074074074,
+      "inflation_at_min": 6.066644003648846,
+      "collapsed": true,
+      "flagged": [
+       {
+        "row": 1,
+        "denominator": 0.018485184025491375,
+        "inflation": 5.142037380305793,
+        "unit": "rep6",
+        "condition": "CF",
+        "pop_index": 49,
+        "dose": 3
+       },
+       {
+        "row": 2,
+        "denominator": 0.02536456394863995,
+        "inflation": 3.7474134163463444,
+        "unit": "rep11",
+        "condition": "CF",
+        "pop_index": 88,
+        "dose": 3
+       },
+       {
+        "row": 4,
+        "denominator": 0.01566788939382935,
+        "inflation": 6.066644003648846,
+        "unit": "rep13",
+        "condition": "CF",
+        "pop_index": 106,
+        "dose": 3
+       },
+       {
+        "row": 8,
+        "denominator": 0.041507203456038866,
+        "inflation": 2.290000272882252,
+        "unit": "rep25",
+        "condition": "CF",
+        "pop_index": 189,
+        "dose": 3
+       },
+       {
+        "row": 10,
+        "denominator": 0.03664226077688282,
+        "inflation": 2.5940404665444405,
+        "unit": "rep27",
+        "condition": "CF",
+        "pop_index": 205,
+        "dose": 3
+       },
+       {
+        "row": 11,
+        "denominator": 0.03996447854824936,
+        "inflation": 2.3783997863540716,
+        "unit": "rep33",
+        "condition": "CF",
+        "pop_index": 247,
+        "dose": 3
+       },
+       {
+        "row": 14,
+        "denominator": 0.04579021057362764,
+        "inflation": 2.07580410856752,
+        "unit": "rep46",
+        "condition": "CF",
+        "pop_index": 344,
+        "dose": 3
+       },
+       {
+        "row": 15,
+        "denominator": 0.0242668311708214,
+        "inflation": 3.9169311630271166,
+        "unit": "rep47",
+        "condition": "CF",
+        "pop_index": 353,
+        "dose": 3
+       },
+       {
+        "row": 21,
+        "denominator": 0.01868114396059939,
+        "inflation": 5.088098857403078,
+        "unit": "rep194",
+        "condition": "CF",
+        "pop_index": 523,
+        "dose": 3
+       },
+       {
+        "row": 23,
+        "denominator": 0.04273497361972023,
+        "inflation": 2.2242088666470186,
+        "unit": "rep197",
+        "condition": "CF",
+        "pop_index": 551,
+        "dose": 3
+       },
+       {
+        "row": 25,
+        "denominator": 0.031208413542216817,
+        "inflation": 3.0457013494879623,
+        "unit": "rep223",
+        "condition": "CF",
+        "pop_index": 598,
+        "dose": 3
+       }
+      ],
+      "note": "normalised scores on the records listed in `flagged` divide by a denominator smaller than the reference split's; read ed_absolute for those rows"
+     },
+     "residualised": {
+      "shift_level": {
+       "cosine_res_pooled": 6.119490021905706e-10,
+       "pearson_res_pooled": 6.122083512351298e-10,
+       "cosine_res_mean": 0.039872258075191035,
+       "n_conditions_with_residual": 27,
+       "shared_direction_fraction": 0.7225953687623882,
+       "residual_norm_ratio": 0.7329020087427685,
+       "global_dir": [
+        0.06828008232065277,
+        0.2992383329271596,
+        -0.5356852801686447,
+        -0.3415180732867175,
+        -0.2227666889835785,
+        -0.4733627609864944,
+        -0.17682627406977514,
+        0.44411271574180966
+       ],
+       "per_condition": [
+        {
+         "cosine_res": 0.5724395462763908,
+         "obs_res_l2": 1.0024533447475752,
+         "pred_res_l2": 0.3111676364887693
+        },
+        {
+         "cosine_res": 0.44513139238447935,
+         "obs_res_l2": 0.17183988315370538,
+         "pred_res_l2": 0.3111676390496906
+        },
+        {
+         "cosine_res": 0.030971916936189826,
+         "obs_res_l2": 0.2334978398345103,
+         "pred_res_l2": 0.31116763553215593
+        },
+        {
+         "cosine_res": 0.4032749815290596,
+         "obs_res_l2": 0.33834707318407725,
+         "pred_res_l2": 0.3111676357207714
+        },
+        {
+         "cosine_res": 0.654435845839506,
+         "obs_res_l2": 0.1279399512076779,
+         "pred_res_l2": 0.3111676390950901
+        },
+        {
+         "cosine_res": 0.9066552327792368,
+         "obs_res_l2": 0.3643140434862118,
+         "pred_res_l2": 0.3111676355669051
+        },
+        {
+         "cosine_res": 0.8808912725850421,
+         "obs_res_l2": 0.5666023992357431,
+         "pred_res_l2": 0.3111676359788269
+        },
+        {
+         "cosine_res": 0.834934933105772,
+         "obs_res_l2": 0.37426284096935836,
+         "pred_res_l2": 0.3111676394904781
+        },
+        {
+         "cosine_res": 0.08719515671415189,
+         "obs_res_l2": 0.2747355235744382,
+         "pred_res_l2": 0.31116763933898395
+        },
+        {
+         "cosine_res": -0.17553813236780577,
+         "obs_res_l2": 0.2816109894978994,
+         "pred_res_l2": 0.31116763732498687
+        },
+        {
+         "cosine_res": 0.4732338541422706,
+         "obs_res_l2": 0.3109809255542068,
+         "pred_res_l2": 0.3111676392506523
+        },
+        {
+         "cosine_res": 0.7699024176637722,
+         "obs_res_l2": 0.30461689481372217,
+         "pred_res_l2": 0.31116763799017816
+        },
+        {
+         "cosine_res": -0.10726452754380189,
+         "obs_res_l2": 0.44931497522872815,
+         "pred_res_l2": 0.31116763733986985
+        },
+        {
+         "cosine_res": -0.5018230292134496,
+         "obs_res_l2": 0.45600957646991136,
+         "pred_res_l2": 0.3111676340435734
+        },
+        {
+         "cosine_res": 0.4702208521935506,
+         "obs_res_l2": 0.31545017037046647,
+         "pred_res_l2": 0.31116764042028217
+        },
+        {
+         "cosine_res": -0.7352261260694231,
+         "obs_res_l2": 0.1658340505568085,
+         "pred_res_l2": 0.31116763221042154
+        },
+        {
+         "cosine_res": -0.9617567022742204,
+         "obs_res_l2": 0.7529084254317346,
+         "pred_res_l2": 0.31116763698981337
+        },
+        {
+         "cosine_res": -0.8566729702051058,
+         "obs_res_l2": 0.5395762546795182,
+         "pred_res_l2": 0.3111676380927982
+        },
+        {
+         "cosine_res": -0.5847073885091085,
+         "obs_res_l2": 0.417524855902114,
+         "pred_res_l2": 0.31116763699651706
+        },
+        {
+         "cosine_res": -0.23743963429031134,
+         "obs_res_l2": 0.3631134925580111,
+         "pred_res_l2": 0.3111676351771454
+        },
+        {
+         "cosine_res": -0.16432244027050275,
+         "obs_res_l2": 0.7400120660989913,
+         "pred_res_l2": 0.31116763678546233
+        },
+        {
+         "cosine_res": 0.6904495255697123,
+         "obs_res_l2": 0.15543210603733057,
+         "pred_res_l2": 0.31116763530565433
+        },
+        {
+         "cosine_res": -0.7776849182952696,
+         "obs_res_l2": 0.22246863493762095,
+         "pred_res_l2": 0.31116763953674875
+        },
+        {
+         "cosine_res": -0.285060435700583,
+         "obs_res_l2": 0.31698185234780485,
+         "pred_res_l2": 0.31116763283651994
+        },
+        {
+         "cosine_res": -0.2255015449966443,
+         "obs_res_l2": 0.2476094893439514,
+         "pred_res_l2": 0.31116763642437956
+        },
+        {
+         "cosine_res": 0.4207234491187149,
+         "obs_res_l2": 0.25302049683517874,
+         "pred_res_l2": 0.3111676393249064
+        },
+        {
+         "cosine_res": -0.9509115590714651,
+         "obs_res_l2": 0.4011928760980127,
+         "pred_res_l2": 0.3111676377062837
+        }
+       ]
+      },
+      "mean_response_shift": [
+       0.021486076500204933,
+       0.09416300470865159,
+       -0.16856709187440208,
+       -0.10746740776294449,
+       -0.07009924356448503,
+       -0.1489557151841291,
+       -0.055642915514766626,
+       0.13975143937774714
+      ],
+      "ed_vs_mean_response": {
+       "point": 1.4544197619212176,
+       "lo": 1.2591397260127206,
+       "hi": 1.6340465649184504,
+       "se": 0.09752395772047805,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "interpretation": "ed_vs_mean_response < 1 means the arm beats predicting the mean observed response; the ordinary no-change ratio can be well below 1 while this is above 1"
+     }
+    },
+    "no_change": {
+     "summary": {
+      "ed_absolute": {
+       "point": 0.13085146549114177,
+       "lo": 0.09021138602878594,
+       "hi": 0.1629393128588044,
+       "se": 0.019615283520806482,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_normalised": {
+       "point": 1.0,
+       "lo": 1.0,
+       "hi": 1.0,
+       "se": 0.0,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_denominator": {
+       "point": 0.13085146549114177,
+       "lo": 0.09021138602878594,
+       "hi": 0.1629393128588044,
+       "se": 0.019615283520806482,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_pred": {
+       "point": 0.22750489505694577,
+       "lo": 0.19189517251368984,
+       "hi": 0.25791932520667715,
+       "se": 0.016983715990928017,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_denominator": {
+       "point": 0.22750489505694577,
+       "lo": 0.19189517251368984,
+       "hi": 0.25791932520667715,
+       "se": 0.016983715990928017,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_normalised": {
+       "point": 1.0,
+       "lo": 1.0,
+       "hi": 1.0,
+       "se": 0.0,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "mmd_pred": {
+       "point": 0.01982097589912314,
+       "lo": 0.0127396374651418,
+       "hi": 0.025190987714030003,
+       "se": 0.0034804705937330534,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "mmd_denominator": {
+       "point": 0.01982097589912314,
+       "lo": 0.0127396374651418,
+       "hi": 0.025190987714030003,
+       "se": 0.0034804705937330534,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "r2_delta": {
+       "point": -0.12233805891873635,
+       "lo": -0.15967304416571335,
+       "hi": -0.08224291693639148,
+       "se": 0.020049538894102558,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "top_overlap": {
+       "point": 0.05555555555555555,
+       "lo": 0.0,
+       "hi": 0.1111111111111111,
+       "se": 0.029939606683957933,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "l2_ratio": {
+       "point": 0.0,
+       "lo": 0.0,
+       "hi": 0.0,
+       "se": 0.0,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "n_records": 27,
+      "n_units": 27
+     },
+     "n_records": 27,
+     "n_units": 27,
+     "denominator_check": {
+      "n_records": 27,
+      "reference": 0.09505150724090816,
+      "threshold": 0.04752575362045408,
+      "collapse_ratio": 0.5,
+      "median_denominator": 0.09505150724090816,
+      "min_denominator": 0.01566788939382935,
+      "max_denominator": 0.3274493826238243,
+      "n_below_threshold": 11,
+      "fraction_below": 0.4074074074074074,
+      "inflation_at_min": 6.066644003648846,
+      "collapsed": true,
+      "flagged": [
+       {
+        "row": 1,
+        "denominator": 0.018485184025491375,
+        "inflation": 5.142037380305793,
+        "unit": "rep6",
+        "condition": "CF",
+        "pop_index": 49,
+        "dose": 3
+       },
+       {
+        "row": 2,
+        "denominator": 0.02536456394863995,
+        "inflation": 3.7474134163463444,
+        "unit": "rep11",
+        "condition": "CF",
+        "pop_index": 88,
+        "dose": 3
+       },
+       {
+        "row": 4,
+        "denominator": 0.01566788939382935,
+        "inflation": 6.066644003648846,
+        "unit": "rep13",
+        "condition": "CF",
+        "pop_index": 106,
+        "dose": 3
+       },
+       {
+        "row": 8,
+        "denominator": 0.041507203456038866,
+        "inflation": 2.290000272882252,
+        "unit": "rep25",
+        "condition": "CF",
+        "pop_index": 189,
+        "dose": 3
+       },
+       {
+        "row": 10,
+        "denominator": 0.03664226077688282,
+        "inflation": 2.5940404665444405,
+        "unit": "rep27",
+        "condition": "CF",
+        "pop_index": 205,
+        "dose": 3
+       },
+       {
+        "row": 11,
+        "denominator": 0.03996447854824936,
+        "inflation": 2.3783997863540716,
+        "unit": "rep33",
+        "condition": "CF",
+        "pop_index": 247,
+        "dose": 3
+       },
+       {
+        "row": 14,
+        "denominator": 0.04579021057362764,
+        "inflation": 2.07580410856752,
+        "unit": "rep46",
+        "condition": "CF",
+        "pop_index": 344,
+        "dose": 3
+       },
+       {
+        "row": 15,
+        "denominator": 0.0242668311708214,
+        "inflation": 3.9169311630271166,
+        "unit": "rep47",
+        "condition": "CF",
+        "pop_index": 353,
+        "dose": 3
+       },
+       {
+        "row": 21,
+        "denominator": 0.01868114396059939,
+        "inflation": 5.088098857403078,
+        "unit": "rep194",
+        "condition": "CF",
+        "pop_index": 523,
+        "dose": 3
+       },
+       {
+        "row": 23,
+        "denominator": 0.04273497361972023,
+        "inflation": 2.2242088666470186,
+        "unit": "rep197",
+        "condition": "CF",
+        "pop_index": 551,
+        "dose": 3
+       },
+       {
+        "row": 25,
+        "denominator": 0.031208413542216817,
+        "inflation": 3.0457013494879623,
+        "unit": "rep223",
+        "condition": "CF",
+        "pop_index": 598,
+        "dose": 3
+       }
+      ],
+      "note": "normalised scores on the records listed in `flagged` divide by a denominator smaller than the reference split's; read ed_absolute for those rows"
+     },
+     "residualised": {
+      "shift_level": {
+       "cosine_res_pooled": NaN,
+       "pearson_res_pooled": NaN,
+       "cosine_res_mean": NaN,
+       "n_conditions_with_residual": 0,
+       "shared_direction_fraction": 0.7225953687623882,
+       "residual_norm_ratio": 0.0,
+       "global_dir": [
+        0.06828008232065277,
+        0.2992383329271596,
+        -0.5356852801686447,
+        -0.3415180732867175,
+        -0.2227666889835785,
+        -0.4733627609864944,
+        -0.17682627406977514,
+        0.44411271574180966
+       ],
+       "per_condition": [
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 1.0024533447475752,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.17183988315370538,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.2334978398345103,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.33834707318407725,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.1279399512076779,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.3643140434862118,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.5666023992357431,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.37426284096935836,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.2747355235744382,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.2816109894978994,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.3109809255542068,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.30461689481372217,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.44931497522872815,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.45600957646991136,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.31545017037046647,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.1658340505568085,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.7529084254317346,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.5395762546795182,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.417524855902114,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.3631134925580111,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.7400120660989913,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.15543210603733057,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.22246863493762095,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.31698185234780485,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.2476094893439514,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.25302049683517874,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.4011928760980127,
+         "pred_res_l2": 0.0
+        }
+       ]
+      },
+      "mean_response_shift": [
+       0.021486076500204933,
+       0.09416300470865159,
+       -0.16856709187440208,
+       -0.10746740776294449,
+       -0.07009924356448503,
+       -0.1489557151841291,
+       -0.055642915514766626,
+       0.13975143937774714
+      ],
+      "ed_vs_mean_response": {
+       "point": 1.172902360225554,
+       "lo": 0.9273355318751046,
+       "hi": 1.375185929553334,
+       "se": 0.11699770051213129,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "interpretation": "ed_vs_mean_response < 1 means the arm beats predicting the mean observed response; the ordinary no-change ratio can be well below 1 while this is above 1"
+     }
+    }
+   },
+   "paired": {
+    "ihcfm_vs_perturbed_mean": {
+     "n_paired_records": 27,
+     "metrics": {
+      "ed_normalised": {
+       "name_a": "ihcfm",
+       "name_b": "perturbed_mean",
+       "mean_a": 1.044215994529291,
+       "mean_b": 2.1516268711119237,
+       "mean_diff": -1.1074108765826327,
+       "lo": -1.6970111653941709,
+       "hi": -0.652838745593729,
+       "se": 0.278156812120411,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 23,
+       "n_units_tied": 0,
+       "sign_test_p": 0.000310748815536499,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_absolute": {
+       "name_a": "ihcfm",
+       "name_b": "perturbed_mean",
+       "mean_a": 0.0818700196208639,
+       "mean_b": 0.13375186828433824,
+       "mean_diff": -0.05188184866347433,
+       "lo": -0.0660671499527379,
+       "hi": -0.03622975210497146,
+       "se": 0.00823979768660894,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 23,
+       "n_units_tied": 0,
+       "sign_test_p": 0.000310748815536499,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_normalised": {
+       "name_a": "ihcfm",
+       "name_b": "perturbed_mean",
+       "mean_a": 0.9571984860357701,
+       "mean_b": 1.2098357563166555,
+       "mean_diff": -0.2526372702808856,
+       "lo": -0.34880478487034594,
+       "hi": -0.16465882927486583,
+       "se": 0.049584958616578696,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 24,
+       "n_units_tied": 0,
+       "sign_test_p": 4.9233436584472656e-05,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "cosine_delta": {
+       "name_a": "ihcfm",
+       "name_b": "perturbed_mean",
+       "mean_a": 0.511442990431202,
+       "mean_b": 0.38867139196970507,
+       "mean_diff": 0.12277159846149692,
+       "lo": 0.016638756198837607,
+       "hi": 0.2261694314933938,
+       "se": 0.05796133698899738,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 12,
+       "n_units_tied": 0,
+       "sign_test_p": 0.7011080384254456,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "r2_delta": {
+       "name_a": "ihcfm",
+       "name_b": "perturbed_mean",
+       "mean_a": -0.5494213838246529,
+       "mean_b": -2.765906430018299,
+       "mean_diff": 2.2164850461936463,
+       "lo": 0.8655666980136729,
+       "hi": 3.772820209268175,
+       "se": 0.7662182286870617,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 3,
+       "n_units_tied": 0,
+       "sign_test_p": 4.9233436584472656e-05,
+       "n_boot": 200,
+       "alpha": 0.05
+      }
+     },
+     "sign_convention": "mean_diff = a - b; NEGATIVE means a is better on a loss metric",
+     "alignment": "paired by (unit, condition, dose, pop_index) identity, not list order"
+    },
+    "ihcfm_vs_no_change": {
+     "n_paired_records": 27,
+     "metrics": {
+      "ed_normalised": {
+       "name_a": "ihcfm",
+       "name_b": "no_change",
+       "mean_a": 1.044215994529291,
+       "mean_b": 1.0,
+       "mean_diff": 0.04421599452929111,
+       "lo": -0.27620944933000097,
+       "hi": 0.34305567899359096,
+       "se": 0.1531995505548887,
+       "excludes_zero": false,
+       "n_units": 27,
+       "n_units_a_lower": 16,
+       "n_units_tied": 0,
+       "sign_test_p": 0.44206833839416504,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_absolute": {
+       "name_a": "ihcfm",
+       "name_b": "no_change",
+       "mean_a": 0.0818700196208639,
+       "mean_b": 0.13085146549114177,
+       "mean_diff": -0.048981445870277876,
+       "lo": -0.0756025137514556,
+       "hi": -0.0181147570779702,
+       "se": 0.016260575021628223,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 16,
+       "n_units_tied": 0,
+       "sign_test_p": 0.44206833839416504,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_normalised": {
+       "name_a": "ihcfm",
+       "name_b": "no_change",
+       "mean_a": 0.9571984860357701,
+       "mean_b": 1.0,
+       "mean_diff": -0.042801513964230056,
+       "lo": -0.1669683176967361,
+       "hi": 0.08520334612773386,
+       "se": 0.062298960761111015,
+       "excludes_zero": false,
+       "n_units": 27,
+       "n_units_a_lower": 16,
+       "n_units_tied": 0,
+       "sign_test_p": 0.44206833839416504,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "r2_delta": {
+       "name_a": "ihcfm",
+       "name_b": "no_change",
+       "mean_a": -0.5494213838246529,
+       "mean_b": -0.12233805891873638,
+       "mean_diff": -0.4270833249059165,
+       "lo": -1.1220206962503687,
+       "hi": 0.21296807419526875,
+       "se": 0.3094959486212448,
+       "excludes_zero": false,
+       "n_units": 27,
+       "n_units_a_lower": 11,
+       "n_units_tied": 0,
+       "sign_test_p": 0.44206833839416504,
+       "n_boot": 200,
+       "alpha": 0.05
+      }
+     },
+     "sign_convention": "mean_diff = a - b; NEGATIVE means a is better on a loss metric",
+     "alignment": "paired by (unit, condition, dose, pop_index) identity, not list order"
+    },
+    "perturbed_mean_vs_no_change": {
+     "n_paired_records": 27,
+     "metrics": {
+      "ed_normalised": {
+       "name_a": "perturbed_mean",
+       "name_b": "no_change",
+       "mean_a": 2.1516268711119237,
+       "mean_b": 1.0,
+       "mean_diff": 1.1516268711119235,
+       "lo": 0.4847487587033461,
+       "hi": 2.007886437898517,
+       "se": 0.39226420952472013,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 11,
+       "n_units_tied": 0,
+       "sign_test_p": 0.44206833839416504,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_absolute": {
+       "name_a": "perturbed_mean",
+       "name_b": "no_change",
+       "mean_a": 0.13375186828433824,
+       "mean_b": 0.13085146549114177,
+       "mean_diff": 0.0029004027931964606,
+       "lo": -0.024569741034824316,
+       "hi": 0.0383900148424897,
+       "se": 0.01660024349808875,
+       "excludes_zero": false,
+       "n_units": 27,
+       "n_units_a_lower": 11,
+       "n_units_tied": 0,
+       "sign_test_p": 0.44206833839416504,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_normalised": {
+       "name_a": "perturbed_mean",
+       "name_b": "no_change",
+       "mean_a": 1.2098357563166555,
+       "mean_b": 1.0,
+       "mean_diff": 0.2098357563166555,
+       "lo": 0.05290372112583445,
+       "hi": 0.3906969178853549,
+       "se": 0.09079685114520313,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 12,
+       "n_units_tied": 0,
+       "sign_test_p": 0.7011080384254456,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "r2_delta": {
+       "name_a": "perturbed_mean",
+       "name_b": "no_change",
+       "mean_a": -2.765906430018299,
+       "mean_b": -0.12233805891873638,
+       "mean_diff": -2.6435683710995628,
+       "lo": -4.889648146661397,
+       "hi": -0.9228326206097367,
+       "se": 1.0083509528128451,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 16,
+       "n_units_tied": 0,
+       "sign_test_p": 0.44206833839416504,
+       "n_boot": 200,
+       "alpha": 0.05
+      }
+     },
+     "sign_convention": "mean_diff = a - b; NEGATIVE means a is better on a loss metric",
+     "alignment": "paired by (unit, condition, dose, pop_index) identity, not list order"
+    }
+   }
+  },
+  "loco_CS": {
+   "arms": {
+    "ihcfm": {
+     "summary": {
+      "ed_absolute": {
+       "point": 0.14551937276697627,
+       "lo": 0.09663552226387642,
+       "hi": 0.2136199102182557,
+       "se": 0.02982318378622148,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_normalised": {
+       "point": 0.8937569766185752,
+       "lo": 0.681848950065008,
+       "hi": 1.123528303395688,
+       "se": 0.11861407548944684,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_denominator": {
+       "point": 0.23651670510173267,
+       "lo": 0.15392697413674164,
+       "hi": 0.3363924662416148,
+       "se": 0.04566611997780159,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_pred": {
+       "point": 0.25784791362515774,
+       "lo": 0.2160588363874301,
+       "hi": 0.31096703981199736,
+       "se": 0.024537893256598876,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_denominator": {
+       "point": 0.31278418573405076,
+       "lo": 0.2534735006918898,
+       "hi": 0.37669157080240284,
+       "se": 0.031646550547877184,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_normalised": {
+       "point": 0.8924815336098022,
+       "lo": 0.80568676418396,
+       "hi": 0.9821133823424002,
+       "se": 0.0485370084281199,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "mmd_pred": {
+       "point": 0.0222981146477825,
+       "lo": 0.01410490794863686,
+       "hi": 0.03411742999800181,
+       "se": 0.005063873402804074,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "mmd_denominator": {
+       "point": 0.037095479720301285,
+       "lo": 0.0238412031711258,
+       "hi": 0.05283488456910874,
+       "se": 0.007419889061150873,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "pearson_delta": {
+       "point": 0.4980328142168495,
+       "lo": 0.3786921741250401,
+       "hi": 0.6205953254276818,
+       "se": 0.06833466216272756,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "spearman_delta": {
+       "point": 0.5026455026455027,
+       "lo": 0.3765211640211641,
+       "hi": 0.6288139329805997,
+       "se": 0.07027512732800612,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "r2_delta": {
+       "point": -0.024541912368052563,
+       "lo": -0.3516578083395643,
+       "hi": 0.24073261176803745,
+       "se": 0.16446100449361725,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "cosine_delta": {
+       "point": 0.506255734145794,
+       "lo": 0.38461715253508816,
+       "hi": 0.6245868826941178,
+       "se": 0.06592661703450424,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "top_overlap": {
+       "point": 0.4074074074074074,
+       "lo": 0.2962962962962963,
+       "hi": 0.5189814814814816,
+       "se": 0.0647728587184326,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "l2_ratio": {
+       "point": 0.7739789621199167,
+       "lo": 0.6793887984117679,
+       "hi": 0.874169922358647,
+       "se": 0.05174057761096511,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "n_records": 27,
+      "n_units": 27
+     },
+     "n_records": 27,
+     "n_units": 27,
+     "denominator_check": {
+      "n_records": 27,
+      "reference": 0.15729358903880808,
+      "threshold": 0.07864679451940404,
+      "collapse_ratio": 0.5,
+      "median_denominator": 0.15729358903880808,
+      "min_denominator": 0.02030152073964775,
+      "max_denominator": 0.707395267000813,
+      "n_below_threshold": 9,
+      "fraction_below": 0.3333333333333333,
+      "inflation_at_min": 7.74787224346314,
+      "collapsed": true,
+      "flagged": [
+       {
+        "row": 2,
+        "denominator": 0.021727408290215244,
+        "inflation": 7.2394087199826735,
+        "unit": "rep11",
+        "condition": "CS",
+        "pop_index": 87,
+        "dose": 3
+       },
+       {
+        "row": 3,
+        "denominator": 0.0702494735865038,
+        "inflation": 2.2390714265654945,
+        "unit": "rep12",
+        "condition": "CS",
+        "pop_index": 96,
+        "dose": 3
+       },
+       {
+        "row": 4,
+        "denominator": 0.05901589700741061,
+        "inflation": 2.6652749007450782,
+        "unit": "rep13",
+        "condition": "CS",
+        "pop_index": 105,
+        "dose": 3
+       },
+       {
+        "row": 8,
+        "denominator": 0.052828501749726975,
+        "inflation": 2.9774380084443903,
+        "unit": "rep25",
+        "condition": "CS",
+        "pop_index": 188,
+        "dose": 3
+       },
+       {
+        "row": 10,
+        "denominator": 0.06744924770844563,
+        "inflation": 2.3320288125187294,
+        "unit": "rep27",
+        "condition": "CS",
+        "pop_index": 204,
+        "dose": 3
+       },
+       {
+        "row": 14,
+        "denominator": 0.04179925265140794,
+        "inflation": 3.763071802995739,
+        "unit": "rep46",
+        "condition": "CS",
+        "pop_index": 343,
+        "dose": 3
+       },
+       {
+        "row": 15,
+        "denominator": 0.02030152073964775,
+        "inflation": 7.74787224346314,
+        "unit": "rep47",
+        "condition": "CS",
+        "pop_index": 352,
+        "dose": 3
+       },
+       {
+        "row": 23,
+        "denominator": 0.03127487296772591,
+        "inflation": 5.029391780459896,
+        "unit": "rep197",
+        "condition": "CS",
+        "pop_index": 550,
+        "dose": 3
+       },
+       {
+        "row": 25,
+        "denominator": 0.03104292533385422,
+        "inflation": 5.066970568887389,
+        "unit": "rep223",
+        "condition": "CS",
+        "pop_index": 597,
+        "dose": 3
+       }
+      ],
+      "note": "normalised scores on the records listed in `flagged` divide by a denominator smaller than the reference split's; read ed_absolute for those rows"
+     },
+     "residualised": {
+      "shift_level": {
+       "cosine_res_pooled": 0.13837614241025536,
+       "pearson_res_pooled": 0.13863507296172345,
+       "cosine_res_mean": 0.10711641905610253,
+       "n_conditions_with_residual": 27,
+       "shared_direction_fraction": 0.8257475371118237,
+       "residual_norm_ratio": 0.7411767541563569,
+       "global_dir": [
+        0.1787623027588373,
+        -0.07093538641609978,
+        -0.4652507847337293,
+        -0.46614597452969514,
+        0.6248529680173082,
+        -0.2757326926432021,
+        -0.2323686953909,
+        0.09379172549211136
+       ],
+       "per_condition": [
+        {
+         "cosine_res": 0.7762903896738451,
+         "obs_res_l2": 0.5272945076950489,
+         "pred_res_l2": 0.21511064240337374
+        },
+        {
+         "cosine_res": -0.09832953471724173,
+         "obs_res_l2": 0.32609688487810745,
+         "pred_res_l2": 0.2976625334296549
+        },
+        {
+         "cosine_res": -0.36605148131465104,
+         "obs_res_l2": 0.173572780539714,
+         "pred_res_l2": 0.16143228333847726
+        },
+        {
+         "cosine_res": -0.3360806746900867,
+         "obs_res_l2": 0.33279052788585484,
+         "pred_res_l2": 0.16105346274655288
+        },
+        {
+         "cosine_res": -0.2867737670220571,
+         "obs_res_l2": 0.297966831450396,
+         "pred_res_l2": 0.1756939576241472
+        },
+        {
+         "cosine_res": 0.7811425351226194,
+         "obs_res_l2": 0.7424459094590476,
+         "pred_res_l2": 0.5333645221901848
+        },
+        {
+         "cosine_res": -0.08727804340464901,
+         "obs_res_l2": 0.4504879032877758,
+         "pred_res_l2": 0.514135760838517
+        },
+        {
+         "cosine_res": 0.37031908946927045,
+         "obs_res_l2": 0.5497894139543146,
+         "pred_res_l2": 0.5172373441773965
+        },
+        {
+         "cosine_res": 0.2477113407521269,
+         "obs_res_l2": 0.3698349945256934,
+         "pred_res_l2": 0.1903850809698505
+        },
+        {
+         "cosine_res": -0.14730380769625345,
+         "obs_res_l2": 0.7300649270675841,
+         "pred_res_l2": 0.19338557948244697
+        },
+        {
+         "cosine_res": -0.6632498273087429,
+         "obs_res_l2": 0.33033256570685354,
+         "pred_res_l2": 0.1947903922025702
+        },
+        {
+         "cosine_res": 0.7423159066833264,
+         "obs_res_l2": 0.27166257553394957,
+         "pred_res_l2": 0.3495626639748462
+        },
+        {
+         "cosine_res": 0.8526138499736874,
+         "obs_res_l2": 0.4562509273761383,
+         "pred_res_l2": 0.4760618087067219
+        },
+        {
+         "cosine_res": 0.5528086106796215,
+         "obs_res_l2": 0.38144219416757386,
+         "pred_res_l2": 0.49058503544862603
+        },
+        {
+         "cosine_res": -0.37391338969032206,
+         "obs_res_l2": 0.2974049676462309,
+         "pred_res_l2": 0.2566175443920599
+        },
+        {
+         "cosine_res": -0.2621145911345932,
+         "obs_res_l2": 0.19258184339857054,
+         "pred_res_l2": 0.2511867715783012
+        },
+        {
+         "cosine_res": 0.74558867174169,
+         "obs_res_l2": 0.49807447349851525,
+         "pred_res_l2": 0.2727357791325596
+        },
+        {
+         "cosine_res": 0.48289130287297377,
+         "obs_res_l2": 0.30315052150785626,
+         "pred_res_l2": 0.26843192372612246
+        },
+        {
+         "cosine_res": -0.7713752458029108,
+         "obs_res_l2": 0.37076507022087973,
+         "pred_res_l2": 0.4673395073746874
+        },
+        {
+         "cosine_res": -0.8436117481531942,
+         "obs_res_l2": 0.7708789754388042,
+         "pred_res_l2": 0.4480561996775539
+        },
+        {
+         "cosine_res": 0.34066886331915147,
+         "obs_res_l2": 0.7979257669470955,
+         "pred_res_l2": 0.36811365552344394
+        },
+        {
+         "cosine_res": 0.5087935154218272,
+         "obs_res_l2": 0.17168230874283372,
+         "pred_res_l2": 0.34332719720995825
+        },
+        {
+         "cosine_res": 0.7942447459986791,
+         "obs_res_l2": 0.6198011577800195,
+         "pred_res_l2": 0.435614094038953
+        },
+        {
+         "cosine_res": -0.029158011109948225,
+         "obs_res_l2": 0.22910653452458443,
+         "pred_res_l2": 0.2377693062499763
+        },
+        {
+         "cosine_res": -0.8070996326825982,
+         "obs_res_l2": 0.7053783833818682,
+         "pred_res_l2": 0.3644405763303505
+        },
+        {
+         "cosine_res": 0.6637779117695367,
+         "obs_res_l2": 0.20388234398522334,
+         "pred_res_l2": 0.27028794621572155
+        },
+        {
+         "cosine_res": 0.1053163357636616,
+         "obs_res_l2": 0.3594440527301553,
+         "pred_res_l2": 0.27521121390325526
+        }
+       ]
+      },
+      "mean_response_shift": [
+       0.09451536940310255,
+       -0.03750502285660476,
+       -0.24598782352627696,
+       -0.24646112909991208,
+       0.3303728369087665,
+       -0.1457856432787311,
+       -0.12285819070151908,
+       0.04958964750974633
+      ],
+      "ed_vs_mean_response": {
+       "point": 0.8720748275357942,
+       "lo": 0.7268597241908611,
+       "hi": 1.0077328765889462,
+       "se": 0.0668394177741496,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "interpretation": "ed_vs_mean_response < 1 means the arm beats predicting the mean observed response; the ordinary no-change ratio can be well below 1 while this is above 1"
+     }
+    },
+    "perturbed_mean": {
+     "summary": {
+      "ed_absolute": {
+       "point": 0.20285157795530648,
+       "lo": 0.15562246454653106,
+       "hi": 0.26444167333000346,
+       "se": 0.02745955591181117,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_normalised": {
+       "point": 2.011054876282217,
+       "lo": 1.2427436522881063,
+       "hi": 2.9060900118510733,
+       "se": 0.4376227487442718,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_denominator": {
+       "point": 0.23651670510173267,
+       "lo": 0.15392697413674164,
+       "hi": 0.3363924662416148,
+       "se": 0.04566611997780159,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_pred": {
+       "point": 0.30580084815533326,
+       "lo": 0.26829400186734526,
+       "hi": 0.35512491977948185,
+       "se": 0.021457447569113258,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_denominator": {
+       "point": 0.31278418573405076,
+       "lo": 0.2534735006918898,
+       "hi": 0.37669157080240284,
+       "se": 0.031646550547877184,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_normalised": {
+       "point": 1.1524602140374707,
+       "lo": 0.9911175655907786,
+       "hi": 1.3518707155747123,
+       "se": 0.09907702582831647,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "mmd_pred": {
+       "point": 0.031084157331780538,
+       "lo": 0.02379484026320115,
+       "hi": 0.041101076755927626,
+       "se": 0.004548375245670365,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "mmd_denominator": {
+       "point": 0.037095479720301285,
+       "lo": 0.0238412031711258,
+       "hi": 0.05283488456910874,
+       "se": 0.007419889061150873,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "pearson_delta": {
+       "point": 0.5520676925300118,
+       "lo": 0.460391044551269,
+       "hi": 0.6616077027146589,
+       "se": 0.054709094528760945,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "spearman_delta": {
+       "point": 0.4920634920634921,
+       "lo": 0.37294973544973553,
+       "hi": 0.6209215167548502,
+       "se": 0.06595007442048911,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "r2_delta": {
+       "point": -1.9634188870847846,
+       "lo": -3.641053981439581,
+       "hi": -0.6263510229366316,
+       "se": 0.808352970172069,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "cosine_delta": {
+       "point": 0.5621963166957267,
+       "lo": 0.4728999638952474,
+       "hi": 0.6612730925165321,
+       "se": 0.052321091225969785,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "top_overlap": {
+       "point": 0.2777777777777778,
+       "lo": 0.16666666666666666,
+       "hi": 0.4074074074074074,
+       "se": 0.06223502467266148,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "l2_ratio": {
+       "point": 1.472002894375072,
+       "lo": 1.1608603082793794,
+       "hi": 1.8458968926144408,
+       "se": 0.17684450679556118,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "n_records": 27,
+      "n_units": 27
+     },
+     "n_records": 27,
+     "n_units": 27,
+     "denominator_check": {
+      "n_records": 27,
+      "reference": 0.15729358903880808,
+      "threshold": 0.07864679451940404,
+      "collapse_ratio": 0.5,
+      "median_denominator": 0.15729358903880808,
+      "min_denominator": 0.02030152073964775,
+      "max_denominator": 0.707395267000813,
+      "n_below_threshold": 9,
+      "fraction_below": 0.3333333333333333,
+      "inflation_at_min": 7.74787224346314,
+      "collapsed": true,
+      "flagged": [
+       {
+        "row": 2,
+        "denominator": 0.021727408290215244,
+        "inflation": 7.2394087199826735,
+        "unit": "rep11",
+        "condition": "CS",
+        "pop_index": 87,
+        "dose": 3
+       },
+       {
+        "row": 3,
+        "denominator": 0.0702494735865038,
+        "inflation": 2.2390714265654945,
+        "unit": "rep12",
+        "condition": "CS",
+        "pop_index": 96,
+        "dose": 3
+       },
+       {
+        "row": 4,
+        "denominator": 0.05901589700741061,
+        "inflation": 2.6652749007450782,
+        "unit": "rep13",
+        "condition": "CS",
+        "pop_index": 105,
+        "dose": 3
+       },
+       {
+        "row": 8,
+        "denominator": 0.052828501749726975,
+        "inflation": 2.9774380084443903,
+        "unit": "rep25",
+        "condition": "CS",
+        "pop_index": 188,
+        "dose": 3
+       },
+       {
+        "row": 10,
+        "denominator": 0.06744924770844563,
+        "inflation": 2.3320288125187294,
+        "unit": "rep27",
+        "condition": "CS",
+        "pop_index": 204,
+        "dose": 3
+       },
+       {
+        "row": 14,
+        "denominator": 0.04179925265140794,
+        "inflation": 3.763071802995739,
+        "unit": "rep46",
+        "condition": "CS",
+        "pop_index": 343,
+        "dose": 3
+       },
+       {
+        "row": 15,
+        "denominator": 0.02030152073964775,
+        "inflation": 7.74787224346314,
+        "unit": "rep47",
+        "condition": "CS",
+        "pop_index": 352,
+        "dose": 3
+       },
+       {
+        "row": 23,
+        "denominator": 0.03127487296772591,
+        "inflation": 5.029391780459896,
+        "unit": "rep197",
+        "condition": "CS",
+        "pop_index": 550,
+        "dose": 3
+       },
+       {
+        "row": 25,
+        "denominator": 0.03104292533385422,
+        "inflation": 5.066970568887389,
+        "unit": "rep223",
+        "condition": "CS",
+        "pop_index": 597,
+        "dose": 3
+       }
+      ],
+      "note": "normalised scores on the records listed in `flagged` divide by a denominator smaller than the reference split's; read ed_absolute for those rows"
+     },
+     "residualised": {
+      "shift_level": {
+       "cosine_res_pooled": -1.5589192722668782e-09,
+       "pearson_res_pooled": -1.5834121598768083e-09,
+       "cosine_res_mean": 0.028581697583933936,
+       "n_conditions_with_residual": 27,
+       "shared_direction_fraction": 0.8257475371118237,
+       "residual_norm_ratio": 0.8307057438696419,
+       "global_dir": [
+        0.1787623027588373,
+        -0.07093538641609978,
+        -0.4652507847337293,
+        -0.46614597452969514,
+        0.6248529680173082,
+        -0.2757326926432021,
+        -0.2323686953909,
+        0.09379172549211136
+       ],
+       "per_condition": [
+        {
+         "cosine_res": 0.8514024910438691,
+         "obs_res_l2": 0.5272945076950489,
+         "pred_res_l2": 0.38651370871427837
+        },
+        {
+         "cosine_res": -0.1649482828279867,
+         "obs_res_l2": 0.32609688487810745,
+         "pred_res_l2": 0.3865137091925592
+        },
+        {
+         "cosine_res": -0.21037174848265042,
+         "obs_res_l2": 0.173572780539714,
+         "pred_res_l2": 0.38651371318981853
+        },
+        {
+         "cosine_res": -0.7700455335039211,
+         "obs_res_l2": 0.33279052788585484,
+         "pred_res_l2": 0.38651371065574497
+        },
+        {
+         "cosine_res": -0.419129313180074,
+         "obs_res_l2": 0.297966831450396,
+         "pred_res_l2": 0.38651371120520184
+        },
+        {
+         "cosine_res": 0.49650637627907224,
+         "obs_res_l2": 0.7424459094590476,
+         "pred_res_l2": 0.38651371263877327
+        },
+        {
+         "cosine_res": -0.14088172708407776,
+         "obs_res_l2": 0.4504879032877758,
+         "pred_res_l2": 0.386513710437561
+        },
+        {
+         "cosine_res": 0.16475709559720844,
+         "obs_res_l2": 0.5497894139543146,
+         "pred_res_l2": 0.38651370975015614
+        },
+        {
+         "cosine_res": 0.5464047973535927,
+         "obs_res_l2": 0.3698349945256934,
+         "pred_res_l2": 0.38651370818552494
+        },
+        {
+         "cosine_res": -0.5277142728508366,
+         "obs_res_l2": 0.7300649270675841,
+         "pred_res_l2": 0.38651371522496225
+        },
+        {
+         "cosine_res": -0.7676295434173036,
+         "obs_res_l2": 0.33033256570685354,
+         "pred_res_l2": 0.38651370956188935
+        },
+        {
+         "cosine_res": 0.8568729590707804,
+         "obs_res_l2": 0.27166257553394957,
+         "pred_res_l2": 0.3865137080658548
+        },
+        {
+         "cosine_res": 0.7604231491756042,
+         "obs_res_l2": 0.4562509273761383,
+         "pred_res_l2": 0.38651371227873593
+        },
+        {
+         "cosine_res": 0.4263186270461747,
+         "obs_res_l2": 0.38144219416757386,
+         "pred_res_l2": 0.3865137098135011
+        },
+        {
+         "cosine_res": -0.3118352167450404,
+         "obs_res_l2": 0.2974049676462309,
+         "pred_res_l2": 0.3865137113849415
+        },
+        {
+         "cosine_res": 0.2197032544744481,
+         "obs_res_l2": 0.19258184339857054,
+         "pred_res_l2": 0.3865137119129207
+        },
+        {
+         "cosine_res": 0.5891956430461246,
+         "obs_res_l2": 0.49807447349851525,
+         "pred_res_l2": 0.3865137108573944
+        },
+        {
+         "cosine_res": 0.09370319873683622,
+         "obs_res_l2": 0.30315052150785626,
+         "pred_res_l2": 0.3865137150937969
+        },
+        {
+         "cosine_res": -0.8690521274465368,
+         "obs_res_l2": 0.37076507022087973,
+         "pred_res_l2": 0.3865137101801037
+        },
+        {
+         "cosine_res": -0.9097007206938151,
+         "obs_res_l2": 0.7708789754388042,
+         "pred_res_l2": 0.38651371403304885
+        },
+        {
+         "cosine_res": 0.09111403730952776,
+         "obs_res_l2": 0.7979257669470955,
+         "pred_res_l2": 0.3865137090940824
+        },
+        {
+         "cosine_res": 0.07246018482944486,
+         "obs_res_l2": 0.17168230874283372,
+         "pred_res_l2": 0.38651371224006215
+        },
+        {
+         "cosine_res": 0.7803436247200017,
+         "obs_res_l2": 0.6198011577800195,
+         "pred_res_l2": 0.3865137121525622
+        },
+        {
+         "cosine_res": 0.4234792037482719,
+         "obs_res_l2": 0.22910653452458443,
+         "pred_res_l2": 0.3865137128515593
+        },
+        {
+         "cosine_res": -0.8545669001743494,
+         "obs_res_l2": 0.7053783833818682,
+         "pred_res_l2": 0.386513713441982
+        },
+        {
+         "cosine_res": 0.7313331104699535,
+         "obs_res_l2": 0.20388234398522334,
+         "pred_res_l2": 0.38651371361770187
+        },
+        {
+         "cosine_res": -0.3864365317281029,
+         "obs_res_l2": 0.3594440527301553,
+         "pred_res_l2": 0.3865137132085641
+        }
+       ]
+      },
+      "mean_response_shift": [
+       0.09451536940310255,
+       -0.03750502285660476,
+       -0.24598782352627696,
+       -0.24646112909991208,
+       0.3303728369087665,
+       -0.1457856432787311,
+       -0.12285819070151908,
+       0.04958964750974633
+      ],
+      "ed_vs_mean_response": {
+       "point": 1.4061718486439392,
+       "lo": 1.1781807071989292,
+       "hi": 1.6089152359799714,
+       "se": 0.10888122518080229,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "interpretation": "ed_vs_mean_response < 1 means the arm beats predicting the mean observed response; the ordinary no-change ratio can be well below 1 while this is above 1"
+     }
+    },
+    "no_change": {
+     "summary": {
+      "ed_absolute": {
+       "point": 0.23651670510173267,
+       "lo": 0.15392697413674164,
+       "hi": 0.3363924662416148,
+       "se": 0.04566611997780159,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_normalised": {
+       "point": 1.0,
+       "lo": 1.0,
+       "hi": 1.0,
+       "se": 0.0,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_denominator": {
+       "point": 0.23651670510173267,
+       "lo": 0.15392697413674164,
+       "hi": 0.3363924662416148,
+       "se": 0.04566611997780159,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_pred": {
+       "point": 0.31278418573405076,
+       "lo": 0.2534735006918898,
+       "hi": 0.37669157080240284,
+       "se": 0.031646550547877184,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_denominator": {
+       "point": 0.31278418573405076,
+       "lo": 0.2534735006918898,
+       "hi": 0.37669157080240284,
+       "se": 0.031646550547877184,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_normalised": {
+       "point": 1.0,
+       "lo": 1.0,
+       "hi": 1.0,
+       "se": 0.0,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "mmd_pred": {
+       "point": 0.037095479720301285,
+       "lo": 0.0238412031711258,
+       "hi": 0.05283488456910874,
+       "se": 0.007419889061150873,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "mmd_denominator": {
+       "point": 0.037095479720301285,
+       "lo": 0.0238412031711258,
+       "hi": 0.05283488456910874,
+       "se": 0.007419889061150873,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "r2_delta": {
+       "point": -0.07901889474406104,
+       "lo": -0.12561403918501599,
+       "hi": -0.035693962852283205,
+       "se": 0.023757147555091236,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "top_overlap": {
+       "point": 0.1111111111111111,
+       "lo": 0.037037037037037035,
+       "hi": 0.18518518518518517,
+       "se": 0.03649319214091034,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "l2_ratio": {
+       "point": 0.0,
+       "lo": 0.0,
+       "hi": 0.0,
+       "se": 0.0,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "n_records": 27,
+      "n_units": 27
+     },
+     "n_records": 27,
+     "n_units": 27,
+     "denominator_check": {
+      "n_records": 27,
+      "reference": 0.15729358903880808,
+      "threshold": 0.07864679451940404,
+      "collapse_ratio": 0.5,
+      "median_denominator": 0.15729358903880808,
+      "min_denominator": 0.02030152073964775,
+      "max_denominator": 0.707395267000813,
+      "n_below_threshold": 9,
+      "fraction_below": 0.3333333333333333,
+      "inflation_at_min": 7.74787224346314,
+      "collapsed": true,
+      "flagged": [
+       {
+        "row": 2,
+        "denominator": 0.021727408290215244,
+        "inflation": 7.2394087199826735,
+        "unit": "rep11",
+        "condition": "CS",
+        "pop_index": 87,
+        "dose": 3
+       },
+       {
+        "row": 3,
+        "denominator": 0.0702494735865038,
+        "inflation": 2.2390714265654945,
+        "unit": "rep12",
+        "condition": "CS",
+        "pop_index": 96,
+        "dose": 3
+       },
+       {
+        "row": 4,
+        "denominator": 0.05901589700741061,
+        "inflation": 2.6652749007450782,
+        "unit": "rep13",
+        "condition": "CS",
+        "pop_index": 105,
+        "dose": 3
+       },
+       {
+        "row": 8,
+        "denominator": 0.052828501749726975,
+        "inflation": 2.9774380084443903,
+        "unit": "rep25",
+        "condition": "CS",
+        "pop_index": 188,
+        "dose": 3
+       },
+       {
+        "row": 10,
+        "denominator": 0.06744924770844563,
+        "inflation": 2.3320288125187294,
+        "unit": "rep27",
+        "condition": "CS",
+        "pop_index": 204,
+        "dose": 3
+       },
+       {
+        "row": 14,
+        "denominator": 0.04179925265140794,
+        "inflation": 3.763071802995739,
+        "unit": "rep46",
+        "condition": "CS",
+        "pop_index": 343,
+        "dose": 3
+       },
+       {
+        "row": 15,
+        "denominator": 0.02030152073964775,
+        "inflation": 7.74787224346314,
+        "unit": "rep47",
+        "condition": "CS",
+        "pop_index": 352,
+        "dose": 3
+       },
+       {
+        "row": 23,
+        "denominator": 0.03127487296772591,
+        "inflation": 5.029391780459896,
+        "unit": "rep197",
+        "condition": "CS",
+        "pop_index": 550,
+        "dose": 3
+       },
+       {
+        "row": 25,
+        "denominator": 0.03104292533385422,
+        "inflation": 5.066970568887389,
+        "unit": "rep223",
+        "condition": "CS",
+        "pop_index": 597,
+        "dose": 3
+       }
+      ],
+      "note": "normalised scores on the records listed in `flagged` divide by a denominator smaller than the reference split's; read ed_absolute for those rows"
+     },
+     "residualised": {
+      "shift_level": {
+       "cosine_res_pooled": NaN,
+       "pearson_res_pooled": NaN,
+       "cosine_res_mean": NaN,
+       "n_conditions_with_residual": 0,
+       "shared_direction_fraction": 0.8257475371118237,
+       "residual_norm_ratio": 0.0,
+       "global_dir": [
+        0.1787623027588373,
+        -0.07093538641609978,
+        -0.4652507847337293,
+        -0.46614597452969514,
+        0.6248529680173082,
+        -0.2757326926432021,
+        -0.2323686953909,
+        0.09379172549211136
+       ],
+       "per_condition": [
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.5272945076950489,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.32609688487810745,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.173572780539714,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.33279052788585484,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.297966831450396,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.7424459094590476,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.4504879032877758,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.5497894139543146,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.3698349945256934,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.7300649270675841,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.33033256570685354,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.27166257553394957,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.4562509273761383,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.38144219416757386,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.2974049676462309,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.19258184339857054,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.49807447349851525,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.30315052150785626,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.37076507022087973,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.7708789754388042,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.7979257669470955,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.17168230874283372,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.6198011577800195,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.22910653452458443,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.7053783833818682,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.20388234398522334,
+         "pred_res_l2": 0.0
+        },
+        {
+         "cosine_res": NaN,
+         "obs_res_l2": 0.3594440527301553,
+         "pred_res_l2": 0.0
+        }
+       ]
+      },
+      "mean_response_shift": [
+       0.09451536940310255,
+       -0.03750502285660476,
+       -0.24598782352627696,
+       -0.24646112909991208,
+       0.3303728369087665,
+       -0.1457856432787311,
+       -0.12285819070151908,
+       0.04958964750974633
+      ],
+      "ed_vs_mean_response": {
+       "point": 1.3422704724097356,
+       "lo": 1.0953570062502613,
+       "hi": 1.5678079561409561,
+       "se": 0.13030702269052705,
+       "n_groups": 27,
+       "n_rows": 27,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "interpretation": "ed_vs_mean_response < 1 means the arm beats predicting the mean observed response; the ordinary no-change ratio can be well below 1 while this is above 1"
+     }
+    }
+   },
+   "paired": {
+    "ihcfm_vs_perturbed_mean": {
+     "n_paired_records": 27,
+     "metrics": {
+      "ed_normalised": {
+       "name_a": "ihcfm",
+       "name_b": "perturbed_mean",
+       "mean_a": 0.8937569766185753,
+       "mean_b": 2.011054876282217,
+       "mean_diff": -1.117297899663642,
+       "lo": -1.7998111532299854,
+       "hi": -0.564516008435403,
+       "se": 0.3289987782674484,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 24,
+       "n_units_tied": 0,
+       "sign_test_p": 4.9233436584472656e-05,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_absolute": {
+       "name_a": "ihcfm",
+       "name_b": "perturbed_mean",
+       "mean_a": 0.14551937276697627,
+       "mean_b": 0.20285157795530645,
+       "mean_diff": -0.057332205188330224,
+       "lo": -0.07229446478740946,
+       "hi": -0.04230443762217355,
+       "se": 0.008311598304127586,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 24,
+       "n_units_tied": 0,
+       "sign_test_p": 4.9233436584472656e-05,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_normalised": {
+       "name_a": "ihcfm",
+       "name_b": "perturbed_mean",
+       "mean_a": 0.8924815336098022,
+       "mean_b": 1.1524602140374707,
+       "mean_diff": -0.2599786804276685,
+       "lo": -0.3753141166510904,
+       "hi": -0.1615903920794643,
+       "se": 0.058360664096140484,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 23,
+       "n_units_tied": 0,
+       "sign_test_p": 0.000310748815536499,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "cosine_delta": {
+       "name_a": "ihcfm",
+       "name_b": "perturbed_mean",
+       "mean_a": 0.5062557341457941,
+       "mean_b": 0.5621963166957267,
+       "mean_diff": -0.055940582549932796,
+       "lo": -0.10908426747116085,
+       "hi": -0.003357348345265597,
+       "se": 0.026184971446276382,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 16,
+       "n_units_tied": 0,
+       "sign_test_p": 0.44206833839416504,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "r2_delta": {
+       "name_a": "ihcfm",
+       "name_b": "perturbed_mean",
+       "mean_a": -0.024541912368052563,
+       "mean_b": -1.963418887084784,
+       "mean_diff": 1.9388769747167318,
+       "lo": 0.8289194912454406,
+       "hi": 3.2760195476951828,
+       "se": 0.6636514313851453,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 5,
+       "n_units_tied": 0,
+       "sign_test_p": 0.0015137195587158203,
+       "n_boot": 200,
+       "alpha": 0.05
+      }
+     },
+     "sign_convention": "mean_diff = a - b; NEGATIVE means a is better on a loss metric",
+     "alignment": "paired by (unit, condition, dose, pop_index) identity, not list order"
+    },
+    "ihcfm_vs_no_change": {
+     "n_paired_records": 27,
+     "metrics": {
+      "ed_normalised": {
+       "name_a": "ihcfm",
+       "name_b": "no_change",
+       "mean_a": 0.8937569766185753,
+       "mean_b": 1.0,
+       "mean_diff": -0.10624302338142477,
+       "lo": -0.3181510499349919,
+       "hi": 0.12352830339568796,
+       "se": 0.11861407548944684,
+       "excludes_zero": false,
+       "n_units": 27,
+       "n_units_a_lower": 20,
+       "n_units_tied": 0,
+       "sign_test_p": 0.0191572904586792,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_absolute": {
+       "name_a": "ihcfm",
+       "name_b": "no_change",
+       "mean_a": 0.14551937276697627,
+       "mean_b": 0.23651670510173264,
+       "mean_diff": -0.09099733233475639,
+       "lo": -0.12895894607201772,
+       "hi": -0.048320771417549105,
+       "se": 0.021646738526706275,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 20,
+       "n_units_tied": 0,
+       "sign_test_p": 0.0191572904586792,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_normalised": {
+       "name_a": "ihcfm",
+       "name_b": "no_change",
+       "mean_a": 0.8924815336098022,
+       "mean_b": 1.0,
+       "mean_diff": -0.10751846639019778,
+       "lo": -0.19431323581604004,
+       "hi": -0.017886617657599708,
+       "se": 0.048537008428119914,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 20,
+       "n_units_tied": 0,
+       "sign_test_p": 0.0191572904586792,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "r2_delta": {
+       "name_a": "ihcfm",
+       "name_b": "no_change",
+       "mean_a": -0.024541912368052563,
+       "mean_b": -0.07901889474406104,
+       "mean_diff": 0.05447698237600848,
+       "lo": -0.26452044519539436,
+       "hi": 0.3349703782569172,
+       "se": 0.16463322466414332,
+       "excludes_zero": false,
+       "n_units": 27,
+       "n_units_a_lower": 7,
+       "n_units_tied": 0,
+       "sign_test_p": 0.0191572904586792,
+       "n_boot": 200,
+       "alpha": 0.05
+      }
+     },
+     "sign_convention": "mean_diff = a - b; NEGATIVE means a is better on a loss metric",
+     "alignment": "paired by (unit, condition, dose, pop_index) identity, not list order"
+    },
+    "perturbed_mean_vs_no_change": {
+     "n_paired_records": 27,
+     "metrics": {
+      "ed_normalised": {
+       "name_a": "perturbed_mean",
+       "name_b": "no_change",
+       "mean_a": 2.011054876282217,
+       "mean_b": 1.0,
+       "mean_diff": 1.0110548762822174,
+       "lo": 0.24274365228810638,
+       "hi": 1.9060900118510733,
+       "se": 0.4376227487442718,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 16,
+       "n_units_tied": 0,
+       "sign_test_p": 0.44206833839416504,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "ed_absolute": {
+       "name_a": "perturbed_mean",
+       "name_b": "no_change",
+       "mean_a": 0.20285157795530645,
+       "mean_b": 0.23651670510173264,
+       "mean_diff": -0.033665127146426166,
+       "lo": -0.08123192967495446,
+       "hi": 0.0212883817749836,
+       "se": 0.027138155395769435,
+       "excludes_zero": false,
+       "n_units": 27,
+       "n_units_a_lower": 16,
+       "n_units_tied": 0,
+       "sign_test_p": 0.44206833839416504,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "sw_normalised": {
+       "name_a": "perturbed_mean",
+       "name_b": "no_change",
+       "mean_a": 1.1524602140374707,
+       "mean_b": 1.0,
+       "mean_diff": 0.15246021403747068,
+       "lo": -0.008882434409221575,
+       "hi": 0.3518707155747126,
+       "se": 0.09907702582831648,
+       "excludes_zero": false,
+       "n_units": 27,
+       "n_units_a_lower": 16,
+       "n_units_tied": 0,
+       "sign_test_p": 0.44206833839416504,
+       "n_boot": 200,
+       "alpha": 0.05
+      },
+      "r2_delta": {
+       "name_a": "perturbed_mean",
+       "name_b": "no_change",
+       "mean_a": -1.963418887084784,
+       "mean_b": -0.07901889474406104,
+       "mean_diff": -1.8843999923407233,
+       "lo": -3.5606831370881467,
+       "hi": -0.5372950384776467,
+       "se": 0.8059088214427064,
+       "excludes_zero": true,
+       "n_units": 27,
+       "n_units_a_lower": 13,
+       "n_units_tied": 0,
+       "sign_test_p": 1.0,
+       "n_boot": 200,
+       "alpha": 0.05
+      }
+     },
+     "sign_convention": "mean_diff = a - b; NEGATIVE means a is better on a loss metric",
+     "alignment": "paired by (unit, condition, dose, pop_index) identity, not list order"
+    }
+   }
+  }
+ }
+}

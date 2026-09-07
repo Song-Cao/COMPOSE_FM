@@ -1,0 +1,32 @@
+=== table1: k=7, 21 folds x 3 seeds, 9 arms ===
+--- tuning r on HELD-OUT SINGLETONS (leak-free) ---
+/Users/songcao/workdir/FM_project/src/composefm/ihcfm_hierarchy.py:933: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/miniforge3/conda-bld/libtorch_1786372171327/work/torch/csrc/autograd/generated/python_variable_methods.cpp:823.)
+  hist.append(float(loss))
+  r= 2  held-out singleton normalised ED 1.0976
+  r= 8  held-out singleton normalised ED 1.2378
+  r=15  held-out singleton normalised ED 1.2459
+    selected r = 2
+--- sweep (r=2, 4 shards) ---
+  shard 1/4 merged (16 cells, 3402s)
+  shard 2/4 merged (32 cells, 3402s)
+  shard 3/4 merged (48 cells, 3404s)
+  shard 4/4 merged (63 cells, 3404s)
+
+--- ranking (21 folds x 3 seeds) ---
+  a  IHC-FM (main effects only)   0.6249 [0.5220, 0.7318]  p= 16,646  66.7s
+  a  IHC-FM (full)                0.6402 [0.5582, 0.7265]  p= 16,646  72.5s
+  a  MonolithicCFM                0.7413 [0.6128, 0.8856]  p= 16,545  21.1s
+  a  FactoredAdditiveCFM          0.7753 [0.6373, 0.9322]  p= 16,765  27.4s
+  a  LinearResponse               0.8300 [0.7230, 0.9461]  p=      0  0.0s
+  a  DeepSetsEndpoint             0.8728 [0.7593, 0.9959]  p= 16,687  18.8s
+  b  NoChange                     1.0000 [1.0000, 1.0000]  p=      0  0.0s  <- CI crosses no-change
+  b  MatchingMean                 1.0089 [0.9666, 1.0550]  p=      0  0.0s  <- CI crosses no-change
+  b  PerturbedMean                1.0333 [1.0264, 1.0402]  p=      0  0.0s
+
+VERDICT: separated_but_below_margin
+UNDERPOWERED FOR A HEADLINE CLAIM. The paired CI excludes zero, but the margin over FactoredAdditiveCFM is +0.135 normalised ED, below the 0.25 threshold the power analysis requires. Report as a small, precisely bounded difference, NOT as a win.
+
+wrote /Users/songcao/workdir/FM_project/results/table1.json
+wrote /Users/songcao/workdir/FM_project/results/tables/table1.tex
+total 3590s

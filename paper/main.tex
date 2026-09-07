@@ -1,11 +1,21 @@
-% COMPOSE-FM -- NeurIPS workshop format (4 pages + refs)
-% RULE 0: this is a FLOW MATCHING METHOD paper. Finance and biology are validation.
-% The method section must contain no domain vocabulary.
-% NOTE ON BUILDING: no LaTeX toolchain was available in the environment where this was
-% written, so this file has NOT been compiled. Drop `neurips_2025.sty` (or the style for
-% the target workshop) next to it and build with pdflatex; if the style file is absent the
-% \IfFileExists fallback below gives a plain-article build with the right geometry so the
-% content can be read and page-counted.
+% =====================================================================================
+% IHC-FM: Intrinsic Hierarchical Compositional Flow Matching
+% NeurIPS workshop format -- ~4-5 pages body + appendix.
+%
+% RULE 0. This is a FLOW MATCHING METHOD paper. The method sections (2-4) are
+% DOMAIN-FREE: no cells, genes, drugs, assets, prices or orders appear before Section 6.
+% Section 6's two case studies are validation, not the contribution.
+%
+% BUILD NOTE. No LaTeX toolchain was available in the environment where this file was
+% written, so it has NOT been compiled. The preamble is deliberately conservative and the
+% neurips style is wrapped in \IfFileExists with a geometry+natbib fallback, so a build
+% succeeds whether or not the style file is present. Brace and environment balance were
+% checked programmatically (see the report accompanying this file), not by eye.
+%
+% FIGURES. Paths go through \newcommand macros defined below and are used as
+% \includegraphics{\figtheory}. Never place a platform artifact marker inside the braces
+% of \includegraphics: nothing expands it at compile time, and {{{...}}} is unparseable.
+% =====================================================================================
 \documentclass{article}
 \IfFileExists{neurips_2025.sty}{\usepackage[final]{neurips_2025}}{%
   \usepackage[margin=1in]{geometry}\usepackage{natbib}}
@@ -16,27 +26,48 @@
 \usepackage{booktabs}
 \usepackage{amsfonts,amsmath,amssymb,amsthm}
 \usepackage{graphicx}
-\usepackage{xcolor}
 
 \newtheorem{proposition}{Proposition}
-% Figure path indirection. Defined once here so the include site below has unambiguous
-% single-brace syntax: an artifact marker written directly inside \includegraphics{...}
-% yields {{{...}}}, which graphicx cannot parse.
+
+% ---- figure path macros (single-brace include sites) --------------------------------
+\newcommand{\figtheory}{figures/fig1_theory.png}
+\newcommand{\figtable}{figures/fig2_table1.png}
+\newcommand{\figcases}{figures/fig3_casestudies.png}
+
+% Guarded include. The three figure files above are produced by a separate track and were
+% NOT on disk when this file was written, so an unguarded \includegraphics would abort the
+% build. \figorbox typesets the graphic when the file exists and a visible placeholder box
+% naming the missing path when it does not, so the paper always compiles and a missing
+% figure is impossible to overlook in the PDF.
+% Table 1 label indirection. The externally generated results/tables/table1.tex carries
+% \label{tab:main}; the local fallback table carries \label{tab:table1}. All references go
+% through \tabonelabel so they resolve in either case.
 %
-% This is a LaTeX source file meant to be compiled with pdflatex, so the path is a plain
-% relative path and the figure must sit at paper/figures/fig2_case_studies.png (it does,
-% in the repo). Do not substitute a platform artifact marker here: nothing expands it at
-% compile time, so it would reach graphicx verbatim and fail. The figure is also stored as
-% an artifact (fig2_case_studies.png, artifact_id
-% e4061ed5-fad8-4faf-9652-a2dba830d479, version_id
-% 511f4f32-ae16-4029-b367-617206186d6b) if you need to retrieve the image itself.
-\newcommand{\figcases}{figures/fig2_case_studies.png}
+% The file test MUST happen here in the preamble, not at the \input site in the body: the
+% only \ref{\tabonelabel} occurs in the contributions list, which precedes the \input, and a
+% macro renewed after its use site would expand to the wrong label. The \input branches in
+% the body therefore only choose what to typeset; they never touch \tabonelabel.
+\newcommand{\tabonelabel}{tab:table1}
+\IfFileExists{../results/tables/table1.tex}{\renewcommand{\tabonelabel}{tab:main}}{%
+  \IfFileExists{results/tables/table1.tex}{\renewcommand{\tabonelabel}{tab:main}}{}}
 
-\newcommand{\XP}{X_{\mathcal{P}}}
-\newcommand{\Rd}{\mathbb{R}^d}
+\newcommand{\figorbox}[1]{%
+  \IfFileExists{#1}{\includegraphics[width=\textwidth]{#1}}{%
+    \fbox{\parbox[c][6em][c]{0.95\textwidth}{\centering
+      \textbf{MISSING FIGURE FILE}\\[0.4em]
+      \texttt{#1}\\[0.4em]
+      produced by the figure track; absent at build time}}}}
 
-\title{Compose the Generators, Not the Displacements:\\
-Covariant Composition of Intervention Flows}
+% ---- notation ----------------------------------------------------------------------
+\newcommand{\Rd}{\mathbb{R}^{d}}
+\newcommand{\RD}{\mathbb{R}^{D}}
+\newcommand{\Pset}{\mathcal{P}}
+\newcommand{\Dec}{\mathrm{Dec}}
+\newcommand{\ED}{\mathrm{ED}}
+\newcommand{\ie}{i.e.\ }
+
+\title{Intrinsic Hierarchical Compositional Flow Matching:\\
+Chart-Covariant Velocity Fields for Unseen Intervention Sets}
 
 \author{%
   Anonymous Author(s)\\
@@ -48,303 +79,988 @@ Covariant Composition of Intervention Flows}
 \maketitle
 
 \begin{abstract}
-Models that predict the effect of combined interventions in a latent space almost
-universally \emph{add displacements}: each intervention is mapped to a vector, and a
-combination is the sum. We show this is not a chart-independent operation. Under a
-diffeomorphism of the latent space, a sum of displacements transforms with an error of
-order $\|d\|^2$, so the prediction depends on an arbitrary choice of coordinates, whereas
-a sum of \emph{vector fields} is exactly covariant. We measure the defect: summing fields
-reproduces the reference to $5.5\times 10^{-17}$ while summing displacements errs by
-$1.7\times 10^{-3}$, and the error grows with the number of interventions, the exposure,
-and the anisotropy of the latent geometry. This motivates COMPOSE-FM, a flow-matching
-operator that composes learned \emph{generators}: a state-dependent contraction gate, a
-sparse pairwise coupling term made tensorial by a Levi-Civita connection correction, and
-exposure entering as integration time, which makes the exposure semigroup exact by
-construction rather than fitted. On two unrelated domains -- limit-order-flow composition
-in cryptocurrency markets and a patient-derived organoid drug-combination ladder with a
-held-out triple -- composing generators improves over a trained displacement baseline of
-matched capacity by $2.9\times$ and $3.0\times$ respectively on intervention sets never
-seen during training. We also report where the method does not help, and why.
+Conditional flow matching is normally trained for one target distribution at a time. We
+consider instead a velocity field indexed by a \emph{set} of interventions, so that the
+distributional response to a combination never observed during training is a prediction
+rather than a fit. The obstacle is geometric: models in this setting act in a learned
+latent space that is defined only up to a diffeomorphism, and the operation they almost
+universally perform --- adding one displacement per intervention --- is not invariant under
+that reparameterisation. We give IHC-FM, in which the velocity field is assembled as the
+metric-inverse of a pulled-back ambient one-form, $v = G^{-1}J^{\top}b$ with
+$G = J^{\top}W J$. Because every ingredient is a function of the \emph{observed} point,
+each carries the correct tensor valence and the whole learned field transforms as a vector
+field, for arbitrary learned decoder, metric and one-form: measured relative residual
+$1.63\times10^{-15}$ analytically and $7.26\times10^{-16}$ for the implemented field. On top
+of this we place a permutation-invariant low-rank interaction hierarchy whose interaction
+term is \emph{bit-exactly} zero on singletons ($0.0$, $15/15$ cases) at $O(kr)$ rather than
+$O(k^{2})$ cost ($121\times$ speedup at $k{=}32$), a boundary-correct exposure response, and
+a saturation operator expressed in the chart-invariant metric norm --- whose coordinate
+alternatives we measure to break covariance at $2.2\times10^{-2}$. We also report an
+evaluation-validity result that we believe matters beyond this method: the CFM loss is
+\textbf{not comparable across couplings}, because it tracks the identity-pair fraction a
+coupling produces, and on our data the coupling ranking inverts between CFM loss and a
+distributional metric. Two case studies validate the construction and are reported with
+their negatives: IHC-FM beats an additive-displacement baseline on both
+(organoid screen $-1.577$ $[-2.100, -1.101]$ over $136$ paired populations; three of four
+purged financial splits with CIs excluding zero), while \emph{losing} to the no-change
+control on the organoid screen ($+0.688$ $[+0.351, +1.058]$).
 \end{abstract}
 
+% =====================================================================================
 \section{Introduction}
+% =====================================================================================
 
-Predicting the effect of applying several interventions at once is a recurring problem:
-which perturbations combine super-additively in a cell, how simultaneous order flow moves
-a price, how two treatments interact. A dominant modelling pattern encodes each
-intervention as a latent displacement and predicts a combination by adding those
-displacements. This pattern underlies compositional perturbation autoencoders and related
-latent perturbation models, and it is attractive because it is simple and because the
-additive prediction is a sensible null.
+A flow-matching model is usually asked to transport one source distribution to one target.
+A different question arises whenever a system can be acted on in several ways at once: given
+a finite set of primitive interventions, each applied at some scalar exposure, predict the
+distributional response to a \emph{subset that was never observed}. Writing $\Pset$ for the
+active subset and $\tau$ for its exposures, we want a single velocity field
+$v_{\theta}(t, z \mid \Pset, \tau)$ whose time-one flow pushes the pre-intervention
+population onto the post-intervention one, for subsets outside the training support.
 
-Our starting point is that this pattern has a geometric defect that has not, to our
-knowledge, been stated. A latent space learned by an autoencoder or by PCA is defined only
-up to a smooth reparameterisation: nothing in the training objective distinguishes $z$ from
-$\psi(z)$ for a diffeomorphism $\psi$. A modelling operation that is meant to express a
-fact about interventions should therefore not depend on which of those equivalent charts
-was chosen. Adding displacements does depend on it. Adding \emph{vector fields} does not.
+The dominant modelling pattern encodes each intervention $p$ as a latent displacement
+$\delta_{p}$ and predicts a combination by summing them. Our starting observation is that
+this is not a coordinate-free operation. The latent space in which the sum is taken is
+learned, and nothing in a reconstruction or flow-matching objective distinguishes $z$ from
+$\psi(z)$ for a diffeomorphism $\psi$. A vector \emph{field} transforms linearly under
+$\psi$ with no remainder; a finite \emph{displacement} does not, and picks up a defect that
+is second order in its norm (Proposition~\ref{prop:defect}). A modelling operation intended
+to express a fact about interventions therefore depends on an arbitrary choice of chart.
 
-This is not a philosophical point; it is measurable, and it grows in exactly the regimes
-practitioners care about -- more simultaneous interventions, stronger exposures, more
-anisotropic latent geometry (\S\ref{sec:defect}). It also suggests what to replace the
-pattern with: a model whose primitive object is a generator $X_p$ rather than a
-displacement $d_p$, and whose composition rule acts on fields.
+Our response is not to correct the defect term by term but to build a field for which the
+question does not arise. IHC-FM parameterises the velocity as
+\begin{equation}
+v(t, z \mid \Pset, \tau) \;=\; G(z)^{-1} J(z)^{\top} b\bigl(t, \Dec(z), c, a(\tau, \Pset)\bigr),
+\qquad G = J^{\top} W(\Dec(z))\, J ,
+\label{eq:field}
+\end{equation}
+where $\Dec$ is a decoder to an observed space, $J$ its Jacobian, $W$ an ambient
+positive-definite weight, and $b$ an ambient one-form built as a hierarchy over the
+intervention set. Every ingredient is a function of the observed point $\Dec(z)$, which is
+invariant under a change of latent chart; consequently $G$ is a $(0,2)$ tensor, $J^{\top}b$
+is a $(0,1)$ tensor, and $v$ is a vector field --- \emph{by valence, for arbitrary learned
+components}, with no term-by-term repair (Proposition~\ref{prop:cov}).
 
 \paragraph{Contributions.}
 \begin{enumerate}
-\item We identify and measure a covariance defect in displacement-additive composition,
-      and show a sum of generators is exactly covariant while a sum of displacements is
-      not (\S\ref{sec:defect}).
-\item We give COMPOSE-FM, a flow-matching composition operator with a state-dependent
-      contraction gate, a saturating exposure response with a \emph{learned} exponent, and
-      a sparse pairwise coupling term that we make tensorial with a connection correction
-      (\S\ref{sec:method}). Exposure is integration time, so the exposure semigroup holds
-      to solver accuracy ($2.3\times10^{-7}$) rather than being learned.
-\item We validate on two unrelated domains and report the negatives as carefully as the
-      positives (\S\ref{sec:experiments}).
+\item \textbf{A chart-covariant compositional velocity field} (\S\ref{sec:method},
+      \S\ref{sec:pullback}). The pullback construction of
+      Eq.~\ref{eq:field} makes the entire learned field transform as a vector field
+      (measured $1.63\times10^{-15}$ analytically, $7.26\times10^{-16}$ for the implemented
+      field, stable to $9.61\times10^{-16}$ under a $1000\times$ drive stress). Covariance
+      follows from the \emph{valences} of the objects, so it does not depend on any learned
+      quantity being correct --- and it forbids the routine Euclidean stabiliser
+      $G \to G + \epsilon I$, whose cost we measure (\S\ref{sec:props}).
+\item \textbf{A structurally-identified interaction hierarchy.} Interactions enter through a
+      second set moment, giving permutation invariance to $7.8\times10^{-16}$ and
+      \emph{bit-exact} vanishing on singletons and on zero exposures, at $O(kr)$ cost
+      (\S\ref{sec:hier}), driven by a boundary-correct exposure response
+      (Eq.~\ref{eq:hill}, \S\ref{sec:dose}) and bounded by a chart-invariant saturation
+      operator (\S\ref{sec:sat}). Because the interaction term is exactly zero on every singleton,
+      leave-one-combination-out is a genuine test of it rather than a re-fit.
+\item \textbf{An evaluation-validity result about couplings.} The CFM loss tracks the
+      identity-pair fraction a coupling induces and is therefore \emph{not} comparable
+      across couplings; we measure a ranking reversal in which the coupling that is worst on
+      CFM loss by a factor of eight is \emph{best} on a distributional metric, while the
+      exact-assignment coupling sits at the good end of the CFM-loss column and is worse
+      than predicting no change distributionally (\S\ref{sec:cfm}).
+\item \textbf{Two case studies reported with their negatives}, against a
+      parameter-matched baseline ladder whose statistical power we measure and report
+      (\S\ref{sec:baselines}; Table~\ref{\tabonelabel} and Figure~\ref{fig:table1} are
+      generated externally and are placeholders in this build), including a
+      headline negative --- IHC-FM loses to the no-change control on one of them
+      (\S\ref{sec:exp}, \S\ref{sec:limits}). Positioning against prior flow-matching,
+      perturbation-modelling and benchmark-validity work is in \S\ref{sec:related}, and
+      hyperparameters in Appendix~\ref{app:hparams}.
 \end{enumerate}
 
-\section{The covariance defect}
-\label{sec:defect}
+A retraction belongs in the contributions list rather than a footnote. An earlier version of
+this work centred a connection-corrected pairwise coupling term added to the instantaneous
+velocity. Our own diagnosis shows the justification was circular: integrating the summed
+field \emph{already} produces the symmetric kinematic cross term, so the added term inserts a
+second, collinear copy of it (\S\ref{sec:doublecount}). That term survives here only as an
+ablation arm.
 
-Let $\psi:\Rd\to\Rd$ be a diffeomorphism, understood as a change of latent chart. A
-vector field transforms as $\tilde X(\tilde z) = D\psi(z) X(z)$, so a sum of fields
-transforms as the sum -- composition of generators commutes with the change of chart
-exactly. A displacement is not a vector at a point but a difference of two points, and
-$\psi(z + d) - \psi(z) = D\psi(z)d + O(\|d\|^2)$: the quadratic remainder is precisely the
-chart dependence.
-
-We measure this on a controlled construction where the ground truth is known. Taking two
-generators, a random polynomial diffeomorphism, and comparing the pushforward of the
-composed prediction against the prediction composed natively in the new chart, we find
-
-\begin{center}
-\begin{tabular}{lc}
-\toprule
-composition rule & relative discrepancy \\
-\midrule
-sum of vector fields & $5.5\times10^{-17}$ \\
-integrate the summed field & $3.5\times10^{-14}$ \\
-sum of displacements & $1.7\times10^{-3}$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\noindent The first two are at machine and solver precision; the third is not, and it is
-the operation that displacement-additive models perform. The defect is not a fixed
-constant: it grows along every axis that makes the problem harder. Increasing the number
-of simultaneous interventions from $k{=}2$ to $k{=}5$ raises it from $2.79\times10^{-2}$ to
-$5.97\times10^{-2}$; increasing exposure $\tau$ from $0.5$ to $3.0$ raises it from
-$1.40\times10^{-2}$ to $8.19\times10^{-2}$; increasing latent anisotropy from $1$ to $30$
-raises it from $2.79\times10^{-2}$ to $3.98\times10^{-2}$. In a jointly reachable regime
-($k{=}4$, $\tau{=}2$, anisotropy $10$) the displacement error reaches $7.84\times10^{-2}$,
-$12.1\times$ the measurement noise floor, while generator composition stays below
-$10^{-8}$ throughout.
-
-\paragraph{Honest boundary.} At $k{=}2$, $\tau{=}1$ and generic (near-isotropic) geometry
-the defect sits at $1.36\times$ the noise floor -- detectable but not dominant. The defect
-matters for many interventions, strong exposures, or curved latent geometry; it does not
-by itself explain a failure at $k{=}2$.
-
-\section{COMPOSE-FM}
+% =====================================================================================
+\section{The compositional velocity field}
 \label{sec:method}
+% =====================================================================================
 
-\paragraph{Setup.} A state is $z\in\Rd$. Each intervention $p$ carries a learned autonomous
-generator $X_p(z)$ and an exposure $\tau_p\ge 0$, the parameter of the one-parameter family
-generated by $X_p$. For a set $\mathcal{P}$ the operator is
-%
+Throughout, a state is a point $z$ in a latent chart $Z = \Rd$; an \emph{intervention} is an
+index $p$ into a finite set $\{1, \dots, k\}$; an \emph{exposure} is a scalar
+$\tau_{p} \ge 0$; a \emph{population} is an empirical measure on an observed space
+$\RD$. Nothing else is assumed about what these indices mean.
+
+\subsection{Chart covariance by valence}
+\label{sec:pullback}
+
+Let $\Dec : Z \to \RD$ be a $C^{1}$ immersion with Jacobian $J_{\Dec}(z)$ of full column
+rank, let $W(x)$ be a positive-definite weight on the observed space, and let $b(x)$ be an
+observed-space one-form. Define
 \begin{equation}
-\XP(z) \;=\; \underbrace{\gamma(z,\mathcal{P})\sum_{p\in\mathcal{P}}\tau_p X_p(z)}_{\text{gated additive part}}
-\;+\; \underbrace{\tfrac12\sum_{p<q}\beta_{pq}(z)\,S^{\nabla}_{pq}(z)}_{\text{coupling}},
-\label{eq:operator}
+G(z) = J_{\Dec}^{\top} W(\Dec(z)) J_{\Dec}, \qquad
+\alpha(z) = J_{\Dec}^{\top} b(\Dec(z)), \qquad
+v(z) = G(z)^{-1}\alpha(z).
+\label{eq:pullback}
 \end{equation}
-%
-and the prediction is the time-one flow $z(1)=\phi^1_{\XP}(z(0))$, trained by flow
-matching against the observed post-intervention distribution. Every term below is a
-function of the state and the intervention set only; no domain quantity appears.
+A change of latent chart is a diffeomorphism $\psi$ acting on $z$ alone, with the decoder
+carried along as $\Dec' = \Dec \circ \psi^{-1}$. The observed point is then an
+\emph{invariant} of the re-chart, $\Dec'(\psi(z)) = \Dec(z)$, and every consequence follows
+mechanically: $J_{\Dec'} = J_{\Dec} J^{-1}$ with $J = D\psi$, hence
+$G' = J^{-\top} G J^{-1}$ and $\alpha' = J^{-\top}\alpha$, hence $v' = J v$
+(Proposition~\ref{prop:cov}). The design rule this imposes is total and easy to violate:
+\emph{any} scalar, vector or tensor the field depends on must be a function of the observed
+point $x$ (or of $t, \tau, c$, which are chart-blind), never of the latent coordinate $z$.
 
-\paragraph{Contraction gate.} Interventions act through shared downstream capacity, so
-their joint effect generally falls short of the sum. We take
-$\gamma(z,\mathcal{P}) = g(z,\mathcal{P})\,\bigl(1+(T/\kappa(z))^{\nu}\bigr)^{-1}$ with
-$T=\sum_p \tau_p$, where $g\in(0,1)$ is a permutation-invariant function of the state and
-the active generators, and $\kappa>0,\nu>0$ are learned. The second factor is what makes
-exposure extrapolation possible: a purely multiplicative gate still leaves the drive
-growing linearly in $T$, so $\|\XP\|\sim T^{1-\nu}$ for $T\gg\kappa$ lets the operator
-represent a saturating response law with a \emph{learned} exponent rather than an assumed
-one. We do not assume $\nu=1/2$; we fit it.
+The rule has teeth. It forbids the additive Euclidean stabiliser $G \to G + \epsilon I$,
+because $I$ is not a $(0,2)$ tensor; conditioning must instead be applied in the observed
+space, $W \to W + w_{\min} I_{D}$, which is covariant precisely because $x$ is not being
+transformed. We measure both halves of this contrast in \S\ref{sec:props}.
 
-\paragraph{Coupling, and why it needs a connection.} The natural second-order object is the
-symmetric field $S_{pq}=DX_q X_p + DX_p X_q$, which is the leading term in
-joint-minus-additive. But $S_{pq}$ is \emph{not} a tensor: measured pushforward-versus-native
-discrepancy is $1.0\times10^{-1}$, i.e. the same defect one derivative up. Subtracting the
-Levi-Civita connection of a learned metric,
-$S^{\nabla}_{pq} = DX_q X_p + DX_p X_q - 2\Gamma(z)[X_p,X_q]$,
-restores tensoriality to $1.2\times10^{-11}$. (The antisymmetric part, the Lie bracket, is
-already tensorial at $1.7\times10^{-16}$, which is why bracket-based methods never meet
-this problem -- and why the symmetric part, which carries the magnitude of the
-interaction, does.) The weights $\beta_{pq}(z)$ use a hard-concrete $L_0$ gate so that
-exact zeros are representable: the model can state that a pair does not interact in a given
-state.
+\subsection{Exposure response with correct boundaries}
+\label{sec:dose}
 
-\paragraph{Exposure is integration time.} Because each $X_p$ is autonomous, integrating a
-fixed field for time $s+t$ equals integrating for $s$ then $t$. We verify this on the
-trained model at $2.3\times10^{-7}$ relative error, i.e. exact up to the RK2 solver. We
-state the property precisely: it holds for the exposure-parameterised \emph{flow}. The
-weaker claim ``scaling $\tau$ by $c$ equals scaling time by $c$'' is only approximate
-($3.6\times10^{-5}$) because $\gamma$ depends on $\tau$, and we do not claim it.
+Exposure enters through a per-intervention amplitude $a_{p}(\tau_{p}) \ge 0$, which we take
+from the Hill family written in its numerically correct form,
+\begin{equation}
+a_{p}(\tau) = A_{p}\,\sigma\bigl(h_{p}(\log \tau - \log e_{p})\bigr) \quad (\tau > 0),
+\qquad a_{p}(0) = 0 ,
+\label{eq:hill}
+\end{equation}
+with $A_{p} = e^{\ell_{p}}$, $h_{p} > 0$, $e_{p} > 0$ learned per intervention and $\sigma$
+the logistic function. This is algebraically the textbook
+$A\tau^{h}/(\tau^{h} + e^{h})$, but evaluating it as a logistic of a log-ratio has no
+$\tau^{h}$ and no division, so there is no overflow or $0/0$ at either endpoint. Three
+properties are then structural rather than fitted: $a_{p}(0) = 0$ \emph{bit-exactly} (via a
+branch on $\tau > 0$, with the standard double-\texttt{where} so the backward pass stays
+finite when $h < 1$); $a_{p}$ is strictly increasing on $\tau > 0$ because $\sigma$ and
+$\log$ are; and $a_{p} < A_{p}$ strictly, so boundedness is a ceiling rather than a clamp.
+The exact zero is what the interaction hierarchy's vanishing property rests on.
 
-\paragraph{Implementation.} The coupling requires Jacobian-vector products for every pair
-at every integration substep. Batching all pairs into a single JVP call makes the cost
-independent of $k$ (exact to $0.0$ against the naive loop, $\approx 2\times$ faster), and
-computing the connection's third term as one reverse-mode gradient of a scalar rather than
-$d$ forward JVPs reduces that term from $O(d)$ passes to $O(1)$.
+\subsection{A permutation-invariant low-rank interaction hierarchy}
+\label{sec:hier}
 
-\section{Experiments}
-\label{sec:experiments}
+Let $e_{p} \in \mathbb{R}^{r}$ be a learned intervention embedding and $u_{p} = a_{p}e_{p}$.
+Define two set moments and the one-form
+\begin{align}
+m_{1} &= \sum_{p} u_{p}, &
+m_{2} &= \tfrac{1}{2}\Bigl( m_{1} \odot m_{1} - \sum_{p} u_{p} \odot u_{p} \Bigr), \\
+b(t, x, c) &= A_{1}(t, x, c, m_{1})\, m_{1} \;+\; C_{2}(t, x, c, m_{1})\, m_{2},
+\label{eq:hierarchy}
+\end{align}
+where $A_{1}, C_{2} \in \mathbb{R}^{D \times r}$ are produced by two heads and $c$ is an
+optional population code. Both branches are \emph{structurally multiplied by their moment},
+and three properties follow from that form rather than from training.
 
-We evaluate with normalised energy distance,
-$\mathrm{ED}(\hat\mu,\mu)/\mathrm{ED}(\mu_0,\mu)$, where $\mu_0$ is the pre-intervention
-distribution: $1.0$ means no better than predicting no change, $0$ is perfect. The
-baseline is a trained displacement model of matched trunk width, depth and optimisation
-budget, differing only in the composition rule. Populations are unpaired, so all models are
-trained with a distributional (sliced-$W_2$ plus mean) objective; a squared-error objective
-drives predictions to the conditional mean, which this metric correctly punishes more than
-inaction.
+\textbf{(H1) Permutation invariance.} $m_{1}$ and $m_{2}$ are symmetric functions of the
+multiset $\{(a_{p}, e_{p})\}$, so $b$ is invariant to any consistent relabelling of the
+intervention indices.
+
+\textbf{(H2) Bit-exact singleton vanishing.} $m_{2}$ collects exactly the cross terms
+$a_{p}a_{q}$, $p \neq q$, so if at most one amplitude is nonzero then $m_{2} = 0.0$
+\emph{exactly} and the interaction contribution is the exact zero vector. The grouping in
+Eq.~\ref{eq:hierarchy} is load-bearing: forming $u_{p}$ \emph{first} makes the singleton case
+a bit-identical cancellation $u_{p}\odot u_{p} - u_{p}\odot u_{p} = 0.0$, whereas the
+algebraically equal $\tfrac12[(\sum a_{p}e_{p})^{2} - \sum a_{p}^{2}e_{p}^{2}]$ rounds the two
+terms differently and leaves an $O(10^{-17})$ residual. The same argument covers a zero
+exposure inside a larger set.
+
+\textbf{(H3) Zero-exposure identity.} The main branch is likewise multiplied by $m_{1}$, so
+$a = 0$ gives $b \equiv 0$ exactly and the flow is the identity map. A model with an
+unmultiplied main head would have to \emph{learn} that a null intervention does nothing.
+
+\textbf{Cost.} Both moments are $O(kr)$; no $k^{2}$ object is ever formed. The explicit
+double loop is retained only as a numerical oracle, and the two agree to round-off
+($1.4\times10^{-15}$), so the cost claim concerns the same quantity computed more cheaply
+rather than an approximation.
+
+\subsection{Saturation in the invariant norm}
+\label{sec:sat}
+
+Bounding the field's magnitude is a practical necessity and a covariance trap: any bound
+expressed through a coordinate-dependent quantity silently converts the field into a
+non-vector object. We bound the \emph{metric} norm, which is invariant
+($v'^{\top}G'v' = v^{\top}Gv$), by a ceiling read off the observed point:
+\begin{equation}
+n(z) = \sqrt{v^{\top} G v}, \qquad
+\kappa(x) = \mathrm{softplus}(\mathrm{head}(x)) + \kappa_{\min} > 0, \qquad
+v_{\mathrm{sat}} = v \cdot \frac{\kappa}{n}\tanh\!\Bigl(\frac{n}{\kappa}\Bigr).
+\label{eq:sat}
+\end{equation}
+The bracket is a chart-invariant scalar, so $v_{\mathrm{sat}}$ is exactly parallel to $v$ and
+transforms exactly as $v$ does; $\|v_{\mathrm{sat}}\|_{G} = \kappa\tanh(n/\kappa) < \kappa$
+in exact arithmetic, with $v_{\mathrm{sat}} \to v$ as $n \to 0$, so the ceiling is an
+asymptote and the field is untouched where it is small. The removable singularity at $n=0$
+is handled by the second-order expansion $1 - u^{2}/3$.
+
+Two ablation arms exist because the contrast is the justification for the component: a
+coordinate scalar gate $v\,\sigma(\mathrm{net}([z,v]))$, and the same radial form built from
+the Euclidean norm $\|v\|_{2}$ and $\kappa(z)$. Both are non-covariant by construction, and
+\S\ref{sec:props} reports how badly.
+
+% =====================================================================================
+\section{The flow-matching objective, and why its loss is not a ranking key}
+\label{sec:cfm}
+% =====================================================================================
+
+\paragraph{Path and target.} We use the linear (I-CFM) interpolant in the observed space
+\citep{lipman2022fm,tong2023otcfm}. For a coupling $\pi_{c}$ of the pre- and
+post-intervention populations under condition $c$, draw $(x_{0}, x_{1}) \sim \pi_{c}$ and
+$t \sim U(0,1)$, and set
+\begin{equation}
+x_{t} = (1-t)x_{0} + t x_{1} + \sigma\varepsilon, \qquad
+u(t \mid x_{0}, x_{1}) = x_{1} - x_{0}, \qquad
+\mathcal{L} = \mathbb{E}\,\bigl\| v_{\theta}(t, x_{t} \mid \Pset, \tau) - u \bigr\|^{2}.
+\label{eq:cfm}
+\end{equation}
+The conditional velocity is $t$-independent for this path ($\sigma > 0$ leaves it unchanged),
+but the \emph{marginal} field $v(t,x) = \mathbb{E}[x_{1}-x_{0} \mid x_{t}=x]$ is genuinely
+$t$-dependent, which is why the field takes $t$ as an input. Our implementation matches the
+analytic conditional velocity to $6.7\times10^{-16}$.
+
+\paragraph{The coupling is computed in the observed space}, never from latent coordinates: a
+coupling built in a learned chart is a function of the current encoder and drifts during
+training, so it is not a property of the data. Four options are selectable --- product,
+exact minibatch assignment, entropic (Sinkhorn, optionally unbalanced), and index-aligned
+\citep{tong2023otcfm}. We select \texttt{sinkhorn} with $\varepsilon = 0.05$, $25$
+iterations, unbalanced relaxation $\tau_{\mathrm{ub}} = 1.0$ on a held-out distributional
+score.
+
+\paragraph{The CFM loss is not comparable across couplings.} This is a methodological point
+rather than an implementation note, and it is measured rather than argued. The loss in
+Eq.~\ref{eq:cfm} rewards a coupling that pairs points with themselves, because a
+self-paired sample has a target of zero variance. The identity-pair fraction our couplings
+produce spans a factor of $256$ --- index-aligned $1.0$, exact assignment $0.795$, entropic
+$0.229$, product $0.0039$ --- so the achievable loss floor is a property
+of the coupling and not of the model. Selecting on it is therefore invalid. The consequence
+is not hypothetical: ranking three couplings by held-out CFM loss and by normalised energy
+distance \emph{reverses} the ordering at both ends. The product coupling is worst on CFM
+loss by a factor of eight ($6.9873$ against $0.86$ for the other two) and yet \emph{best} on
+the distributional metric ($0.8094$); the exact-assignment coupling is at the good end of the
+CFM-loss column ($0.8600$, within $0.3\%$ of the selected coupling's $0.8579$ --- and we
+attach no significance to that ordering, for the reason this paragraph is about)
+and yet scores $1.1188$ on the distributional metric --- \textbf{worse than
+predicting no change} (Table~\ref{tab:coupling}, Appendix~\ref{app:policy}). We accordingly
+fix a distributional metric as the only ranking key in code, and report CFM loss as a
+within-coupling training diagnostic. A minibatch OT coupling is also not the paired coupling
+even when the target is a deterministic function of the source: on an affine test system
+exact assignment agrees with the true pairing on only $79.5\%$ of samples. A model fitted
+under one coupling must not be scored against the closed-form marginal of another.
+
+\paragraph{Training schedule.} A jointly-trained interaction branch absorbs single-intervention
+effects, after which its ``interaction'' is a relabelled main effect. We therefore train in
+three stages: (1) main effects on singleton conditions only, interaction branch \emph{disabled}
+rather than penalised; (2) interaction branch enabled on combinations, with the stage-1 model
+frozen as an anchor penalising drift of the singleton velocities; (3) joint fine-tune with
+singletons oversampled and an interaction-norm penalty whose weight is selected on held-out
+combinations. Non-finite steps are skipped and counted rather than allowed to poison
+parameters; every run reported here had $0$.
+
+% =====================================================================================
+\section{Three propositions}
+\label{sec:props}
+% =====================================================================================
+
+The statements below are exactly those verified in our propositions document; we have taken
+care that each claims no more than its proof gives, and each carries its scope limit.
+Derivatives in the verification are computed by complex-step differentiation
+($h = 10^{-20}$), which has no truncation error and no subtractive cancellation, so residuals
+are limited by float64 round-off ($\sim\!10^{-16}$) rather than by a finite-difference floor.
+Each headline residual is the value at the reported reference configuration. For
+Propositions~\ref{prop:conn} and~\ref{prop:cov} the maximum over $9$ independent seeds is
+given alongside it ($1.06\times$ and $2.40\times$ the reference value respectively);
+Proposition~\ref{prop:defect} is verified as a convergence \emph{rate} rather than a single
+residual, so no seed maximum is quoted for it. Full proofs are in
+Appendix~\ref{app:props}, the ablation arms that act as failing controls in
+Appendix~\ref{app:ablations} (Table~\ref{tab:ablations}), and the measured residuals are
+summarised in Figure~\ref{fig:theory}.
+
+\begin{proposition}[Displacement defect]
+\label{prop:defect}
+Let $\psi$ be $C^{2}$ near $z$. Then
+$\psi(z+\delta) - \psi(z) = D\psi(z)\delta + R(z,\delta)$ with
+$R = \tfrac12 D^{2}\psi(z)[\delta,\delta] + O(\|\delta\|^{3})$. Hence: composing vector
+\emph{fields} and integrating is chart-covariant, because a field transforms linearly with no
+remainder, whereas adding finite \emph{displacements} incurs $R$; if $\psi$ is affine then
+$D^{2}\psi \equiv 0$ and $R \equiv 0$ \emph{exactly}; and the relative defect
+$\|R\|/\|\delta\|$ is proportional to $\|\delta\|$ to leading order.
+\end{proposition}
+
+\noindent\textbf{Verification.} Log-log slope of the defect norm against $\|\delta\|$ is
+$1.999142$ (deviation $8.58\times10^{-4}$ from $2$) on $\|\delta\| \le 10^{-2}$; the affine
+control gives $2.46\times10^{-16}$, machine zero; the relative defect grows like $\tau^{1}$
+(slope $0.99215$).
+\textbf{Scope.} This is a statement about \emph{displacements}, not about model accuracy. It
+does not assert that displacement-additive models fail, nor that the defect dominates their
+error. Two directly relevant negatives: at fixed $\|\delta\|$, latent anisotropy does
+\emph{not} increase the defect (relative range $8.05\times10^{-3}$ across a $20\times$
+stretch, no trend), so the only supportable anisotropy claim is the indirect one via
+$\|\delta\|$-inflation; and the sub-$10^{-4}$ rise in measured relative error is
+cancellation in the \emph{measurement} (absolute residual $1.04\times10^{-16}$ against a
+predicted round-off floor of $1.51\times10^{-16}$), not a missing term.
+
+\begin{proposition}[Connection law and the tensoriality of $S + 2\Gamma$]
+\label{prop:conn}
+Let $X, Y$ be vector fields, $G$ a $C^{2}$ Riemannian metric with Levi-Civita connection
+$\Gamma$, and $\psi$ a $C^{3}$ diffeomorphism with $J = D\psi$. With
+$S = DX[Y] + DY[X]$ and all tilded objects read at $\psi(z)$:
+$\tilde S = J S + 2 D^{2}\psi[X,Y]$; $\tilde\Gamma[JX, JY] = J\Gamma[X,Y] - D^{2}\psi[X,Y]$;
+and therefore $\tilde S + 2\tilde\Gamma = J(S + 2\Gamma)$. The coefficient is forced: for
+$S + c\Gamma$ the defect is $(2-c)D^{2}\psi$.
+\end{proposition}
+
+\noindent\textbf{Verification.} $S + 2\Gamma$ is tensorial to $2.971\times10^{-15}$
+($\le 3.160\times10^{-15}$ over $9$ seeds), the connection law holds to
+$4.585\times10^{-15}$, and the cross-term defect matches $2D^{2}\psi[X,Y]$ to
+$2.594\times10^{-14}$. Controls fail as they must: $S - 2\Gamma$ at $5.335\times10^{-2}$
+(and at every one of $9$ seeds, minimum $4.954\times10^{-2}$), $S$ alone at
+$3.996\times10^{-2}$, and an unsymmetrised $D^{2}\psi$ at $8.341\times10^{-2}$.
+\textbf{Scope, and a warning.} Under an \emph{affine} chart all of $S+2\Gamma$, $S-2\Gamma$
+and $S$ transform correctly ($3.102\times10^{-15}$), so an affine map cannot identify the
+coefficient. PCA and any whitening are affine; a covariance experiment run on PCA-whitened
+coordinates would report success for a model with the wrong sign. Note also that this
+proposition repairs \emph{one hand-built term}, which is a strictly weaker guarantee than
+Proposition~\ref{prop:cov}, and that \S\ref{sec:doublecount} explains why the repaired term
+is nonetheless not what IHC-FM uses.
+
+\begin{proposition}[Whole-field covariance of the pullback construction]
+\label{prop:cov}
+Let $\Dec$ be a $C^{1}$ immersion, $W$ positive definite and $C^{0}$ as a function of the
+\emph{observed} point, $b$ an observed-space one-form, and define $G, \alpha, v$ as in
+Eq.~\ref{eq:pullback}. Let $\psi$ be a diffeomorphism with $J = D\psi(z)$ and read the same
+decoder in the new chart, $\Dec' = \Dec\circ\psi^{-1}$. Then
+$G' = J^{-\top} G J^{-1}$, $\alpha' = J^{-\top}\alpha$, and $v' = J v$: $v$ is a vector
+field, for arbitrary $W$, arbitrary $b$, arbitrary immersion $\Dec$ and arbitrary $\psi$.
+\end{proposition}
+
+\noindent\textbf{Verification.} With a \emph{random nonlinear} decoder and a \emph{random
+nonlinear} chart, whole-field covariance holds to $\mathbf{1.629\times10^{-15}}$ (mean
+$8.83\times10^{-16}$; $\le 3.904\times10^{-15}$ over $9$ seeds), with $G$ a $(0,2)$ tensor to
+$9.19\times10^{-16}$ and $\alpha$ a $(0,1)$ tensor to $7.43\times10^{-16}$. The chart-2
+decoder Jacobian is obtained by complex-step differentiating the \emph{actually composed} map
+$z' \mapsto \Dec(\psi^{-1}(z'))$, rather than by substituting the chain rule, which would make
+the test a tautology; the chain rule is separately checked at $4.59\times10^{-16}$. For the
+\emph{implemented} field the residual is $7.26\times10^{-16}$, rising only to
+$8.64\times10^{-16}$ at $50\times$ drive and $9.61\times10^{-16}$ at $1000\times$; the
+pullback metric is SPD with minimum eigenvalue $0.514$, condition number $\le 5.72$, no
+solver fallbacks, and an analytic Jacobian agreeing with autodiff to $2.41\times10^{-16}$.
+\textbf{Scope.} Four assumptions are load-bearing and one is a hard constraint on the
+method. $\Dec$ must be an immersion on the data region (measured
+$\sigma_{\min}(J_{\Dec}) = 0.461$), $W$ must be positive definite \emph{and a function of the
+observed point}, $G$ must be well conditioned for the numerical residual to be small
+(covariance is exact in exact arithmetic for any invertible $G$), and $\psi$ must be a
+diffeomorphism on the region. Finally, \textbf{no Euclidean $\epsilon I$ may be added to the
+latent metric}: the error is linear in $\epsilon$, reaching $2.089\times10^{-2}$ analytically
+and $2.60\times10^{-3}$ on the implemented field at the routine value $\epsilon = 10^{-2}$,
+\ie thirteen orders of magnitude worse than the unstabilised construction. Conditioning must
+be applied in the observed space, where it is covariant ($7.79\times10^{-16}$ with an ambient
+floor). One further limit deserves emphasis: this is an \emph{operator-level} guarantee about
+a single chart. It says the field transforms correctly; it does not say a model trained in
+chart~1 and a model trained in chart~2 will learn the same field, and \S\ref{sec:limits}
+reports that they measurably do not.
+
+\paragraph{The saturation contrast.} Proposition~\ref{prop:cov} also explains why
+Eq.~\ref{eq:sat} is written in the metric norm. Under the same test, the metric-radial form
+preserves covariance ($7.26\times10^{-16}$) and preserves direction to
+$2.22\times10^{-16}$, while the coordinate-scalar gate breaks covariance at
+$2.20\times10^{-2}$ and the Euclidean-norm variant at $6.20\times10^{-3}$ --- a contrast of
+roughly thirteen orders of magnitude, which is the entire justification for the component.
+Under a $1000\times$ drive stress the attained norm equals $\kappa$ to
+$+4.44\times10^{-16}$, so we state the guarantee as
+$\|v_{\mathrm{sat}}\|_{G} \le \kappa(1 + 10^{-12})$ rather than as a strict inequality.
+
+\subsection{Why the connection coupling was replaced}
+\label{sec:doublecount}
+
+For fields $X, Y$ and integration time $T$,
+\begin{equation}
+\mathrm{flow}_{X+Y}^{T}(z) - \bigl[z + (\mathrm{flow}_{X}^{T}(z) - z) + (\mathrm{flow}_{Y}^{T}(z) - z)\bigr]
+= \tfrac{T^{2}}{2}\,\bigl(DX[Y] + DY[X]\bigr) + O(T^{3}).
+\label{eq:free}
+\end{equation}
+Integrating the summed field \emph{already} produces the symmetric kinematic cross term, for
+free. The previous justification for an explicit $\beta S$ term --- that $S$ is the leading
+term of joint-minus-additive behaviour --- therefore proves the opposite of its conclusion:
+$S$ is what generator composition yields, so adding it to the velocity inserts a second copy.
+The two copies enter at different orders in $T$ (composition's in the displacement at
+$O(T^{2})$, the hand-added one at $O(T)$), so their ratio $2\beta/T$ \emph{diverges} as
+$T \to 0$: measured $40\times$ at $T = 0.05$ and $400\times$ at $T = 0.005$. They are also
+collinear (minimum cosine $0.99999790$), so the added term supplies no new direction.
+Eq.~\ref{eq:free} is verified at relative error $1.610\times10^{-3}$ at $T = 0.005$ with
+log-log convergence slope $0.99971$ against the predicted $O(T)$.
+
+What can be added is therefore only what lies \emph{outside} the kinematic span, which is
+exactly the specification of \S\ref{sec:hier}: non-kinematic, singleton-vanishing, low-rank.
+The connection-coupling form is retained as an ablation arm, since it is the correct control
+for the claim that the non-kinematic branch does work the kinematic term cannot.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{\figcases}
-\caption{Composing generators generalises to intervention sets never seen in training, in
-two unrelated domains. \textbf{(a)} Order-flow composition, $6{,}373$ held-out windows with
-all four channels active. \textbf{(b)} Organoid drug combinations, held-out triple
-Cetuximab $+$ SN-38 $+$ 5-FU, $26$ populations never seen jointly; here the no-change
-baseline coincides with the best fitted-mean-shift oracle. \textbf{(c)} The exposure
-response is sub-linear in the data: binning by executed quantity and fitting on bin means
-gives exponent $0.59$ over a $1{,}547\times$ span of volume, which is why the gate is given
-a saturating form with a learned exponent. Hatched bars mark the saturating variant.}
-\label{fig:cases}
+\figorbox{\figtheory}
+\caption{\textbf{The geometric claims, measured.} \textbf{(a)} Relative chart-covariance
+error of the implemented pullback field. The construction holds at machine precision
+($7.26\times10^{-16}$) and is unmoved by a stronger chart, a $50\times$ drive, a
+$1000\times$ drive, or a random nonlinear decoder composed with a random chart
+($1.63\times10^{-15}$, Proposition~\ref{prop:cov}). The three ablations that a
+practitioner would reach for first all break it: a latent $\epsilon I$ stabiliser at
+$\epsilon=10^{-2}$ ($2.60\times10^{-3}$) and the two coordinate saturation gates
+(up to $2.20\times10^{-2}$). Float32 floors at $3.12\times10^{-7}$ for arithmetic reasons,
+not because the law fails --- inference in double recovers machine precision.
+\textbf{(b)} Structural guarantees. Six of eight hold \emph{bit-exactly} (interaction
+vanishing on singletons, 15/15 cases; zero-exposure embedding, 5/5; dropped-member
+contribution; zero-dose flow identity; Hill dose at $\tau=0$); permutation invariance of
+the one-form and saturator direction preservation are rounding-level rather than exact
+($7.8\times10^{-16}$, $2.2\times10^{-16}$), and are drawn as such. \textbf{(c)} Factored
+moments cost $O(kr)$ against $O(k^{2})$ for explicit pairwise accumulation: log-log slopes
+$0.23$ versus $1.95$, a $121\times$ speedup at $k=32$. Lower is better throughout.}
+\label{fig:theory}
 \end{figure}
 
-\paragraph{Domain 1: order-flow composition.} From four days of BTCUSDT aggregated trades
-($3.5$M trades) we build $34{,}545$ ten-second windows. The state is six microstructure
-features including the realised return; the interventions are four order-flow channels
-(side $\times$ size class); exposure is executed quantity normalised to each channel's
-median. Training uses windows with at most three channels active; evaluation uses windows
-with all four. Composing generators reaches $0.691$ against $2.008$ for the displacement
-baseline ($2.9\times$), with each state-dependent rung contributing
-(Fig.~\ref{fig:cases}a).
+% =====================================================================================
+\section{Related work}
+\label{sec:related}
+% =====================================================================================
 
-\paragraph{Domain 2: organoid drug combinations.} We use the Trellis mass-cytometry
-organoid screen \citep{ramoszapatero2023}, in the preprocessed form released with Meta Flow
-Matching \citep{atanackovic2024mfm}: $24{,}756{,}030$ cells $\times$ $44$ markers, $666$
-populations with controls matched per condition. The ladder contains six single compounds,
-four pairs and one triple. We hold out the triple entirely. Composing generators reaches
-$0.741$ against $2.233$ ($3.0\times$), and the state-gated variants are the only models
-that beat the fitted-oracle reference of $1.000$ (Fig.~\ref{fig:cases}b).
+\paragraph{Flow matching.} We use the conditional flow-matching objective
+\citep{lipman2022fm} with a linear interpolant \citep{liu2022rectified} and the coupling
+generalisation of I-CFM/OT-CFM \citep{tong2023otcfm}, and claim no improvement to the
+estimator itself; our addition is what is \emph{parameterised}, plus the coupling
+non-comparability result of \S\ref{sec:cfm}, which that line states as a variance-reduction
+benefit but not as a constraint on model selection. Meta Flow Matching
+\citep{atanackovic2024mfm} amortises flow matching over populations by conditioning the
+velocity on an embedding of the initial measure. We take that mechanism directly and claim
+no credit for it --- our population encoder \emph{is} that idea --- and we report that we
+measured it to be harmful on exactly the combinations this method targets, so it is off by
+default (\S\ref{sec:exp}). What MFM does not do is compose several interventions: it
+conditions one field on a population, whereas ours is indexed by an intervention set.
+Metric Flow Matching \citep{kapusniak2024metricfm} and Energy-Guided Geometric Flow Matching
+\citep{zweig2025egfm} both use a learned geometry, but to curve the interpolating
+\emph{path} so it follows the data manifold. We leave the path straight and put the geometry
+in the \emph{field}: a metric used to bend a path does not make the field a vector field.
 
-\paragraph{Replication across seeds.} Single-seed comparisons are not a result. Repeating
-the decisive contrast over three seeds (Table~\ref{tab:seeds}), every composition variant
-beats the displacement baseline in $3/3$ seeds in \emph{both} domains, with non-overlapping
-spreads; the mean-over-seeds improvement is $3.1\times$ in finance and $3.3\times$ on the
-organoid triple.
+\paragraph{Perturbation modelling.} The compositional perturbation autoencoder
+\citep{lotfollahi2023cpa} encodes each perturbation as a latent displacement and predicts a
+combination by summing them with a per-perturbation dose scaling; GEARS-class models
+\citep{roohani2023gears} compose graph-informed per-perturbation representations under the
+same additive rule. The relevant class property is the composition rule, not the priors, and
+Proposition~\ref{prop:defect} is a statement about that rule. Our competitor is a
+\emph{correct} implementation of the class --- bit-exactly additive, zero-exposure-vanishing
+and permutation-invariant, parameter-matched to $0.993\times$ under an identical protocol
+--- rather than a weakened one.
+
+\paragraph{Benchmark validity.} \citet{ahlmanneltze2025linear} report that deep
+perturbation-effect predictors do not beat simple baselines including no-change, and
+\citet{miller2025rebuttal} respond that the conclusion turns on metric calibration. We do
+not adjudicate. We adopt the shared methodological lesson --- that the choice of metric can
+reverse a ranking --- as a protocol requirement: every normalised figure here carries its
+no-change denominator, the no-change control is a first-class row, and we report the
+concrete reversal we measured in our own coupling and baseline comparisons
+(\S\ref{sec:cfm}). That is also the source of our headline negative
+(\S\ref{sec:limits}).
+
+\paragraph{Learned intervention fields with Lie-geometric structure.} Learned intervention
+response fields with bracket geometry are the contribution of recent causal-discovery work
+\citep{mahadevan2026bridge}; \textbf{we do not introduce learned Lie-geometric intervention
+fields and do not claim to}. Three separations. That work recovers graph structure under
+latent confounding, whereas we predict a distributional response and never estimate a graph.
+Its stated scope is single-node intervention targets, whereas our object is the $k \ge 2$
+composition. And bracket geometry uses the antisymmetric part $[X,Y]$, which is already a
+tensor and never meets the transformation defect; the object carrying the \emph{magnitude} of
+a composition is the symmetric part $S$, which is not (Proposition~\ref{prop:conn}).
+
+% =====================================================================================
+\section{Experiments}
+\label{sec:exp}
+% =====================================================================================
+
+We score with normalised energy distance,
+$\ED(\hat\mu, \mu)/\ED(\mu_{0}, \mu)$, where $\mu_{0}$ is the pre-intervention population, so
+$1.0$ means no better than predicting no change and $0$ is perfect. Every normalised figure
+is reported with its denominator, and every CI is a grouped bootstrap over populations or
+blocks --- never over individual samples or overlapping windows. Metrics are validated
+against known answers (identical inputs $0.0$; a no-change prediction normalising to exactly
+$1.0$; unbiased ED mean $0.0012 \pm 0.0037$ under the null while the V-statistic is biased
+upward at $0.0575$).
+
+\subsection{Baseline ladder, and a power finding that governs the table}
+\label{sec:baselines}
+
+Three neural baselines are parameter-matched to IHC-FM's $22{,}135$ parameters at
+$d{=}6$, $k{=}4$, $r{=}8$, hidden $64$ (ratios $0.993$--$1.005\times$; the match is to the
+\emph{total}, which gives them more capacity than our velocity core --- the conservative
+direction), and share a protocol of $800$ steps, batch $128$, lr $3\times10^{-3}$, gradient
+clip $5.0$, $16$ integration steps, Adam, identical coupling kwargs, $0$ non-finite steps.
+
+% The generated table is expected at results/tables/table1.tex. Note that
+% results/tables/table1_smoke.tex also exists on disk: it is a SMOKE run (3 folds, k=7,
+% d=6) and is deliberately NOT input here, because a smoke table must not silently become
+% the paper's Table 1. Point the guard at it only if that is an explicit decision.
+% The label was already decided in the preamble, so these branches only choose what to
+% typeset; they must NOT renew \tabonelabel (the reference site precedes this point).
+\IfFileExists{../results/tables/table1.tex}{\input{../results/tables/table1.tex}}{%
+\IfFileExists{results/tables/table1.tex}{\input{results/tables/table1.tex}}{%
+\begin{table}[t]
+\centering
+\caption{\textbf{TODO --- Table 1 placeholder.} The generated table is expected at
+\texttt{results/tables/table1.tex} and is \texttt{\textbackslash input}'d automatically once
+present. The figures below are the single-fold, seed-0 baseline ladder (normalised energy
+distance on the held-out combination) and must not be read as a ranking: see the power
+finding in the text.}
+\label{tab:table1}
+\begin{tabular}{lcc}
+\toprule
+model & params & held-out combination normalised ED \\
+\midrule
+FactoredAdditiveCFM & $21{,}991$ & $0.647$ \\
+DeepSetsEndpoint    & $22{,}096$ & $0.713$ \\
+MonolithicCFM       & $22{,}250$ & $0.828$ \\
+LinearResponse      & $0$        & $0.866$ \\
+MatchingMean        & $0$        & $0.889$ \\
+NoChange            & $0$        & $1.000$ \\
+PerturbedMean       & $0$        & $1.011$ \\
+\bottomrule
+\end{tabular}
+\end{table}}}
+
+\paragraph{A single fold cannot order these models, and we report that instead of a ranking.}
+Across seeds $0/1/2$ on one fold the neural rows swing wildly while the controls are
+deterministic: \texttt{FactoredAdditiveCFM} scores $0.647$, $1.510$, $0.871$
+(mean $1.010 \pm 0.366$ population sd), whereas the four controls have sd $\le 1.2\times10^{-10}$.
+Two pre-registered checks consequently \emph{fail} and are reported as failures rather than
+reframed. A six-fold sweep recovers the mean ordering --- all three neural models beat
+no-change on the mean, and the best flow model beats the best control on a paired test ---
+but adjacent models remain statistically indistinguishable: the
+\texttt{FactoredAdditiveCFM}--\texttt{DeepSetsEndpoint} gap is $+0.018$ against a paired sem
+of $0.255$ ($4/6$ folds), and \texttt{DeepSetsEndpoint}--\texttt{MonolithicCFM} is $+0.009$
+against $0.138$. Our own power calculation puts the required $n$ at $\sim\!270$--$450$
+folds. Single folds are also actively misleading rather than merely imprecise:
+\texttt{LinearResponse} looks competitive on one fold ($0.866$) and is by far the worst
+pooled ($1.484$, sem $1.506$). \textbf{No headline claim in this paper rests on one fold or
+one seed}; the competitor to beat is \texttt{FactoredAdditiveCFM}, and beating it is
+demonstrated only with paired statistics over independent units.
+
+One documented exception to the shared-coupling rule: \texttt{DeepSetsEndpoint} is an
+endpoint regressor with no integration step, so it applies the coupling's barycentric
+projection directly as a map and inherits a $2.14\times$ displacement inflation (mean
+displacement $0.868$ entropic versus $0.406$ paired) while collapsing predictive variance.
+Under the shared coupling it scores $1.923$, worse than no change; trained paired it scores
+$0.713$. A CFM model integrates and does not suffer this, which is why the requirement
+carries a ``where applicable'' clause.
+
+\subsection{Case study 1: a combination screen with held-out combinations}
+
+We use the mass-cytometry patient-derived organoid drug screen of
+\citet{ramoszapatero2023trellis} --- $666$ populations, $87$ records, with controls matched
+per condition. The latent chart is a PCA fitted on $60{,}000$ \emph{control} cells only ($8$
+components, cumulative EVR $0.690$); $r{=}8$ was selected on held-out \emph{singletons only},
+since every combination is screened and validating on one would leak the test data.
+Leave-one-combination-out over five folds is reported in Table~\ref{tab:loco} and
+Figure~\ref{fig:cases}:
 
 \begin{table}[t]
 \centering
-\caption{Three-seed replication on the held-out composition axis (normalised energy
-distance, mean $\pm$ sd over seeds $0,1,2$; lower is better). ``Beats'' counts seeds in
-which the model scores below the displacement baseline trained with the same seed. Numbers
-from \texttt{results/seed\_robustness.json}.}
-\label{tab:seeds}
+\caption{Organoid leave-one-combination-out. Normalised energy distance, $95\%$ grouped
+bootstrap CIs over populations. The no-change denominator is $1.000$ by construction.}
+\label{tab:loco}
 \begin{tabular}{lcccc}
 \toprule
-& \multicolumn{2}{c}{finance (all 4 channels)} & \multicolumn{2}{c}{organoid (held-out triple)} \\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}
-& score & beats & score & beats \\
+held-out set & IHC-FM [95\% CI] & additive baseline & no-change & $n$ pops \\
 \midrule
-displacement (CPA-class) & $1.828\pm0.213$ & --- & $2.309\pm0.223$ & --- \\
-field composition        & $0.833\pm0.068$ & $3/3$ & $2.010\pm0.178$ & $3/3$ \\
-$+$ state gate           & $0.633\pm0.037$ & $3/3$ & $\mathbf{0.700\pm0.079}$ & $3/3$ \\
-$+$ covariant coupling   & $\mathbf{0.589\pm0.036}$ & $3/3$ & $0.772\pm0.081$ & $3/3$ \\
+VS  & $1.371$ $[1.092, 1.686]$ & $1.462$ & $1.000$ & $29$ \\
+CS  & $\mathbf{0.894}$ $[0.667, 1.139]$ & $2.011$ & $1.000$ & $27$ \\
+SF  & $2.023$ $[1.134, 3.133]$ & $4.472$ & $1.000$ & $27$ \\
+CF  & $1.044$ $[0.763, 1.393]$ & $2.152$ & $1.000$ & $27$ \\
+CSF (triple) & $3.177$ $[1.942, 4.571]$ & $6.484$ & $1.000$ & $26$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{A numerical failure worth reporting.} In a first three-seed run one organoid
-seed with the coupling active returned NaN. The cause was not the model but the training
-loop: gradient clipping does not stop a non-finite value, so a single non-finite forward
-pass followed by an optimiser step wrote NaN into every parameter. We added two guards --
-skip any step whose loss or gradient norm is non-finite (and report the count), and a
-radial trust region on the composed field, active only on pathological early iterates. The
-guarded rerun recovers that seed at $0.821$ and leaves every healthy run bit-identical
-(finance seeds reproduce to four decimals). We note the trust region is a norm-based clip
-and therefore \emph{not} itself covariant; it is inactive for trained models, where field
-norms are $\sim\!0.08$ against a limit $50\times$ the state norm, and the covariance and
-semigroup properties are stated for that regime.
+Paired over $136$ populations, IHC-FM beats the additive-displacement baseline decisively:
+mean $1.688$ versus $3.265$, difference $\mathbf{-1.577}$ $[-2.100, -1.101]$, better on
+$113/136$ populations, sign test $p = 1.8\times10^{-15}$. \textbf{And it loses to the
+no-change control}: difference $+0.688$ $[+0.351, +1.058]$, significantly worse on the mean.
+Per population it is a coin flip ($72/136$ better, sign test $p = 0.549$), so the mean is
+dragged by a minority of large failures rather than by uniform degradation; only the CS fold
+is below $1.0$. Composing generators beats composing displacements, but on this screen
+neither beats predicting no change.
 
-\paragraph{Reading scores above 1.0.} On the organoid data an oracle that fits one mean
-shift per condition scores $1.096$ on the \emph{training} split -- worse than inaction --
-because populations are different patients and the same treatment moves them in directions
-with mean pairwise cosine only $+0.23$ to $+0.35$. A model at $0.98$ on that split is
-therefore beating the best possible fixed-shift predictor. The held-out splits are where
-the comparison is meaningful.
+The population encoder of \citet{atanackovic2024mfm} is neutral overall under a
+leave-replicate-out split (paired diff $+0.027$ $[-0.026, +0.085]$, $n{=}87$, $p = 0.086$)
+but significantly \emph{harmful} on combinations only ($-0.059$ $[-0.113, -0.011]$, $n{=}57$,
+$p = 0.016$). It is therefore off by default, supported by a paired test on independent
+replicates rather than by a single fold.
 
-\paragraph{Negative results.} (i) A \emph{global scalar} contraction does not help in
-either domain ($0.882$ vs $0.862$ in finance, $1.965$ vs $1.947$ on the triple); state
-dependence is what matters. (ii) On the finance exposure axis every model scores $6$--$9$,
-and this is a property of the data, not the architecture: an oracle mean shift fitted on
-the high-exposure split scores $0.287$ but the same oracle transferred from the training
-split scores $2.788$, so that axis is a distribution shift rather than an extrapolation.
-(iii) Saturation helps only where there is exposure range to extrapolate over; it is
-neutral-to-harmful on the organoid ladder, whose four dose levels span no extrapolation.
-(iv) Conditioning the operator on an encoding of the pre-intervention population -- the
-mechanism of Meta Flow Matching -- improves the training split slightly ($1.092\to1.080$)
-but damages the held-out triple ($0.903\to1.283$); with $26$ held-out populations the
-encoder memorises replicate identity. We keep it in the codebase, off by default.
+\subsection{Case study 2: purged splits on observational exposure data}
 
-\section{Related work and limitations}
+The second study is deliberately from an unrelated field --- ten-second windows of
+order-flow data ($34{,}545$ windows, $48$ blocks, six state features) --- and is framed as
+\textbf{observational conditioning, not causal intervention estimation}: order flow is
+observed, not assigned. Splits are audited rather than asserted: $0$ overlapping indices, $0$
+shared bins, minimum same-day gap $31$ windows against a $30$-window embargo, and one day
+removed before any fitting. Results are in Table~\ref{tab:finance}.
 
-Flow matching on the Wasserstein manifold conditioned on a population is the contribution
-of Meta Flow Matching \citep{atanackovic2024mfm}; we use that conditioning idea and do not
-claim it. What is new here is the \emph{composition} of several generators with contraction
-and coupling terms, which lets unseen intervention sets and exposures be predicted; MFM
-conditions one velocity field and does not compose interventions. Metric-aware flow
-matching \citep{kapusniak2024mfm} and energy-guided geometric flow matching
-\citep{zweig2025eggfm} curve the interpolating \emph{paths} using a learned metric; we use a
-metric for a different purpose -- to make a composition term tensorial -- and their metrics
-are conformal rather than anisotropic. Learned intervention fields with Lie-bracket
-geometry appear in recent causal-discovery work, restricted by its own statement of scope to
-single-node interventions.
+\begin{table}[t]
+\centering
+\caption{Purged splits, normalised energy distance with $95\%$ grouped bootstrap CIs on the
+paired difference. Negative differences favour IHC-FM.}
+\label{tab:finance}
+\begin{tabular}{lcccc}
+\toprule
+split & IHC-FM & additive baseline & paired diff [95\% CI] & $n$ blocks \\
+\midrule
+chronological     & $\mathbf{0.698}$ & $1.691$ & $-0.993$ $[-1.098, -0.873]$ & $11$ \\
+held-out day      & $\mathbf{0.890}$ & $1.512$ & $-0.622$ $[-0.764, -0.476]$ & $12$ \\
+exposure (block-purged)  & $\mathbf{0.823}$ & $1.403$ & $-0.580$ $[-0.679, -0.486]$ & $11$ \\
+exposure (window-purged) & $2.180$ & $1.926$ & $+0.254$ $[+0.184, +0.332]$ & $24$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\paragraph{Limitations.} The covariance defect is measured on analytic diffeomorphisms; a
-general proof is not given. The coupling term shows no gain over the contraction gate on
-the organoid triple, where $26$ populations and $k{=}3$ leave it unidentifiable, so its
-support rests on the finance composition split and on the covariance argument. Both domains
-are evaluated in low-dimensional latent spaces ($d{=}6$, $d{=}8$), chosen because the
-identifiability of a state-dependent second-order term degrades quickly with dimension.
+On three of four splits IHC-FM is well below $1.0$ and beats the additive baseline with CIs
+excluding zero. The fourth is a loss, and it is diagnosed rather than excused: on \emph{every}
+split the exposure axis is a \textbf{distribution shift}, established by comparing an oracle
+fitted in-split against the same oracle transferred from the training split (ratios $1.799$,
+$1.803$, $1.868$, $2.802$). The window-purged arm carries the largest shift by a wide margin
+(pre-state energy distance $2.522$ against $0.0023$ within-train). That axis therefore tests
+transfer under shift, not exposure extrapolation, and we do not report it as the latter.
 
+\begin{figure}[t]
+\centering
+\figorbox{\figcases}
+\caption{\textbf{Both case studies, including the negative.} Shaded region is worse than
+predicting no change. \textbf{(a)} Organoid leave-one-combination-out, per fold, with
+grouped-bootstrap CIs over populations. IHC-FM is below the additive baseline on 5/5 folds
+but above the no-change line on 4/5 (only CS, $0.894$, is below it), and the held-out
+triple CSF is the hardest fold for both models ($3.177$ against $6.484$).
+\textbf{(b)} The two paired contrasts pooled over $136$ populations. Against the additive
+baseline the difference is $-1.58$ $[-2.10, -1.10]$, favouring IHC-FM on $113/136$
+populations (sign test $p=1.8\times10^{-15}$); against no-change it is $+0.69$
+$[+0.35, +1.06]$ --- significantly worse on the mean, yet a coin flip per population
+($72/136$, $p=0.55$), so the mean is carried by a minority of large failures rather than
+uniform degradation. \textbf{(c)} Finance across four purged splits (audited: 0 overlapping
+indices, 0 shared bins, minimum same-day gap 31 windows against a 30-window embargo).
+IHC-FM is below no-change and below the additive baseline on three; the exposure-window
+split is the single loss and also carries the largest measured pre-state shift
+($2.52$ against $0.0023$ within training), which is why we read that axis as distribution
+shift rather than exposure extrapolation.}
+\label{fig:cases}
+\end{figure}
+
+% =====================================================================================
+\section{Limitations}
+\label{sec:limits}
+% =====================================================================================
+
+Stated plainly, because each of these is measured.
+
+\textbf{IHC-FM loses to the no-change control on the organoid screen.} The paired difference
+is $+0.688$ $[+0.351, +1.058]$ over $136$ populations. It beats the additive baseline
+decisively on the same populations, but ``better than the standard additive model'' and
+``useful'' are different claims and only the first is supported there.
+
+\textbf{The interaction branch does not reach its oracle recovery ceiling.} On a synthetic
+system with known ground truth, stage 2 improves the \emph{training} combinations it is
+fitted on (combination loss $0.826 \to 0.241$) but not a leave-one-combination-out pair
+($0.575 \to 1.060$). Two measured causes, neither of which is addressed by simplifying the
+model: on the held-out pair the \emph{main} branch is already wrong (its cosine against the
+additive-flow displacement is negative, $-0.318$, at $0.13$ of the additive scale), so the
+failure begins before the interaction branch; and the kinematic composition defect is
+$0.09$--$1.98\times$ the true interaction and near-orthogonal to it (maximum absolute cosine
+$0.158$), so an $m_{2}$-gated branch fitted against a straight observed-space interpolant
+necessarily absorbs a large non-interaction term. This is evidence about the interpolant.
+
+\textbf{The exposure axis is a distribution-shift test, not extrapolation.} See
+\S\ref{sec:exp}; the oracle-transfer ratios are $1.799$--$2.802$ and the window-purged arm's
+pre-state shift is three orders of magnitude above within-train.
+
+\textbf{The population encoder hurts combinations} ($-0.059$ $[-0.113, -0.011]$, $p = 0.016$)
+and is off by default. We inherited the mechanism from \citet{atanackovic2024mfm} and report
+that it does not transfer to this setting.
+
+\textbf{Single-fold, single-seed comparisons are underpowered.} Adjacent models on our
+benchmark need $\sim\!270$--$450$ folds to separate at the observed effect size, against the
+$6$ we ran. Where models are indistinguishable we say so rather than implying an order.
+
+\textbf{Chart covariance is an operator-level guarantee plus one retraining test.} It is not
+a general proof that training is chart-independent, and the retraining test says it is not:
+the cross-chart discrepancy of \emph{trained} models correlates with chart curvature at
+$+0.92$ (regression slope $2.18$; the chart-2 model is worse in $17$ of $18$ configurations).
+At the strongest chart curvature the discrepancy ($0.0875$) reaches the seed-noise floor
+($0.0875$), \ie training outcome is chart-dependent at the level of seed noise, and only
+there. Both facts are ours to report: the operator is covariant to $10^{-16}$, the training
+outcome is not exactly invariant, and we make no claim that it is.
+
+\textbf{Scale.} All results are at $d \le 8$ and $k \le 6$, on CPU. The identifiability of a
+state-dependent interaction term degrades with dimension, and we have not measured where.
+
+% =====================================================================================
+\appendix
+\section*{Appendix}
+
+\section{Propositions: proofs and full verification}
+\label{app:props}
+
+\paragraph{Proposition~\ref{prop:defect}.} Let $g(t) = \psi(z + t\delta)$. Since $\psi$ is
+$C^{2}$, Taylor with integral remainder at $t=0$ evaluated at $t=1$ gives
+$\psi(z+\delta) = \psi(z) + D\psi(z)\delta + \int_{0}^{1}(1-t) D^{2}\psi(z+t\delta)[\delta,\delta]\,dt$.
+Bounding the integrand by $M = \sup\|D^{2}\psi\|$ on the segment and using
+$\int_{0}^{1}(1-t)dt = 1/2$ gives $\|R\| \le (M/2)\|\delta\|^{2}$; expanding
+$D^{2}\psi$ about $t=0$ inside the integral isolates the leading coefficient
+$\tfrac12 D^{2}\psi(z)[\delta,\delta]$. Only the symmetric part of $D^{2}\psi$ contributes,
+being contracted against $\delta^{i}\delta^{j}$. For an affine $\psi$ the integrand vanishes
+identically, so $R \equiv 0$ exactly and for arbitrarily large $\delta$.
+
+\paragraph{Proposition~\ref{prop:conn}.} Differentiating $\tilde X^{a} = J^{a}_{i}X^{i}$ with
+respect to $z'^{b}$ and using $\partial_{b} = K^{j}_{b}\partial_{j}$ with $K = J^{-1}$ gives
+$(D\tilde X[\tilde Y])^{a} = J^{a}_{i}(DX[Y])^{i} + D^{2}\psi^{a}[X,Y]$. Swapping $X$ and $Y$
+yields the same second term, since $D^{2}\psi$ is symmetric in its lower indices; adding the
+two copies gives $\tilde S = JS + 2D^{2}\psi[X,Y]$, and the factor $2$ is exactly the two
+summands of $S$. For the connection, chart-independence of covariant differentiation,
+$(\nabla_{\tilde Y}\tilde X)^{a} = J^{a}_{i}(\nabla_{Y}X)^{i}$, combined with the previous
+identity, forces
+$\tilde\Gamma^{a}[JX, JY] = J^{a}_{i}\Gamma^{i}[X,Y] - D^{2}\psi^{a}[X,Y]$. Adding the first
+identity to twice the second cancels $D^{2}\psi$ identically. For $S + c\Gamma$ the residual
+defect is $(2-c)D^{2}\psi$, so $c=2$ is forced and $c=-2$ carries defect $4D^{2}\psi$ ---
+twice as large as no correction at all.
+
+\paragraph{Proposition~\ref{prop:cov}.} Because $\Dec' = \Dec\circ\psi^{-1}$ and
+$z' = \psi(z)$, we have $\Dec'(z') = \Dec(z) = x$: the ambient point is the same in both
+charts, so $W$ and $b$ are evaluated at the same argument and contribute no transformation
+factors. The chain rule gives $J_{\Dec'} = J_{\Dec}K$, whence
+$G' = K^{\top}(J_{\Dec}^{\top}WJ_{\Dec})K = K^{\top}GK$ and
+$\alpha' = K^{\top}J_{\Dec}^{\top}b = K^{\top}\alpha$. Note $\alpha$ is the \emph{pullback of
+a one-form}, which needs no inverse of the non-square $J_{\Dec}$; pushing a vector forward
+would not be defined. Then
+$v' = (K^{\top}GK)^{-1}K^{\top}\alpha = K^{-1}G^{-1}K^{-\top}K^{\top}\alpha = Jv$. The
+construction is index-balanced: the $K^{-\top}K^{\top}$ pair annihilates and a single
+$K^{-1} = J$ survives. Any non-tensorial addition to $G$ breaks that pairing and leaves a
+residual factor of $J$.
+
+\paragraph{A failure found and fixed, reported because it is a genuine trap.} A first pass
+drew $\psi$ with an unconstrained nonlinearity, and at $2$ of $9$ seeds the covariance checks
+failed catastrophically (Proposition~\ref{prop:conn} at $2.46$, Proposition~\ref{prop:cov} at
+$6.30\times10^{-1}$) while the image-space residual $\psi(\psi^{-1}(z')) - z'$ stayed at
+$3\times10^{-16}$. Cause: the drawn nonlinearity violated a contraction bound, $D\psi$ became
+near-singular on the sample ($\sigma_{\min}$ down to $2.0\times10^{-3}$), $\psi$ was not
+injective, and the Newton inverse converged to a \emph{different branch}. An image-space
+check cannot detect this --- any branch satisfies it --- whereas the $Z$-space round trip
+does ($\|\psi^{-1}(\psi(z)) - z\| = 8.2\times10^{-1}$). Both fixes are retained: the chart
+rescales its nonlinear block at construction to enforce the contraction bound, and a
+$Z$-space round trip is asserted at $10^{-13}$. The lesson generalises: every covariance
+guarantee here is a statement about a single chart, so any experiment that reparameterises
+data must verify injectivity on the data region \emph{in $Z$}, not merely in image space.
+
+\section{Metric policy and the coupling comparison}
+\label{app:policy}
+
+\begin{table}[h]
+\centering
+\caption{Three couplings, one model, one held-out split (one point estimate per cell; no
+replicates and no interval, so no cell supports a significance claim).
+\textbf{The two rankings disagree at both ends.} The product coupling is worst on CFM loss by
+a factor of eight and \emph{best} on normalised energy distance, while exact assignment
+(\texttt{ot}) sits at the good end of the CFM-loss column and is \emph{worse than predicting
+no change} distributionally. \textbf{The CFM-loss column is deliberately left unbolded}: it is
+not comparable across couplings (\S\ref{sec:cfm}), so marking a best value in it would assert
+exactly the comparison this paper argues is invalid. It is printed only to expose the
+disagreement. Bold marks the best value in the two distributional columns, which are the
+ranking keys. The energy-distance denominator (the no-change reference) is $0.03636$.}
+\label{tab:coupling}
+\begin{tabular}{lccc}
+\toprule
+coupling & held-out CFM loss \emph{(not a ranking key)} & absolute ED & normalised ED \\
+\midrule
+independent (product)                 & $6.9873$ & $\mathbf{0.02943}$ & $\mathbf{0.8094}$ \\
+\texttt{ot} (exact assignment)        & $0.8600$ & $0.04068$ & $1.1188$ \\
+\texttt{sinkhorn} + UOT (\emph{selected}) & $0.8579$ & $0.03049$ & $0.8387$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent The identity-pair fractions that drive the CFM-loss column are: index-aligned
+$1.0$, exact assignment $0.795$, entropic $0.229$, product $0.0039$ --- a factor of $256$
+between the extremes. The selected
+configuration is \texttt{sinkhorn} with $\varepsilon = 0.05$, $25$ iterations and unbalanced
+relaxation $\tau_{\mathrm{ub}} = 1.0$. Its CFM loss is numerically the lowest of the three,
+but nothing rests on that and we do not report it as a win: the values in that column are
+not comparable across couplings, and a single split with no replicates could not support
+the comparison even if they were. It was selected on the distributional
+score with its denominator reported. The same policy governs the baseline
+ladder: ranking it by CFM loss instead of normalised energy distance produces a
+\emph{different} order, so at least one model's position depends on the metric chosen, and we
+record the divergence rather than asserting a preference.
+
+\paragraph{Retracted rank rule.} An earlier version of this work required $r \ge k(k-1)/2$ so
+that no two intervention pairs alias onto a shared interaction direction. The rank claim is
+true --- the pair-basis rank saturates at $\min(r, k(k-1)/2)$ --- but the requirement is
+\textbf{retracted}, because it does not predict performance: measured recovery was better at
+$r{=}2$ than at $r{=}4$ or $r{=}6$. We therefore treat $r$ as a tunable capacity
+hyperparameter selected on a held-out distributional score ($r{=}8$ measured best at
+$k{=}4$; on the organoid screen the held-out-singleton selection gave $0.9112$, $0.8719$,
+$0.8852$ for $r = 2, 8, 15$, selecting $r{=}8$).
+
+\section{Hyperparameters and structural self-tests}
+\label{app:hparams}
+
+\paragraph{Configurations.} Synthetic/baseline benchmark: $d{=}6$, $D{=}6$, $k{=}4$, $r{=}8$,
+hidden $64$, depth $2$, code dim $0$; $22{,}135$ parameters (one-form $17{,}664$; ambient
+metric $3{,}717$; saturator $257$; decoder $453$; embeddings $32$; dose $12$; velocity core
+$17{,}708$). Organoid screen: latent $d{=}8$, $k{=}6$, $r{=}8$, hidden $96$, $41{,}576$
+parameters, $400$ cells per population, $12$ integration steps, $600$ bootstrap resamples.
+Order-flow study: $d{=}6$, $k{=}4$, $r{=}8$, hidden $96$, $37{,}015$ parameters. Schedule
+$300{+}300{+}200$ steps, batch $128$, lr $3\times10^{-3}$ ($10^{-3}$ in stage 3), singleton
+oversampling $3\times$, Adam. All runs on CPU with two threads; a velocity evaluation at
+batch $256$ costs $1.70$ ms in float32 and $2.02$ ms in float64.
+
+\paragraph{Precision.} Covariance must be measured in float64: the same weights floor at
+$3.12\times10^{-7}$ in float32, which is arithmetic and not a broken law, so evaluation uses
+an explicit float64 inference cast.
+
+\paragraph{Structural self-tests (bit-exact where claimed).} Permutation invariance
+$\le 7.77\times10^{-16}$ (moments $2.2$--$2.8\times10^{-16}$); interaction contribution on
+singletons exactly $0.0$ ($15/15$ cases) and under a zeroed exposure exactly $0.0$ ($5/5$);
+zero-dose flow identity defect $0.0$; sparse and dense moment paths agreeing to
+$8.9\times10^{-16}$ under the default reduction and to $0.0$ when the reduction order is
+forced. Moment cost: $O(kr)$ versus $O(k^{2})$ speedup $1.05\times$ at $k{=}2$ rising
+monotonically to $\mathbf{121.33\times}$ at $k{=}32$, with log-log slopes $0.230$ and
+$1.950$; the two agree to $1.40\times10^{-15}$. Hill dose: $a(0) = 0.0$ bit-exactly, minimum
+increment $1.03\times10^{-3}$ (strictly monotone), maximum excess over the ceiling
+$-0.143$ (bounded), and it survives fitting to a bounded monotone reference at relative
+$L_{2}$ error $0.0142$ with the boundary properties intact. Saturation: direction preserved
+to $2.22\times10^{-16}$, bound binding under $50\times$ and $1000\times$ drive, covariance
+$8.64\times10^{-16}$ and $9.61\times10^{-16}$ respectively.
+
+\section{Ablations}
+\label{app:ablations}
+
+Each arm below is a component removal or replacement, not a rescue of a weak result. The
+architectural components are fixed by the propositions; the arms exist to measure what each
+one buys and to expose the failures the covariance argument predicts.
+
+\begin{table}[h]
+\centering
+\caption{Ablation arms. The upper block is measured covariance (lower is better; the intact
+method is $7.26\times10^{-16}$); the lower block is a qualitative or distributional arm. Arms
+marked \emph{predicted to fail} are controls whose failure validates the corresponding
+proposition.}
+\label{tab:ablations}
+\begin{tabular}{llc}
+\toprule
+arm & what it changes & measured \\
+\midrule
+latent $\epsilon I$, $\epsilon = 10^{-6}$ & Euclidean stabiliser on $G$ & $2.64\times10^{-7}$ \\
+latent $\epsilon I$, $\epsilon = 10^{-2}$ & \emph{predicted to fail} & $2.60\times10^{-3}$ \\
+latent $\epsilon I$, $\epsilon = 10^{-1}$ & \emph{predicted to fail} & $2.27\times10^{-2}$ \\
+ambient floor $w_{\min}$ & covariant conditioning & $7.79\times10^{-16}$ \\
+coordinate-scalar gate & the old gate; \emph{predicted to fail} & $2.20\times10^{-2}$ \\
+Euclidean-norm saturation & wrong norm; \emph{predicted to fail} & $6.20\times10^{-3}$ \\
+saturation off & no bound & $5.76\times10^{-16}$ \\
+$S - 2\Gamma$ / $S$ alone & wrong sign / no correction & $5.34\times10^{-2}$ / $4.00\times10^{-2}$ \\
+\midrule
+connection coupling & the retracted term (\S\ref{sec:doublecount}) & collinear, cosine $0.99999790$ \\
+interaction branch disabled & main effects only & within-model paired arm \\
+interaction head without $m_{1}$ & rank-$r$-shared interaction & arm retained, not default \\
+population encoder on & \citet{atanackovic2024mfm} conditioning & $-0.059$ $[-0.113, -0.011]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\figorbox{\figtable}
+\caption{\textbf{Table~\ref{\tabonelabel} drawn, and why neither contrast supports a
+claim.} \textbf{(a)} All nine arms on the same 21 leave-one-combination-out folds
+$\times$ 3 seeds. Letters are a compact letter display over \emph{adjacent} paired tests:
+all six model arms share letter (a), so no adjacent pair among them is separated --- which
+is not the same statement as no pair being separated. \textbf{(b)} The two contrasts that
+matter. IHC-FM (full) versus FactoredAdditiveCFM is $-0.135$ $[-0.253, -0.023]$: the CI
+excludes zero, but the margin is below the $0.25$ nED threshold our power analysis
+requires, so we report a small bounded difference and not a win ($\sim$35 folds would be
+needed). The within-model ablation --- better powered, since both arms share fold, seed,
+initialisation and schedule --- is $+0.015$ $[-0.024, +0.051]$, a null: the full model is
+nominally worse. \textbf{(c)} Why the null is not a floor effect. Integrating the true
+field on the same pre-cells gives an achievable floor of $0.018$; deleting the true
+interaction term from that oracle costs $0.292$ nED, so real interaction signal exists
+(roughly $0.41$ of the additive velocity magnitude). But both IHC-FM arms sit at
+$0.625$/$0.640$, still above the interaction-free oracle at $0.310$, so neither has reached
+the ceiling main effects alone could deliver and the interaction branch has no headroom in
+which to demonstrate value. We report this rather than adjusting the architecture.}
+\label{fig:table1}
+\end{figure}
+
+% =====================================================================================
 \bibliographystyle{plainnat}
-\begin{thebibliography}{9}
-\bibitem[Atanackovic et al.(2025)]{atanackovic2024mfm}
+\begin{thebibliography}{12}
+
+\bibitem[Ahlmann-Eltze et al.(2025)]{ahlmanneltze2025linear}
+C.~Ahlmann-Eltze, W.~Huber, and S.~Anders.
+\newblock Deep-learning-based gene perturbation effect prediction does not yet outperform
+simple linear baselines.
+\newblock \emph{Nature Methods}, 22(8):1657--1661, 2025.
+doi:10.1038/s41592-025-02772-6.
+
+\bibitem[Atanackovic et al.(2024)]{atanackovic2024mfm}
 L.~Atanackovic, X.~Zhang, B.~Amos, M.~Blanchette, L.~J.~Lee, Y.~Bengio, A.~Tong, and
 K.~Neklyudov.
 \newblock Meta Flow Matching: Integrating vector fields on the Wasserstein manifold.
-\newblock \emph{ICLR}, 2025. arXiv:2408.14608.
+\newblock arXiv:2408.14608, 2024.
 
-\bibitem[Kapusniak et al.(2024)]{kapusniak2024mfm}
-K.~Kapusniak et al.
+\bibitem[Kapu\'{s}niak et al.(2024)]{kapusniak2024metricfm}
+K.~Kapu\'{s}niak, P.~Potaptchik, T.~Reu, L.~Zhang, A.~Tong, M.~Bronstein, A.~J.~Bose, and
+F.~Di~Giovanni.
 \newblock Metric Flow Matching for smooth interpolations on the data manifold.
-\newblock \emph{NeurIPS}, 2024. arXiv:2405.14780.
+\newblock arXiv:2405.14780, 2024.
 
-\bibitem[Ramos Zapatero et al.(2023)]{ramoszapatero2023}
-M.~Ramos Zapatero et al.
-\newblock Trellis tree-based analysis reveals stromal regulation of patient-derived
-organoid drug responses.
-\newblock \emph{Cell}, 186(25), 2023. doi:10.1016/j.cell.2023.11.005.
+\bibitem[Lipman et al.(2022)]{lipman2022fm}
+Y.~Lipman, R.~T.~Q.~Chen, H.~Ben-Hamu, M.~Nickel, and M.~Le.
+\newblock Flow matching for generative modeling.
+\newblock arXiv:2210.02747, 2022.
 
-\bibitem[Zweig et al.(2025)]{zweig2025eggfm}
+\bibitem[Liu et al.(2022)]{liu2022rectified}
+X.~Liu, C.~Gong, and Q.~Liu.
+\newblock Flow straight and fast: learning to generate and transfer data with rectified flow.
+\newblock arXiv:2209.03003, 2022.
+
+\bibitem[Lotfollahi et al.(2023)]{lotfollahi2023cpa}
+M.~Lotfollahi, A.~Klimovskaia~Susmelj, C.~De~Donno, L.~Hetzel, et al.
+\newblock Predicting cellular responses to complex perturbations in high-throughput screens.
+\newblock \emph{Molecular Systems Biology}, 19(6), 2023. doi:10.15252/msb.202211517.
+
+\bibitem[Mahadevan(2026)]{mahadevan2026bridge}
+S.~Mahadevan.
+\newblock Latent confounded causal discovery via Lie bracket geometry.
+\newblock arXiv:2606.19610, 2026.
+
+\bibitem[Miller et al.(2025)]{miller2025rebuttal}
+H.~E.~Miller, G.~M.~Mejia, F.~J.~A.~Leblanc, B.~Wang, B.~Swain, and
+L.~Paulo~de~Lima~Camillo.
+\newblock Deep learning-based genetic perturbation models \emph{do} outperform uninformative
+baselines on well-calibrated metrics.
+\newblock bioRxiv, 2025. doi:10.1101/2025.10.20.683304.
+
+\bibitem[Ramos Zapatero et al.(2023)]{ramoszapatero2023trellis}
+M.~Ramos~Zapatero, A.~Tong, J.~W.~Opzoomer, R.~O'Sullivan, et al.
+\newblock Trellis tree-based analysis reveals stromal regulation of patient-derived organoid
+drug responses.
+\newblock \emph{Cell}, 186(25):5606--5619.e24, 2023. doi:10.1016/j.cell.2023.11.005.
+
+\bibitem[Roohani et al.(2023)]{roohani2023gears}
+Y.~Roohani, K.~Huang, and J.~Leskovec.
+\newblock Predicting transcriptional outcomes of novel multigene perturbations with GEARS.
+\newblock \emph{Nature Biotechnology}, 42(6):927--935, 2023. doi:10.1038/s41587-023-01905-6.
+
+\bibitem[Tong et al.(2023)]{tong2023otcfm}
+A.~Tong, K.~Fatras, N.~Malkin, G.~Huguet, Y.~Zhang, J.~Rector-Brooks, G.~Wolf, and
+Y.~Bengio.
+\newblock Improving and generalizing flow-based generative models with minibatch optimal
+transport.
+\newblock arXiv:2302.00482, 2023.
+
+\bibitem[Zweig et al.(2025)]{zweig2025egfm}
 A.~Zweig, M.~Zhang, E.~Azizi, and D.~Knowles.
-\newblock Energy Guided Geometric Flow Matching.
+\newblock Energy guided geometric flow matching.
 \newblock arXiv:2509.25230, 2025.
+
 \end{thebibliography}
 
 \end{document}

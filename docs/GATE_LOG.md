@@ -708,14 +708,16 @@ Pooled over all 6 LOCO folds (12 held-out populations), normalised ED mean [sem]
 | NoChange | 1.0000 [0.0] | 1.000 |
 | PerturbedMean | 1.0408 [0.0131] | 1.011 |
 | MatchingMean | 1.0861 [0.1270] | 0.889 |
-| LinearResponse | 1.4837 [1.5056] | 0.866 |
+| LinearResponse | 1.4837 [0.6733] | 0.866 |
 
 Adjacent paired separation: FactoredAdditive vs DeepSets gap **+0.0179** against sem
 0.2554 (wins 4/6, not separated); DeepSets vs Monolithic gap **+0.0090** against sem 0.1383
 (not separated). Required n at the observed effect size is **~270–450 folds**, so **this
 benchmark at k=4 cannot rank the three neural models at all**. Note also that
 `LinearResponse` looks competitive on one fold (0.866) and is by far the worst pooled
-(1.484 [1.506]) — a single fold is actively misleading, not merely imprecise.
+(1.484, sem 0.6733, sd 1.5056, per-fold range 0.438–4.738) — a single fold is actively
+misleading, not merely imprecise. All bracketed figures in the table above are **sems**
+(the sds are roughly 2.4x larger at n=6; e.g. FactoredAdditiveCFM sd 0.6096 vs sem 0.2726).
 
 **Structural asymmetry that makes single-fold tables dishonest:** the four controls are
 effectively deterministic across seeds (measured std — NoChange and PerturbedMean bitwise
