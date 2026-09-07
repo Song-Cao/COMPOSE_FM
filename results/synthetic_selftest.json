@@ -1,0 +1,396 @@
+{
+  "systems": [
+    {
+      "d": 6,
+      "k": 4,
+      "r_declared": 2,
+      "interaction_field_rank": 2,
+      "interaction_field_singular_values": [
+        20.991156840179208,
+        7.395401451270608,
+        4.170694405152274e-15,
+        3.0685692427834257e-15,
+        1.806521188063309e-15,
+        1.2489085929164711e-15,
+        9.637393095682415e-16
+      ],
+      "coefficient_matrix_numerical_rank": 4,
+      "singleton_interaction_max_abs": 0.0,
+      "dose": {
+        "max_abs_at_tau0": 0.0,
+        "min_increment": 1.9963625509822336e-05,
+        "max_over_ceiling": -0.0002752692873246865,
+        "ceilings": [
+          1.0825230788791353,
+          0.93931501858282,
+          1.2263072881683192,
+          1.0369245492997785
+        ]
+      },
+      "nonkinematic": {
+        "per_pair": {
+          "X0+X1": 0.9539804253683035,
+          "X0+X2": 0.9148230534230297,
+          "X0+X3": 0.95131718056446,
+          "X1+X2": 0.9820357851323444,
+          "X1+X3": 0.9416345170484693,
+          "X2+X3": 0.9820583002356092
+        },
+        "min": 0.9148230534230297,
+        "median": 0.9526488029663818,
+        "max": 0.9820583002356092
+      },
+      "tau0_flow_identity_max_abs": 0.0,
+      "loco": {
+        "held_out": [
+          0,
+          1
+        ],
+        "resid_frac_from_other_pairs": 1.8836731192573358e-16,
+        "singleton_basis_norm": 0.0,
+        "other_pair_span_rank": 2,
+        "r": 2
+      },
+      "interaction_to_additive_norm_ratio": 0.17242086406545215,
+      "interaction_to_additive_ratio_median": 0.14897478138569295,
+      "interaction_to_additive_ratio_range": [
+        0.056772658253254116,
+        0.3730291066088711
+      ],
+      "eps_requested": 0.15,
+      "eps_calibration_constant": 16.511278218671865,
+      "null_system": false,
+      "checks": {
+        "rank_equals_r": true,
+        "singletons_vanish_exactly": true,
+        "dose_zero_at_zero_exactly": true,
+        "dose_monotone": true,
+        "dose_bounded": true,
+        "interaction_nonkinematic": true,
+        "tau0_is_identity": true,
+        "loco_well_posed": true,
+        "eps_calibration_within_2x": true
+      },
+      "config": {
+        "d": 6,
+        "k": 4,
+        "r": 2,
+        "anisotropy": 1.0,
+        "eps": 0.15
+      }
+    },
+    {
+      "d": 6,
+      "k": 4,
+      "r_declared": 3,
+      "interaction_field_rank": 3,
+      "interaction_field_singular_values": [
+        19.26263006735995,
+        5.0275793042593415,
+        0.36025974600542193,
+        3.4164256099061013e-15,
+        2.279457081740998e-15,
+        1.3788848863987503e-15,
+        1.1225423098995566e-15
+      ],
+      "coefficient_matrix_numerical_rank": 4,
+      "singleton_interaction_max_abs": 0.0,
+      "dose": {
+        "max_abs_at_tau0": 0.0,
+        "min_increment": 1.9963625509822336e-05,
+        "max_over_ceiling": -0.0002752692873246865,
+        "ceilings": [
+          1.0825230788791353,
+          0.93931501858282,
+          1.2263072881683192,
+          1.0369245492997785
+        ]
+      },
+      "nonkinematic": {
+        "per_pair": {
+          "X0+X1": 0.9359197459039008,
+          "X0+X2": 0.9416184589359523,
+          "X0+X3": 0.9684338266095698,
+          "X1+X2": 0.9399273966730824,
+          "X1+X3": 0.9762039541591571,
+          "X2+X3": 0.9626665631832277
+        },
+        "min": 0.9359197459039008,
+        "median": 0.95214251105959,
+        "max": 0.9762039541591571
+      },
+      "tau0_flow_identity_max_abs": 0.0,
+      "loco": {
+        "held_out": [
+          0,
+          1
+        ],
+        "resid_frac_from_other_pairs": 8.990350898473404e-15,
+        "singleton_basis_norm": 0.0,
+        "other_pair_span_rank": 3,
+        "r": 3
+      },
+      "interaction_to_additive_norm_ratio": 0.07385639647973652,
+      "interaction_to_additive_ratio_median": 0.14317966646758723,
+      "interaction_to_additive_ratio_range": [
+        0.04495206240209961,
+        0.25193088534973523
+      ],
+      "eps_requested": 0.15,
+      "eps_calibration_constant": 5.467173633286848,
+      "null_system": false,
+      "checks": {
+        "rank_equals_r": true,
+        "singletons_vanish_exactly": true,
+        "dose_zero_at_zero_exactly": true,
+        "dose_monotone": true,
+        "dose_bounded": true,
+        "interaction_nonkinematic": true,
+        "tau0_is_identity": true,
+        "loco_well_posed": true,
+        "eps_calibration_within_2x": true
+      },
+      "config": {
+        "d": 6,
+        "k": 4,
+        "r": 3,
+        "anisotropy": 20.0,
+        "eps": 0.15
+      }
+    },
+    {
+      "d": 8,
+      "k": 5,
+      "r_declared": 2,
+      "interaction_field_rank": 2,
+      "interaction_field_singular_values": [
+        60.28124326073713,
+        49.77705706518887,
+        1.5059195395006552e-14,
+        1.1651034608187656e-14,
+        8.878376448171138e-15,
+        5.043368051778012e-15,
+        4.08969265020666e-15,
+        2.932277463938682e-15
+      ],
+      "coefficient_matrix_numerical_rank": 5,
+      "singleton_interaction_max_abs": 0.0,
+      "dose": {
+        "max_abs_at_tau0": 0.0,
+        "min_increment": 6.212916366044041e-06,
+        "max_over_ceiling": -7.284928301598548e-05,
+        "ceilings": [
+          1.1560868289188675,
+          0.9120066003356746,
+          0.9816840455684781,
+          1.341709366816781,
+          1.2946237741263382
+        ]
+      },
+      "nonkinematic": {
+        "per_pair": {
+          "X0+X1": 0.9761748258947327,
+          "X0+X2": 0.9944803340585193,
+          "X0+X3": 0.9781073080151126,
+          "X0+X4": 0.9801695451080025,
+          "X1+X2": 0.9907249741693797,
+          "X1+X3": 0.982047001195212,
+          "X1+X4": 0.9736738687383163,
+          "X2+X3": 0.9902931235627092,
+          "X2+X4": 0.9869977382438214,
+          "X3+X4": 0.9796603037786473
+        },
+        "min": 0.9736738687383163,
+        "median": 0.9811082731516072,
+        "max": 0.9944803340585193
+      },
+      "tau0_flow_identity_max_abs": 0.0,
+      "loco": {
+        "held_out": [
+          0,
+          1
+        ],
+        "resid_frac_from_other_pairs": 4.0804737479773224e-16,
+        "singleton_basis_norm": 0.0,
+        "other_pair_span_rank": 2,
+        "r": 2
+      },
+      "interaction_to_additive_norm_ratio": 0.33312830873491217,
+      "interaction_to_additive_ratio_median": 0.3021618595814991,
+      "interaction_to_additive_ratio_range": [
+        0.08822863411268962,
+        1.2344275215498393
+      ],
+      "eps_requested": 0.3,
+      "eps_calibration_constant": 7.397114360015129,
+      "null_system": false,
+      "checks": {
+        "rank_equals_r": true,
+        "singletons_vanish_exactly": true,
+        "dose_zero_at_zero_exactly": true,
+        "dose_monotone": true,
+        "dose_bounded": true,
+        "interaction_nonkinematic": true,
+        "tau0_is_identity": true,
+        "loco_well_posed": true,
+        "eps_calibration_within_2x": true
+      },
+      "config": {
+        "d": 8,
+        "k": 5,
+        "r": 2,
+        "anisotropy": 5.0,
+        "eps": 0.3
+      }
+    },
+    {
+      "d": 6,
+      "k": 4,
+      "r_declared": 2,
+      "interaction_field_rank": 0,
+      "interaction_field_singular_values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "coefficient_matrix_numerical_rank": 4,
+      "singleton_interaction_max_abs": 0.0,
+      "dose": {
+        "max_abs_at_tau0": 0.0,
+        "min_increment": 1.9963625509822336e-05,
+        "max_over_ceiling": -0.0002752692873246865,
+        "ceilings": [
+          1.0825230788791353,
+          0.93931501858282,
+          1.2263072881683192,
+          1.0369245492997785
+        ]
+      },
+      "nonkinematic": {
+        "per_pair": {
+          "X0+X1": 0.0,
+          "X0+X2": 0.0,
+          "X0+X3": 0.0,
+          "X1+X2": 0.0,
+          "X1+X3": 0.0,
+          "X2+X3": 0.0
+        },
+        "min": 0.0,
+        "median": 0.0,
+        "max": 0.0
+      },
+      "tau0_flow_identity_max_abs": 0.0,
+      "loco": {
+        "held_out": [
+          0,
+          1
+        ],
+        "resid_frac_from_other_pairs": 0.0,
+        "singleton_basis_norm": 0.0,
+        "other_pair_span_rank": 0,
+        "r": 2
+      },
+      "interaction_to_additive_norm_ratio": 0.0,
+      "interaction_to_additive_ratio_median": 0.0,
+      "interaction_to_additive_ratio_range": [
+        0.0,
+        0.0
+      ],
+      "eps_requested": 0.0,
+      "eps_calibration_constant": 1.0,
+      "null_system": true,
+      "checks": {
+        "rank_equals_r": true,
+        "singletons_vanish_exactly": true,
+        "dose_zero_at_zero_exactly": true,
+        "dose_monotone": true,
+        "dose_bounded": true,
+        "interaction_nonkinematic": true,
+        "tau0_is_identity": true,
+        "loco_well_posed": true
+      },
+      "config": {
+        "d": 6,
+        "k": 4,
+        "r": 2,
+        "anisotropy": 1.0,
+        "eps": 0.0
+      }
+    }
+  ],
+  "charts": [
+    {
+      "kind": "tanh",
+      "strength": 0.1,
+      "hessian_scale": 0.0053328858899369235,
+      "inverse_residual": 4.440892098500626e-16
+    },
+    {
+      "kind": "tanh",
+      "strength": 0.3,
+      "hessian_scale": 0.015998657669810772,
+      "inverse_residual": 2.220446049250313e-16
+    },
+    {
+      "kind": "tanh",
+      "strength": 0.6,
+      "hessian_scale": 0.031997315339621545,
+      "inverse_residual": 4.440892098500626e-16
+    },
+    {
+      "kind": "cubic",
+      "strength": 0.1,
+      "hessian_scale": 0.07839534126268605,
+      "inverse_residual": 4.218847493575595e-15
+    },
+    {
+      "kind": "cubic",
+      "strength": 0.3,
+      "hessian_scale": 0.23518602378805806,
+      "inverse_residual": 4.218847493575595e-15
+    },
+    {
+      "kind": "cubic",
+      "strength": 0.6,
+      "hessian_scale": 0.4703720475761161,
+      "inverse_residual": 4.440892098500626e-15
+    },
+    {
+      "kind": "affine",
+      "strength": 0.1,
+      "hessian_scale": 0.0,
+      "inverse_residual": 1.5543122344752192e-15
+    },
+    {
+      "kind": "affine",
+      "strength": 0.3,
+      "hessian_scale": 0.0,
+      "inverse_residual": 1.5543122344752192e-15
+    },
+    {
+      "kind": "affine",
+      "strength": 0.6,
+      "hessian_scale": 0.0,
+      "inverse_residual": 1.5543122344752192e-15
+    }
+  ],
+  "sampler": {
+    "n_populations": 44,
+    "n_train": 40,
+    "n_test": 4,
+    "orders": [
+      1,
+      2,
+      3
+    ],
+    "labels_held_out": [
+      "X0+X1@tau0.5",
+      "X0+X1@tau1"
+    ]
+  },
+  "wall_clock_s": 0.8625879287719727
+}

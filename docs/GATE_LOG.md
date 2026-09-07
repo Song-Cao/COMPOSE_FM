@@ -311,3 +311,135 @@ contains it. Norman says it barely does at k=2. Real-data confirmation at k>=3 a
 an exposure ladder is what the full evaluation must supply.
 
 **Decision.** Two gates passed -> advance to pipeline step 3 (full evaluation plan).
+
+---
+
+# REDESIGN: COMPOSE-FM -> IHC-FM
+
+Trigger: an external professional review (`compose_fm_professional_review_and_architecture_redesign.pdf`,
+research cut-off 6 September 2026) plus an earlier workshop revision plan. The user's ruling:
+architectural components are NON-NEGOTIABLE, performance failure does not authorise
+simplifying the main model, and baseline-compatible simplifications belong only in
+ablation arms. Two decisions were taken before any code changed: (1) re-derive the
+interaction term as a non-kinematic residual and retain the old connection form as an
+ablation arm; (2) build IHC-FM as the single main model rather than maintaining two
+codebases.
+
+## CORRECTION 1 — Christoffel sign was WRONG (fail, fixed)
+
+The coupling term shipped as `S - 2*Gamma`. That is not the tensorial combination.
+
+Verified three independent ways, float64, random nonlinear chart, symmetrised Hessian:
+
+| quantity | relative residual |
+|---|---|
+| connection law `Gamma~ = Dpsi.Gamma - D2psi[u,v]` | 4.59e-15 |
+| coupling defect `== 2*D2psi[Xp,Xq]` | 2.59e-14 |
+| **`S + 2*Gamma` (tensorial)** | **2.97e-15** |
+| `S - 2*Gamma` (what we shipped) | 5.34e-02 |
+| `S` alone | 4.00e-02 |
+
+Controls that MUST fail, and do: unsymmetrised Hessian 8.34e-02; affine chart makes all
+three variants indistinguishable (1.9e-15 / 3.1e-15 / 4.0e-16) because `D2psi == 0`.
+
+Fixed in `src/composefm/compose.py` (commit `4e55168`). An earlier in-session
+verification had reported `-2*Gamma` as covariant; that test was itself buggy — it used
+an unsymmetrised Hessian and a Newton chart inverse. Superseded.
+
+## CORRECTION 2 — the coupling term DOUBLE-COUNTED a kinematic effect (fail, redesigned)
+
+The old justification was "S is the leading term of joint-minus-additive". Integrating the
+summed generator field already produces exactly that term, for free:
+
+`[flow(X+Y) - (dispX + dispY)] / (T^2/2)` vs `S = DX.Y + DY.X`, relative error
+1.61e-02 (T=0.05), 6.44e-03 (T=0.02), 3.22e-03 (T=0.01), 1.61e-03 (T=0.005).
+Convergence slope 0.99971, collinearity cosine 0.999998.
+
+So adding `beta*S` to the instantaneous velocity added a SECOND copy of a term the
+integrator supplies. This is a derivation error, not a performance shortfall. Replaced by
+a low-rank, singleton-vanishing, NON-kinematic interaction residual. The connection form
+is retained as an ablation arm.
+
+## PROPOSITIONS 1-3 (pass, 33/33 checks, 21 s CPU)
+
+`docs/PROPOSITIONS.md`, `experiments/verify_propositions.py`, `results/propositions.json`.
+
+- **P1 displacement defect** — `O(||d||^2)`, log-log slope 1.99914; affine control
+  2.46e-16 (machine zero); rises with k (1.45e-03 -> 3.44e-03) and with tau
+  (5.59e-04 -> 7.63e-03, slope 0.99216).
+- **P2** — as tabulated above.
+- **P3 WHOLE-FIELD covariance** — the paper's headline property. With `G = J^T W J`,
+  `alpha = J^T b`, `v = G^{-1} alpha`, under `z' = psi(z)` we get `v' = Dpsi . v` at
+  **1.63e-15 max / 8.83e-16 mean**, on a random nonlinear decoder AND random nonlinear
+  chart. `G` is a (0,2) tensor to 9.19e-16, `alpha` a (0,1) tensor to 7.43e-16.
+  Decoder immersion `sigma_min = 0.4609`; `cond(G) <= 40.0`.
+
+### HONEST NEGATIVE 1 — anisotropy is not an independent driver
+
+At FIXED displacement norm, latent anisotropy does NOT increase the defect: relative
+range 0.00805 across the sweep (flat). It acts only by inflating `||d||`. Earlier drafts
+listed anisotropy as a third independent axis alongside k and tau. **That claim is
+withdrawn.**
+
+### CONSTRAINT — no `eps*I` on the metric
+
+A raw Euclidean jitter breaks arbitrary-chart covariance, measured: relerr 2.12e-06
+(eps=1e-6), 2.12e-04 (1e-4), 2.09e-02 (1e-2), 1.83e-01 (0.1). `G` must be conditioned by
+construction. This is now an architectural constraint, and the ablation that adds `eps*I`
+is kept as proof the test has power.
+
+## CHART HARNESS — two tests, and they must never be conflated
+
+`experiments/chart_test.py`, `results/chart_test.json`, 186 s CPU full sweep.
+
+- **TEST A (implementation)** — exact pushforward of ONE trained model: max error
+  **8.18e-11** across k in {2,3,4} and tanh/cubic charts at strengths 0.1/0.3/0.6.
+  The no-Jacobian arm errs by >= 4.89e-02 (power ratio 9.7e+09), so the test discriminates.
+- **TEST B (optimisation / identifiability)** — INDEPENDENT retraining in both charts.
+
+### HONEST NEGATIVE 2 — training is NOT chart-independent
+
+The pre-registered criterion ("discrepancy <= 2x seed noise") passes at ratio 1.022, but
+that pass is misleading and must not be quoted as chart-independence. Discrepancy
+correlates **+0.9246** with chart Hessian scale (slope 2.1785), grows monotonically
+2.68e-02 -> 6.00e-02 -> 8.75e-02 with chart strength 0.1/0.3/0.6, and the re-charted model
+is LESS accurate against ground truth in **17/18** configurations (degradation +0.0020 ->
++0.0089 -> +0.0221). Standardising away the affine part does not remove it (raw 1.096 vs
+standardised 1.022), consistent with a genuinely nonlinear residual.
+
+Diagnosed cause: an optimisation/parameterisation effect, NOT an operator error — Test A
+is covariant to 8.2e-11 on the very same model. The minimiser Adam reaches on a re-charted
+dataset is not the pushforward of the minimiser in the original chart.
+
+**Consequence for the paper: "chart-covariant" is defensible only at the OPERATOR level.**
+Measured on the placeholder model; must be re-measured for IHC-FM before any claim.
+
+### Why PCA is excluded as a "nonlinear reparameterisation"
+
+Affine charts have `D2psi == 0` exactly, so the second-order defect is invisible:
+frozen-Jacobian arm gives 2.83e-15 for affine vs 6.10e-03 for nonlinear charts. PCA is
+affine and cannot exercise the defect. (A first attempt used the no-Jacobian arm as the
+affine control and it "failed" at 1.785e+00 — that criterion was wrong, not the code:
+an affine chart still rotates and scales. Superseded by the frozen-Jacobian arm.)
+
+## Controlled ground truth
+
+`src/composefm/synthetic.py` — closed-form rank-r interactions, so interaction RECOVERY
+is measurable rather than inferred from a distributional score. Verified: factor rank
+recovers as declared (2 and 3); singleton interaction bit-exact 0.0; non-kinematic
+fraction >= 0.9148; dose `a_p(0) = 0.0` exact, monotone (min increment 2.00e-05), bounded
+(max over ceiling -2.75e-04); `tau=0` flow identity exact 0.0. LOCO is well-posed: a
+held-out pair is reconstructible from other pairs at 1.66e-16 but from singletons at
+exactly 0.0 — i.e. interactions are unidentifiable from singletons alone, which is what
+makes the held-out-combination task meaningful.
+
+**RANK SEMANTICS.** The recoverable quantity is the FACTOR rank r. The coefficient matrix
+`off-diag(LL^T)` has numerical rank 4 at k=4 because zeroing a diagonal is not
+rank-preserving. Do not conflate them in the paper.
+
+**Test A dtype caveat.** float32 inference stalls at ~1e-8 (convergence only 1.4-2.1x per
+doubling); float64 reaches 4.46e-14 at n=128. A float32 model will appear to fail Test A
+for that reason alone.
+
+**Decision.** Phase 1 complete; both negatives recorded above are to be reported in the
+paper, not buried. Advance to Phase 2 (IHC-FM implementation).

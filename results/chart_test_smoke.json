@@ -1,0 +1,155 @@
+{
+  "config": {
+    "k_values": [
+      2
+    ],
+    "strengths": [
+      0.3
+    ],
+    "kinds": [
+      "tanh"
+    ],
+    "d": 4,
+    "r": 2,
+    "eps": 0.15,
+    "anisotropy": 5.0,
+    "n_cells": 60,
+    "n_states": 40,
+    "tau": 1.0,
+    "train_steps": 600,
+    "hidden": 32,
+    "model": "PlaceholderCFM"
+  },
+  "test_A": [
+    {
+      "err_pushforward": 3.202712547166487e-13,
+      "err_naive": 0.1996710221745202,
+      "err_frozen_jacobian": 0.02865425318410455,
+      "power_ratio": 623443469352.795,
+      "second_order_ratio": 89468701177.86755,
+      "displacement_scale": 0.5340276723761334,
+      "hessian_scale": 0.029021844831195732,
+      "k": 2,
+      "kind": "tanh",
+      "strength": 0.3,
+      "condition": "X0+X1",
+      "negative_control": false,
+      "inverse_residual": 4.440892098500626e-16
+    },
+    {
+      "err_pushforward": 1.4772029310913505e-15,
+      "err_naive": 1.2264457452157096,
+      "err_frozen_jacobian": 1.5092058366673495e-15,
+      "power_ratio": 830248653994761.1,
+      "second_order_ratio": 1.021664528889308,
+      "displacement_scale": 0.5015857407654247,
+      "hessian_scale": 0.0,
+      "k": 2,
+      "kind": "affine",
+      "strength": 0.3,
+      "condition": "X0+X1",
+      "negative_control": true,
+      "inverse_residual": 7.216449660063518e-16
+    }
+  ],
+  "test_B": [
+    {
+      "agg": {
+        "discrepancy_mean": 0.06994144068371197,
+        "seed_floor_mean": 0.08993916782148563,
+        "err_vs_truth_chart1_mean": 0.12784362454718548,
+        "err_vs_truth_chart2_mean": 0.14863791988831276,
+        "final_loss_chart1": 0.0018218890763819218,
+        "final_loss_chart2": 0.0022166534326970577,
+        "ratio_mean": 0.7776527443808926,
+        "skill_vs_zero_displacement": 0.8721563754528145,
+        "test_B_informative": true,
+        "k": 2,
+        "kind": "tanh",
+        "strength": 0.3,
+        "standardise": true,
+        "hessian_scale": 0.029021844831195732
+      },
+      "rows": [
+        {
+          "condition": "X0+X1",
+          "order": 2,
+          "discrepancy": 0.06994144068371197,
+          "seed_floor": 0.08993916782148563,
+          "ratio": 0.7776527443808926,
+          "err_vs_truth_chart1": 0.12784362454718548,
+          "err_vs_truth_chart2": 0.14863791988831276
+        }
+      ]
+    },
+    {
+      "agg": {
+        "discrepancy_mean": 0.06608479195895574,
+        "seed_floor_mean": 0.10394124987808255,
+        "err_vs_truth_chart1_mean": 0.13546499537987614,
+        "err_vs_truth_chart2_mean": 0.15823553933719312,
+        "final_loss_chart1": 0.0015146133955568075,
+        "final_loss_chart2": 0.0016372179379686713,
+        "ratio_mean": 0.6357898527915492,
+        "skill_vs_zero_displacement": 0.8645350046201239,
+        "test_B_informative": true,
+        "k": 2,
+        "kind": "tanh",
+        "strength": 0.3,
+        "standardise": false,
+        "hessian_scale": 0.029021844831195732
+      },
+      "rows": [
+        {
+          "condition": "X0+X1",
+          "order": 2,
+          "discrepancy": 0.06608479195895574,
+          "seed_floor": 0.10394124987808255,
+          "ratio": 0.6357898527915492,
+          "err_vs_truth_chart1": 0.13546499537987614,
+          "err_vs_truth_chart2": 0.15823553933719312
+        }
+      ]
+    }
+  ],
+  "chart_validity": [
+    {
+      "kind": "tanh",
+      "strength": 0.3,
+      "hessian_scale": 0.029021844831195732,
+      "inverse_residual": 4.440892098500626e-16,
+      "is_valid_nonlinear": true
+    },
+    {
+      "kind": "affine",
+      "strength": 0.3,
+      "hessian_scale": 0.0,
+      "inverse_residual": 7.216449660063518e-16,
+      "is_valid_nonlinear": false
+    }
+  ],
+  "summary": {
+    "test_A_max_pushforward_err": 3.202712547166487e-13,
+    "test_A_min_naive_err": 0.1996710221745202,
+    "test_A_min_power_ratio": 623443469352.795,
+    "test_A_affine_control_max_naive_err": 1.2264457452157096,
+    "test_A_min_frozen_jac_err_nonlinear": 0.02865425318410455,
+    "test_A_affine_control_max_frozen_jac_err": 1.5092058366673495e-15,
+    "test_A_min_second_order_ratio_nonlinear": 89468701177.86755,
+    "test_B_max_ratio_standardised": 0.7776527443808926,
+    "test_B_max_ratio_raw": 0.6357898527915492,
+    "test_B_max_discrepancy_standardised": 0.06994144068371197,
+    "test_B_mean_seed_floor": 0.08993916782148563,
+    "test_B_max_skill_vs_zero_displacement": 0.8721563754528145,
+    "test_B_any_informative": true,
+    "verdict": {
+      "test_A_implementation_correct": true,
+      "test_A_has_power": true,
+      "test_B_chart_within_2x_seed_noise": true,
+      "test_B_precondition_model_has_skill": true,
+      "affine_control_blind_to_second_order": true,
+      "nonlinear_charts_expose_second_order": true
+    }
+  },
+  "wall_clock_s": 11.993054866790771
+}

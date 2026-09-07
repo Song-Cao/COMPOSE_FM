@@ -1,0 +1,606 @@
+{
+  "all_passed": true,
+  "checks": [
+    {
+      "check": "O(||d||^2) rate: log-log slope vs 2",
+      "kind": "abs",
+      "note": "slope=1.999142 on ||d||<=1e-2",
+      "passed": true,
+      "prop": "P1",
+      "threshold": 0.002,
+      "value": 0.0008576235434796242
+    },
+    {
+      "check": "leading term == 1/2 D2psi[d,d] (O(d) rate)",
+      "kind": "rel",
+      "note": "relerr/||d|| = 0.68399 const over [1e-4,1e-2]",
+      "passed": true,
+      "prop": "P1",
+      "threshold": 0.005,
+      "value": 0.0021382487088318024
+    },
+    {
+      "check": "sub-window rise is round-off (abs err ~ eps*||psi||)",
+      "kind": "abs",
+      "note": "abs 1.04e-16 vs eps floor 1.51e-16 (ratio 0.69); cubic term ~1.0e-20, far under the floor",
+      "passed": true,
+      "prop": "P1",
+      "threshold": 2.0,
+      "value": 0.1623797411577167
+    },
+    {
+      "check": "AFFINE control: defect == 0 exactly",
+      "kind": "abs",
+      "note": "machine-zero; D2psi vanishes identically",
+      "passed": true,
+      "prop": "P1",
+      "threshold": 1e-15,
+      "value": 2.458970527197124e-16
+    },
+    {
+      "check": "relative defect increases with k",
+      "kind": "count",
+      "note": "1.4468e-03 -> 3.4393e-03",
+      "passed": true,
+      "prop": "P1",
+      "threshold": 0.0,
+      "value": 0.0
+    },
+    {
+      "check": "relative defect increases with tau",
+      "kind": "count",
+      "note": "5.5920e-04 -> 7.6295e-03",
+      "passed": true,
+      "prop": "P1",
+      "threshold": 0.0,
+      "value": 0.0
+    },
+    {
+      "check": "relative defect increases with anisotropy via ||d||-inflation",
+      "kind": "count",
+      "note": "2.2577e-04 -> 2.0268e-03",
+      "passed": true,
+      "prop": "P1",
+      "threshold": 0.0,
+      "value": 0.0
+    },
+    {
+      "check": "anisotropy acts through ||d|| (rel/||d|| ~ const)",
+      "kind": "rel",
+      "note": "rel/||d|| in [0.0112, 0.0138]",
+      "passed": true,
+      "prop": "P1",
+      "threshold": 0.3,
+      "value": 0.20785910358971257
+    },
+    {
+      "check": "NEGATIVE: fixed-||d|| anisotropy has NO effect (flat)",
+      "kind": "rel",
+      "note": "5.5824e-04 -> 5.6047e-04 over 20x stretch, 12 charts",
+      "passed": true,
+      "prop": "P1",
+      "threshold": 0.02,
+      "value": 0.008051849158151938
+    },
+    {
+      "check": "relative defect ~ tau^1",
+      "kind": "abs",
+      "note": "slope=0.9922 on tau<=0.2; 0.9471 incl. tau=0.8 (O(tau^3) bend)",
+      "passed": true,
+      "prop": "P1",
+      "threshold": 0.02,
+      "value": 0.007845110986302362
+    },
+    {
+      "check": "k-growth follows sqrt(k) (||d|| ~ sqrt k)",
+      "kind": "rel",
+      "note": "rel/sqrt(k) in [0.00128, 0.00145]",
+      "passed": true,
+      "prop": "P1",
+      "threshold": 0.2,
+      "value": 0.12216365628565537
+    },
+    {
+      "check": "connection law Gt = Dpsi.G - D2psi[u,v]",
+      "kind": "rel",
+      "note": "fact B; Hessian symmetrised",
+      "passed": true,
+      "prop": "P2",
+      "threshold": 1e-12,
+      "value": 4.585210203182599e-15
+    },
+    {
+      "check": "CONTROL unsymmetrised Hessian must FAIL",
+      "kind": "inv",
+      "note": "relerr=8.341e-02",
+      "passed": true,
+      "prop": "P2",
+      "threshold": 1000.0,
+      "value": 11.98853150507578
+    },
+    {
+      "check": "coupling defect == 2 D2psi[X,Y]",
+      "kind": "rel",
+      "note": "fact C",
+      "passed": true,
+      "prop": "P2",
+      "threshold": 1e-12,
+      "value": 2.5936961935093574e-14
+    },
+    {
+      "check": "S + 2 Gamma is tensorial",
+      "kind": "rel",
+      "note": "fact C, correct sign",
+      "passed": true,
+      "prop": "P2",
+      "threshold": 1e-12,
+      "value": 2.971281320647692e-15
+    },
+    {
+      "check": "CONTROL S - 2 Gamma must FAIL",
+      "kind": "inv",
+      "note": "relerr=5.335e-02",
+      "passed": true,
+      "prop": "P2",
+      "threshold": 1000.0,
+      "value": 18.743563034310423
+    },
+    {
+      "check": "CONTROL S alone must FAIL",
+      "kind": "inv",
+      "note": "relerr=3.996e-02",
+      "passed": true,
+      "prop": "P2",
+      "threshold": 1000.0,
+      "value": 25.02640200079999
+    },
+    {
+      "check": "AFFINE chart: all variants exact (fact D)",
+      "kind": "rel",
+      "note": "D2psi == 0, so the three variants are indistinguishable; PCA is therefore NOT a valid nonlinear-chart example",
+      "passed": true,
+      "prop": "P2",
+      "threshold": 1e-12,
+      "value": 3.1019867134177386e-15
+    },
+    {
+      "check": "Z-space chart round trip psi^-1(psi(z)) == z",
+      "kind": "rel",
+      "note": "detects wrong-branch Newton, which the psi-space check cannot",
+      "passed": true,
+      "prop": "P3",
+      "threshold": 1e-13,
+      "value": 3.076554694047746e-16
+    },
+    {
+      "check": "decoder is an immersion (sigma_min(J_D) > 0)",
+      "kind": "inv",
+      "note": "sigma_min=0.4609",
+      "passed": true,
+      "prop": "P3",
+      "threshold": 1000.0,
+      "value": 2.1698044128926934
+    },
+    {
+      "check": "Newton chart inverse converged",
+      "kind": "rel",
+      "note": "psi(psi^-1(z'))==z'",
+      "passed": true,
+      "prop": "P3",
+      "threshold": 1e-14,
+      "value": 1.0615228509364195e-16
+    },
+    {
+      "check": "WHOLE-FIELD covariance v' = Dpsi . v",
+      "kind": "rel",
+      "note": "random nonlinear decoder AND random nonlinear chart",
+      "passed": true,
+      "prop": "P3",
+      "threshold": 1e-10,
+      "value": 1.6291596645021977e-15
+    },
+    {
+      "check": "chart-2 J_D by complex step == chain rule",
+      "kind": "rel",
+      "note": "chain rule verified, not assumed",
+      "passed": true,
+      "prop": "P3",
+      "threshold": 1e-10,
+      "value": 4.58677884783586e-16
+    },
+    {
+      "check": "G transforms as a (0,2) tensor",
+      "kind": "rel",
+      "note": "",
+      "passed": true,
+      "prop": "P3",
+      "threshold": 1e-10,
+      "value": 9.191461549625418e-16
+    },
+    {
+      "check": "alpha transforms as a (0,1) tensor",
+      "kind": "rel",
+      "note": "",
+      "passed": true,
+      "prop": "P3",
+      "threshold": 1e-10,
+      "value": 7.430101622609266e-16
+    },
+    {
+      "check": "ABLATION eps*I stabiliser must BREAK covariance",
+      "kind": "inv",
+      "note": "relerr 2.123e-06 (eps=1e-06) -> 1.828e-01 (eps=0.1)",
+      "passed": true,
+      "prop": "P3",
+      "threshold": 1000.0,
+      "value": 5.470077418756649
+    },
+    {
+      "check": "joint-minus-additive == (T^2/2) S",
+      "kind": "rel",
+      "note": "relerr at T=0.005; composition already yields S",
+      "passed": true,
+      "prop": "E",
+      "threshold": 0.005,
+      "value": 0.0016095989825142443
+    },
+    {
+      "check": "O(T) convergence: log-log slope vs 1",
+      "kind": "abs",
+      "note": "slope=0.9997",
+      "passed": true,
+      "prop": "E",
+      "threshold": 0.05,
+      "value": 0.00028736852749677855
+    },
+    {
+      "check": "the two S copies are collinear (cos ~ 1)",
+      "kind": "abs",
+      "note": "min cosine 0.99999790: the hand-added term is not a new direction",
+      "passed": true,
+      "prop": "E",
+      "threshold": 0.01,
+      "value": 2.0985822346553107e-06
+    },
+    {
+      "check": "P2 connection law over all seeds",
+      "kind": "rel",
+      "note": "max over 9 seeds",
+      "passed": true,
+      "prop": "SEED",
+      "threshold": 1e-12,
+      "value": 7.54141883545643e-15
+    },
+    {
+      "check": "P2 S+2Gamma tensorial over all seeds",
+      "kind": "rel",
+      "note": "max over seeds",
+      "passed": true,
+      "prop": "SEED",
+      "threshold": 1e-12,
+      "value": 3.1599445570538386e-15
+    },
+    {
+      "check": "P3 whole-field covariance over all seeds",
+      "kind": "rel",
+      "note": "max over seeds",
+      "passed": true,
+      "prop": "SEED",
+      "threshold": 1e-10,
+      "value": 3.904264552692169e-15
+    },
+    {
+      "check": "CONTROL S-2Gamma fails at EVERY seed",
+      "kind": "inv",
+      "note": "min control relerr 4.954e-02",
+      "passed": true,
+      "prop": "SEED",
+      "threshold": 1000.0,
+      "value": 20.185567404090513
+    }
+  ],
+  "complex_step_h": 1e-20,
+  "double_counting": {
+    "E_collinearity_cosine_min": 0.9999979014177653,
+    "E_convergence_slope": 0.9997126314725032,
+    "E_explicit_over_kinematic_ratio": {
+      "0.005": 400.0,
+      "0.01": 200.0,
+      "0.02": 100.0,
+      "0.05": 40.0
+    },
+    "E_joint_minus_additive_vs_S_relerr": {
+      "0.005": 0.0016095989825142443,
+      "0.01": 0.0032188807027715136,
+      "0.02": 0.006436612698051495,
+      "0.05": 0.0160854120339174
+    }
+  },
+  "dtype": "float64",
+  "failed_checks": [],
+  "n_checks": 33,
+  "n_passed": 33,
+  "numpy": "2.5.2",
+  "prop1": {
+    "P1_affine_defect_abs_max": 2.458970527197124e-16,
+    "P1_affine_hessian_abs_max": 0.0,
+    "P1_aniso_fixed_norm_axis_aligned": {
+      "1": 0.000641483771846852,
+      "10": 0.0005253878846698694,
+      "2": 0.0006022444729831479,
+      "20": 0.0005082193134026286,
+      "5": 0.0005525650481167564
+    },
+    "P1_aniso_fixed_norm_random_frame": {
+      "1": 0.0005582440157148517,
+      "10": 0.0005588460847164727,
+      "2": 0.0005559780165617545,
+      "20": 0.0005604719348004083,
+      "5": 0.0005570724835295361
+    },
+    "P1_aniso_fixed_norm_relative_range": 0.008051849158151938,
+    "P1_aniso_inflation_delta_norm": {
+      "1": 0.020180979291073375,
+      "10": 0.0981482329531762,
+      "2": 0.03055865330993623,
+      "20": 0.14689314792109723,
+      "5": 0.0595148015353892
+    },
+    "P1_aniso_inflation_ratio_spread": 0.20785910358971257,
+    "P1_aniso_inflation_rel_defect": {
+      "1": 0.0002257650021887777,
+      "10": 0.0013066088842116873,
+      "2": 0.00035844508606436493,
+      "20": 0.0020267796978546207,
+      "5": 0.0007600626091768127
+    },
+    "P1_aniso_inflation_rel_over_delta": {
+      "1": 0.01118701916951275,
+      "10": 0.013312607317495303,
+      "2": 0.011729740915900096,
+      "20": 0.013797646292822952,
+      "5": 0.012770984520965895
+    },
+    "P1_aniso_inflation_saturation": {
+      "1": 0.3613339269517626,
+      "10": 0.5082535805684393,
+      "2": 0.37151028752223725,
+      "20": 0.6474635070123234,
+      "5": 0.4222862591450651
+    },
+    "P1_aniso_naive_is_monotone": false,
+    "P1_aniso_naive_saturation": {
+      "1": 0.7148075093924998,
+      "10": 0.9797591145829045,
+      "2": 0.8265647130343077,
+      "20": 0.9943060951898369,
+      "5": 0.9389183047974836
+    },
+    "P1_aniso_naive_turnover_at": "2",
+    "P1_cancellation_abs_residual_at_1e-6": 1.0392654565373527e-16,
+    "P1_cancellation_floor_relerr": {
+      "1e-05": 7.135762387186583e-05,
+      "1e-06": 0.007664734325431107
+    },
+    "P1_cancellation_predicted_floor": 1.5104495824210079e-16,
+    "P1_cancellation_ratio_to_eps_floor": 0.6880504113692939,
+    "P1_cubic_abs_term_at_1e-6_extrapolated": 1.0437692304452683e-20,
+    "P1_cubic_abs_term_at_delta_1e-1": 1.0437692304452682e-05,
+    "P1_cubic_remainder_at_delta_1e-1": 0.06971250431118463,
+    "P1_defect_norm_by_scale": {
+      "0.0001": 1.5617196814517846e-10,
+      "0.001": 1.561162144102632e-08,
+      "0.01": 1.5555638301401317e-06,
+      "0.1": 0.00014972482207583046,
+      "1e-05": 1.5617810962115e-12,
+      "1e-06": 1.5652285825942483e-14
+    },
+    "P1_defect_over_delta2_by_scale": {
+      "0.0001": 0.015617196814517845,
+      "0.001": 0.015611621441026322,
+      "0.01": 0.015555638301401317,
+      "0.1": 0.014972482207583042,
+      "1e-05": 0.015617810962114995,
+      "1e-06": 0.015652285825942483
+    },
+    "P1_defect_vs_aniso_naive": {
+      "1": 0.0028163213156491523,
+      "10": 0.0024329571675938077,
+      "2": 0.0033640732476405396,
+      "20": 0.0017983787352089597,
+      "5": 0.003165266646040389
+    },
+    "P1_defect_vs_k": {
+      "1": 0.0014467808510974988,
+      "2": 0.001871428111486159,
+      "3": 0.0022126140174361245,
+      "4": 0.0028445752093978123,
+      "5": 0.003225559950352304,
+      "6": 0.0034393113854900726
+    },
+    "P1_defect_vs_tau": {
+      "0.05": 0.0005592022311799793,
+      "0.1": 0.001116480815538191,
+      "0.2": 0.0022126140174361245,
+      "0.4": 0.004255078476590508,
+      "0.8": 0.0076294559441383025
+    },
+    "P1_delta_norm_vs_k": {
+      "1": 0.10446580423670865,
+      "2": 0.14564223886367864,
+      "3": 0.17806272091102382,
+      "4": 0.2102074125557973,
+      "5": 0.23777211609227783,
+      "6": 0.2514934568557754
+    },
+    "P1_hessian_norm_vs_aniso": {
+      "1": 0.08900526858369948,
+      "10": 0.054284501964200975,
+      "2": 0.09042423130659848,
+      "20": 0.0211160319645268,
+      "5": 0.08668967661538445
+    },
+    "P1_leading_coeff_constancy_spread": 0.0021382487088318024,
+    "P1_leading_coeff_limit": 0.68399229065421,
+    "P1_leading_coeff_relerr_by_scale": {
+      "0.0001": 6.825297450218677e-05,
+      "0.001": 0.000684088953792087,
+      "0.01": 0.006853581731486753,
+      "0.1": 0.06971250431118463,
+      "1e-05": 7.135762387186583e-05,
+      "1e-06": 0.007664734325431107
+    },
+    "P1_leading_coeff_relerr_over_delta": {
+      "0.0001": 0.6825297450218677,
+      "0.001": 0.684088953792087,
+      "0.01": 0.6853581731486753
+    },
+    "P1_quadratic_slope": 1.9991423764565204,
+    "P1_quadratic_slope_fit_window": [
+      0.0001,
+      0.01
+    ],
+    "P1_rel_defect_over_sqrt_k": {
+      "1": 0.0014467808510974988,
+      "2": 0.0013232995081349972,
+      "3": 0.0012774532985794858,
+      "4": 0.0014222876046989061,
+      "5": 0.0014425142628977196,
+      "6": 0.0014040929934992224
+    },
+    "P1_rel_defect_tau_slope": 0.9921548890136976,
+    "P1_rel_defect_tau_slope_all_taus": 0.9470503598601558,
+    "P1_rel_defect_tau_slope_fit_window": [
+      0.05,
+      0.2
+    ],
+    "P1_sqrt_k_spread": 0.12216365628565537,
+    "chart_diffeo_margin_sigma_min": 0.3332620331977789
+  },
+  "prop2": {
+    "P2_S_alone_relerr": 0.03995780136385702,
+    "P2_S_minus_2Gamma_relerr": 0.05335164921255806,
+    "P2_S_plus_2Gamma_relerr": 2.971281320647692e-15,
+    "P2_affine_S_alone_relerr": 4.049236161195674e-16,
+    "P2_affine_S_minus_2Gamma_relerr": 3.1019867134177386e-15,
+    "P2_affine_S_plus_2Gamma_relerr": 1.9227189312376076e-15,
+    "P2_connection_law_relerr": 4.585210203182599e-15,
+    "P2_coupling_defect_vs_2D2psi_relerr": 2.5936961935093574e-14,
+    "P2_metric_cond_max": 25.820631873982016,
+    "P2_unsymmetrised_hessian_relerr": 0.0834130518468099,
+    "chart_diffeo_margin_sigma_min": 0.30464718114657724
+  },
+  "prop3": {
+    "P3_G_condition_max": 40.019242242753485,
+    "P3_chart_diffeo_margin_sigma_min": 0.3243769982014774,
+    "P3_chart_lipschitz_ratio": 0.6000000000000001,
+    "P3_decoder_jacobian_cs_vs_chainrule_relerr": 4.58677884783586e-16,
+    "P3_decoder_min_singular_value": 0.4608710324571796,
+    "P3_euclidean_stabiliser_covariance_relerr": {
+      "0.0001": 0.00021226531544417978,
+      "0.01": 0.02088966062403747,
+      "0.1": 0.18281276907910757,
+      "1e-06": 2.122996031342758e-06
+    },
+    "P3_metric_pullback_relerr": 9.191461549625418e-16,
+    "P3_newton_inverse_max_relerr": 1.0615228509364195e-16,
+    "P3_newton_inverse_zspace_max_relerr": 3.076554694047746e-16,
+    "P3_oneform_pullback_relerr": 7.430101622609266e-16,
+    "P3_wholefield_covariance_relerr": 1.6291596645021977e-15,
+    "P3_wholefield_covariance_relerr_mean": 8.831108675867171e-16
+  },
+  "seed": 20260907,
+  "seed_sweep": {
+    "max_p2_S_plus_2Gamma": 3.1599445570538386e-15,
+    "max_p2_connection_law": 7.54141883545643e-15,
+    "max_p3_G_cond": 57.18466664043454,
+    "max_p3_wholefield": 3.904264552692169e-15,
+    "min_p2_S_minus_2Gamma_control": 0.049540346326720275,
+    "n_seeds": 9,
+    "per_seed": [
+      {
+        "n_failed": 0,
+        "p2_S_minus_2Gamma_control": 0.049540346326720275,
+        "p2_S_plus_2Gamma": 6.879857956614874e-16,
+        "p2_connection_law": 2.8265418356552673e-15,
+        "p3_G_cond_max": 27.751231663435266,
+        "p3_wholefield": 3.904264552692169e-15,
+        "seed": 1
+      },
+      {
+        "n_failed": 0,
+        "p2_S_minus_2Gamma_control": 0.13927270868428535,
+        "p2_S_plus_2Gamma": 1.4683725441274672e-15,
+        "p2_connection_law": 1.1726291743655821e-15,
+        "p3_G_cond_max": 14.148982935467515,
+        "p3_wholefield": 1.9274806785355943e-15,
+        "seed": 2
+      },
+      {
+        "n_failed": 0,
+        "p2_S_minus_2Gamma_control": 0.3401347966977884,
+        "p2_S_plus_2Gamma": 4.460208268828247e-16,
+        "p2_connection_law": 7.172603221438558e-16,
+        "p3_G_cond_max": 24.406235314906564,
+        "p3_wholefield": 2.987510922942801e-15,
+        "seed": 3
+      },
+      {
+        "n_failed": 0,
+        "p2_S_minus_2Gamma_control": 0.12347541112068403,
+        "p2_S_plus_2Gamma": 2.1406567634579652e-15,
+        "p2_connection_law": 4.834592920295296e-15,
+        "p3_G_cond_max": 6.225200462412761,
+        "p3_wholefield": 1.2791355025433575e-15,
+        "seed": 7
+      },
+      {
+        "n_failed": 0,
+        "p2_S_minus_2Gamma_control": 0.15022163754152232,
+        "p2_S_plus_2Gamma": 6.333150445111771e-16,
+        "p2_connection_law": 1.7974985604930905e-15,
+        "p3_G_cond_max": 17.975094557288934,
+        "p3_wholefield": 2.1011960766190887e-15,
+        "seed": 101
+      },
+      {
+        "n_failed": 0,
+        "p2_S_minus_2Gamma_control": 0.07739879210644854,
+        "p2_S_plus_2Gamma": 1.103851300622829e-15,
+        "p2_connection_law": 1.3217929556693248e-15,
+        "p3_G_cond_max": 8.126462710706212,
+        "p3_wholefield": 1.3483115667726416e-15,
+        "seed": 2718
+      },
+      {
+        "n_failed": 0,
+        "p2_S_minus_2Gamma_control": 0.1476419478807036,
+        "p2_S_plus_2Gamma": 2.9956183533449216e-15,
+        "p2_connection_law": 4.096454022297044e-15,
+        "p3_G_cond_max": 57.18466664043454,
+        "p3_wholefield": 2.170983279778738e-15,
+        "seed": 99991
+      },
+      {
+        "n_failed": 0,
+        "p2_S_minus_2Gamma_control": 0.3082125284253473,
+        "p2_S_plus_2Gamma": 1.0842588020610147e-15,
+        "p2_connection_law": 2.439487049491387e-15,
+        "p3_G_cond_max": 8.17575831435759,
+        "p3_wholefield": 3.1435573109601497e-15,
+        "seed": 555
+      },
+      {
+        "n_failed": 0,
+        "p2_S_minus_2Gamma_control": 0.2374996807435394,
+        "p2_S_plus_2Gamma": 3.1599445570538386e-15,
+        "p2_connection_law": 7.54141883545643e-15,
+        "p3_G_cond_max": 19.514443838006216,
+        "p3_wholefield": 1.8870513702204333e-15,
+        "seed": 31337
+      }
+    ],
+    "total_failed_checks": 0
+  },
+  "wall_clock_s": 21.167
+}
