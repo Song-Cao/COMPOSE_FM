@@ -1,0 +1,514 @@
+{
+  "module": "ihcfm_hierarchy",
+  "torch": "2.13.0",
+  "permutation_invariance": {
+    "max_abs_dev_m1": 2.220446049250313e-16,
+    "max_abs_dev_m2": 2.7755575615628914e-16,
+    "max_abs_dev_b": 7.771561172376096e-16,
+    "sparse_vs_dense_m1": 2.220446049250313e-16,
+    "sparse_vs_dense_m2": 2.7755575615628914e-16,
+    "passed": true
+  },
+  "singleton_vanishing": {
+    "max_abs_interaction_on_singletons": 0.0,
+    "max_abs_m2_on_singletons": 0.0,
+    "bit_exact_singleton_cases": "15/15",
+    "max_dev_perturbing_zero_exposure_embedding": 0.0,
+    "bit_exact_zero_exposure_cases": "5/5",
+    "max_dev_dense_vs_sparse_default_reduction": 8.881784197001252e-16,
+    "max_dev_dense_vs_sparse_forced_same_order": 0.0,
+    "max_abs_dropped_member_contribution": 0.0,
+    "reassociation_note": "dense-vs-sparse moment agreement is ~1e-15 under torch's default blocked reduction and EXACTLY 0.0 when the reduction order is forced to match, while the dropped member's own contributions are exactly 0.0 -- so the residual is summation order, not the construction. Both numbers are reported and the forced-order one IS in the pass criterion",
+    "max_abs_when_branch_disabled": 0.0,
+    "passed": true
+  },
+  "zero_dose_identity": {
+    "max_abs_amplitude_at_tau0": 0.0,
+    "max_abs_b_at_tau0": 0.0,
+    "max_abs_v_at_tau0": 0.0,
+    "max_abs_flow_identity_defect": 0.0,
+    "passed": true
+  },
+  "moment_cost": {
+    "per_k": [
+      {
+        "k": 2,
+        "r": 4,
+        "t_okr_s": 4.864526757349571e-05,
+        "t_ok2_s": 5.1149299057821436e-05,
+        "ratio_slow_over_fast": 1.0514753358184845,
+        "max_abs_dev_m1": 0.0,
+        "rel_dev_m2": 3.049557593218087e-16
+      },
+      {
+        "k": 4,
+        "r": 4,
+        "t_okr_s": 4.969176564676066e-05,
+        "t_ok2_s": 0.0001753318317544957,
+        "ratio_slow_over_fast": 3.5283880432194974,
+        "max_abs_dev_m1": 0.0,
+        "rel_dev_m2": 6.7445769211369e-16
+      },
+      {
+        "k": 8,
+        "r": 4,
+        "t_okr_s": 5.533796502277255e-05,
+        "t_ok2_s": 0.0007139989989809692,
+        "ratio_slow_over_fast": 12.90251635901584,
+        "max_abs_dev_m1": 8.881784197001252e-16,
+        "rel_dev_m2": 4.183548471257341e-16
+      },
+      {
+        "k": 16,
+        "r": 4,
+        "t_okr_s": 7.280840072780848e-05,
+        "t_ok2_s": 0.00288870403310284,
+        "ratio_slow_over_fast": 39.675422124737416,
+        "max_abs_dev_m1": 8.881784197001252e-16,
+        "rel_dev_m2": 7.088331874277588e-16
+      },
+      {
+        "k": 32,
+        "r": 4,
+        "t_okr_s": 8.93090987422814e-05,
+        "t_ok2_s": 0.010835509366976718,
+        "ratio_slow_over_fast": 121.32592893188485,
+        "max_abs_dev_m1": 1.7763568394002505e-15,
+        "rel_dev_m2": 1.402087691453754e-15
+      }
+    ],
+    "ratio_first": 1.0514753358184845,
+    "ratio_last": 121.32592893188485,
+    "ratio_monotone_increasing": true,
+    "loglog_slope_okr": 0.23041135222634127,
+    "loglog_slope_ok2": 1.9495936128925135,
+    "max_rel_dev_m2": 1.402087691453754e-15,
+    "max_abs_dev_m1": 1.7763568394002505e-15,
+    "arithmetic_claim": "main effects O(k); interactions O(k*r), not O(k^2)",
+    "slope_ok2_superlinear": true,
+    "slope_okr_below_ok2": true,
+    "passed": true
+  },
+  "cfm_correctness": {
+    "sigma_0.0": {
+      "max_abs_target_minus_analytic_conditional_velocity": 6.661338147750939e-16,
+      "max_abs_interpolant_reconstruction": 0.0,
+      "sigma": 0.0,
+      "path": "linear interpolant x_t=(1-t)x0+t x1+sigma*eps",
+      "conditional_velocity": "x1-x0"
+    },
+    "sigma_0.05": {
+      "max_abs_target_minus_analytic_conditional_velocity": 6.661338147750939e-16,
+      "max_abs_interpolant_reconstruction": 0.0,
+      "sigma": 0.05,
+      "path": "linear interpolant x_t=(1-t)x0+t x1+sigma*eps",
+      "conditional_velocity": "x1-x0"
+    },
+    "training": {
+      "loss_before": 8.859358429908752,
+      "loss_after": 6.455367386341095,
+      "loss_reduction_factor": 1.3724018943761838,
+      "stage": {
+        "steps": 400,
+        "applied": 400,
+        "skipped_nonfinite": 0,
+        "final_loss": 6.542813777923584,
+        "mean_loss_first_decile": 7.250777781009674,
+        "mean_loss_last_decile": 6.217091739177704,
+        "wall_clock_s": 1.67402982711792
+      },
+      "paired_stage": {
+        "steps": 1500,
+        "applied": 1500,
+        "skipped_nonfinite": 0,
+        "final_loss": 6.431006477214396e-05,
+        "mean_loss_first_decile": 0.024697445943796387,
+        "mean_loss_last_decile": 8.235840454290155e-05,
+        "wall_clock_s": 6.618217945098877
+      },
+      "paired_final_cfm_loss": 0.00010951109652523883,
+      "marginal_velocity_vs_closed_form": [
+        {
+          "t": 0.1,
+          "closed_form_vs_x1_minus_x0": 6.661338147750939e-16,
+          "cosine": 0.9999281608506523,
+          "rel_l2": 0.012102622196935826
+        },
+        {
+          "t": 0.5,
+          "closed_form_vs_x1_minus_x0": 6.661338147750939e-16,
+          "cosine": 0.9999333645828381,
+          "rel_l2": 0.0130071397463679
+        },
+        {
+          "t": 0.9,
+          "closed_form_vs_x1_minus_x0": 6.661338147750939e-16,
+          "cosine": 0.9999371456279573,
+          "rel_l2": 0.011215788513460868
+        }
+      ],
+      "identity_pair_fraction_by_coupling": {
+        "paired": 1.0,
+        "ot": 0.794921875,
+        "sinkhorn": 0.228515625,
+        "independent": 0.00390625
+      },
+      "note": "the closed-form marginal E[x1-x0 | x_t] belongs to the PAIRED coupling, so the model scored against it is trained with coupling='paired'. Minibatch OT is NOT the paired coupling even here -- see identity_pair_fraction_by_coupling -- so an OT-trained field is fitting a DIFFERENT marginal and must not be scored against this one"
+    },
+    "max_abs_closed_form_formula_check": 6.661338147750939e-16,
+    "max_rel_l2_vs_closed_form_marginal": 0.0130071397463679,
+    "passed": true,
+    "max_abs_target_dev": 6.661338147750939e-16
+  },
+  "hierarchical_schedule": {
+    "stages": {
+      "stage1": {
+        "steps": 300,
+        "applied": 300,
+        "skipped_nonfinite": 0,
+        "final_loss": 0.03962036594748497,
+        "mean_loss_first_decile": 0.41331880291302997,
+        "mean_loss_last_decile": 0.03375966862464944,
+        "wall_clock_s": 0.8912429809570312,
+        "val_cfm_loss": 0.5741679221391678,
+        "val_combo_cfm_loss": 0.5749855637550354,
+        "train_combo_cfm_loss": 0.8263145877669255
+      },
+      "stage2": {
+        "steps": 300,
+        "applied": 300,
+        "skipped_nonfinite": 0,
+        "final_loss": 0.08890775591135025,
+        "mean_loss_first_decile": 0.7016440379122894,
+        "mean_loss_last_decile": 0.2912607685973247,
+        "wall_clock_s": 2.2154572010040283,
+        "singleton_velocity_drift_rel": 0.23774057418466568,
+        "val_cfm_loss": 1.052557349205017,
+        "val_combo_cfm_loss": 1.0598055720329285,
+        "train_combo_cfm_loss": 0.24050894596924385
+      },
+      "stage3": {
+        "steps": 200,
+        "applied": 200,
+        "skipped_nonfinite": 0,
+        "final_loss": 0.017809847369790077,
+        "mean_loss_first_decile": 0.11605984261259436,
+        "mean_loss_last_decile": 0.07779444195330143,
+        "wall_clock_s": 1.7827739715576172,
+        "singleton_velocity_drift_rel": 0.22813486650953613,
+        "val_cfm_loss": 1.2166555225849152,
+        "val_combo_cfm_loss": 1.2142186760902405,
+        "train_combo_cfm_loss": 0.2331768077177306
+      }
+    },
+    "singleton_flow_err_final": 0.4233874745638827,
+    "heldout_combination_flow_err_final": 1.319346215109184,
+    "val_combo_cfm_loss_by_stage": {
+      "stage1": 0.5749855637550354,
+      "stage2": 1.0598055720329285,
+      "stage3": 1.2142186760902405
+    },
+    "val_cfm_loss_all_heldout_by_stage": {
+      "stage1": 0.5741679221391678,
+      "stage2": 1.052557349205017,
+      "stage3": 1.2166555225849152
+    },
+    "singleton_drift_stage2": 0.23774057418466568,
+    "singleton_drift_stage3": 0.22813486650953613,
+    "stage2_improves_train_combos": true,
+    "stage2_improves_heldout_combos": false,
+    "train_combo_cfm_loss_by_stage": {
+      "stage1": 0.8263145877669255,
+      "stage2": 0.24050894596924385,
+      "stage3": 0.2331768077177306
+    },
+    "oracle_ceiling_cfm_readout": {
+      "rel_l2": 0.4071272447258948,
+      "cosine": 0.9392803743273357,
+      "optimal_scale": 0.8108639425714963,
+      "truth_norm": 13.931568846549224,
+      "pred_norm": 16.137909844227664,
+      "n_conditions": 7,
+      "n_states": 128
+    },
+    "kinematic_composition_confound": {
+      "per_pair": [
+        {
+          "condition": "X0+X1",
+          "defect_norm": 0.7009665247765727,
+          "true_interaction_norm": 2.613593939806749,
+          "defect_over_interaction": 0.2682002410934587,
+          "cosine_defect_vs_true_interaction": 0.15750699274739371
+        },
+        {
+          "condition": "X0+X2",
+          "defect_norm": 3.6468102884856965,
+          "true_interaction_norm": 1.8430882176998813,
+          "defect_over_interaction": 1.9786412030981384,
+          "cosine_defect_vs_true_interaction": -0.14148843251160842
+        },
+        {
+          "condition": "X0+X3",
+          "defect_norm": 0.535285554590525,
+          "true_interaction_norm": 1.1348809217621765,
+          "defect_over_interaction": 0.471666713508026,
+          "cosine_defect_vs_true_interaction": -0.09363474554860134
+        },
+        {
+          "condition": "X1+X2",
+          "defect_norm": 1.595371961233959,
+          "true_interaction_norm": 8.17708242312641,
+          "defect_over_interaction": 0.19510283481085267,
+          "cosine_defect_vs_true_interaction": 0.03485706064210803
+        },
+        {
+          "condition": "X1+X3",
+          "defect_norm": 0.3634371100585369,
+          "true_interaction_norm": 3.9147223716040034,
+          "defect_over_interaction": 0.0928385401464941,
+          "cosine_defect_vs_true_interaction": -0.07633242206103791
+        },
+        {
+          "condition": "X2+X3",
+          "defect_norm": 1.2009459156787572,
+          "true_interaction_norm": 3.0372811139821634,
+          "defect_over_interaction": 0.3954016340964249,
+          "cosine_defect_vs_true_interaction": -0.0026053202160183546
+        }
+      ],
+      "ratio_min": 0.0928385401464941,
+      "ratio_max": 1.9786412030981384,
+      "abs_cosine_max": 0.15750699274739371,
+      "reading": "the displacement-composition defect is comparable to or larger than the true interaction and is nearly ORTHOGONAL to it, so an m2-gated branch sitting on top of a singleton-anchored main branch must absorb both; the recovered interaction is therefore a SUM of the true interaction and a kinematic term, which caps its cosine well below the oracle ceiling"
+    },
+    "interaction_recovery_all_combos": {
+      "rel_l2": 1.1951545338774712,
+      "cosine": 0.4722111921077561,
+      "optimal_scale": 0.3691194597186591,
+      "truth_norm": 13.931568846549224,
+      "pred_norm": 17.82253023987002,
+      "n_conditions": 7,
+      "n_states": 128
+    },
+    "interaction_recovery_train_combos": {
+      "rel_l2": 0.9786324621938375,
+      "cosine": 0.5330946190577265,
+      "optimal_scale": 0.5201230204956054,
+      "truth_norm": 13.684214893224468,
+      "pred_norm": 14.025492120415002,
+      "n_conditions": 6,
+      "n_states": 128
+    },
+    "interaction_recovery_heldout_pair": {
+      "rel_l2": 3.785651441241837,
+      "cosine": 0.5195489912389907,
+      "optimal_scale": 0.12348121868799421,
+      "truth_norm": 2.613593939806749,
+      "pred_norm": 10.996733830154207,
+      "n_conditions": 1,
+      "n_states": 128
+    },
+    "branch_attribution": {
+      "per_pair": [
+        {
+          "condition": "X0+X1",
+          "held_out": true,
+          "cos_main_vs_additive_flow_displacement": -0.3178046192372931,
+          "main_over_additive_norm": 0.13346629120560413,
+          "cos_main_vs_sum_singleton_main": -0.31803779918849767,
+          "cos_interaction_vs_true_interaction": 0.5195489912389907,
+          "cos_interaction_vs_full_minus_singletons": 0.5374294291993925,
+          "interaction_over_residual_norm": 3.701272999862124
+        },
+        {
+          "condition": "X0+X2",
+          "held_out": false,
+          "cos_main_vs_additive_flow_displacement": 0.871224744053531,
+          "main_over_additive_norm": 0.8235151721282734,
+          "cos_main_vs_sum_singleton_main": 0.9587581697863077,
+          "cos_interaction_vs_true_interaction": 0.14887400251049862,
+          "cos_interaction_vs_full_minus_singletons": 0.02939854685414186,
+          "interaction_over_residual_norm": 1.4386554239992098
+        },
+        {
+          "condition": "X0+X3",
+          "held_out": false,
+          "cos_main_vs_additive_flow_displacement": 0.9309647485945451,
+          "main_over_additive_norm": 0.8397518617063081,
+          "cos_main_vs_sum_singleton_main": 0.9917435790652452,
+          "cos_interaction_vs_true_interaction": 0.6706188958953817,
+          "cos_interaction_vs_full_minus_singletons": 0.5420103007411136,
+          "interaction_over_residual_norm": 0.5650323733224342
+        },
+        {
+          "condition": "X1+X2",
+          "held_out": false,
+          "cos_main_vs_additive_flow_displacement": 0.8632704031721835,
+          "main_over_additive_norm": 0.7910205070503272,
+          "cos_main_vs_sum_singleton_main": 0.9121042836501003,
+          "cos_interaction_vs_true_interaction": 0.6260027439271499,
+          "cos_interaction_vs_full_minus_singletons": 0.6149487845142171,
+          "interaction_over_residual_norm": 0.5527098248459553
+        },
+        {
+          "condition": "X1+X3",
+          "held_out": false,
+          "cos_main_vs_additive_flow_displacement": 0.8830374641188685,
+          "main_over_additive_norm": 0.8279018645062797,
+          "cos_main_vs_sum_singleton_main": 0.983298180022258,
+          "cos_interaction_vs_true_interaction": 0.46453086234382307,
+          "cos_interaction_vs_full_minus_singletons": 0.5045275900898304,
+          "interaction_over_residual_norm": 0.274249949607601
+        },
+        {
+          "condition": "X2+X3",
+          "held_out": false,
+          "cos_main_vs_additive_flow_displacement": 0.9312440311198374,
+          "main_over_additive_norm": 0.8155406446842508,
+          "cos_main_vs_sum_singleton_main": 0.9946851251484649,
+          "cos_interaction_vs_true_interaction": 0.8051627303927692,
+          "cos_interaction_vs_full_minus_singletons": 0.6995637547941258,
+          "interaction_over_residual_norm": 0.687597847254624
+        }
+      ],
+      "t_grid": [
+        0.125,
+        0.375,
+        0.625,
+        0.875
+      ]
+    },
+    "interaction_recovery_singletons_must_be_zero": 0.0,
+    "skipped_nonfinite_total": 0,
+    "wall_clock_s": 4.889474153518677,
+    "system": {
+      "d": 6,
+      "k": 4,
+      "r_true": 2,
+      "eps": 0.3,
+      "n_populations": 11,
+      "n_train": 10,
+      "n_val": 1,
+      "heldout": [
+        "X0+X1@tau1"
+      ]
+    },
+    "coupling_sensitivity": {
+      "rows": [
+        {
+          "coupling": "independent",
+          "coupling_kw": {
+            "coupling": "independent"
+          },
+          "val_combo_cfm_loss": 6.987294793128967,
+          "val_cfm_loss_all_heldout": 7.054133176803589,
+          "heldout_energy_distance": 0.029425104989960982,
+          "heldout_energy_distance_null": 0.03635596898255766,
+          "normalised_energy_distance": 0.8093610434115545,
+          "wall_clock_s": 1.698807954788208
+        },
+        {
+          "coupling": "ot",
+          "coupling_kw": {
+            "coupling": "ot"
+          },
+          "val_combo_cfm_loss": 0.8600239604711533,
+          "val_cfm_loss_all_heldout": 0.8613536059856415,
+          "heldout_energy_distance": 0.04067638486465075,
+          "heldout_energy_distance_null": 0.03635596898255766,
+          "normalised_energy_distance": 1.1188364937863675,
+          "wall_clock_s": 2.0733230113983154
+        },
+        {
+          "coupling": "sinkhorn_uot",
+          "coupling_kw": {
+            "coupling": "sinkhorn",
+            "sinkhorn_eps": 0.05,
+            "sinkhorn_iters": 25,
+            "unbalanced_tau": 1.0
+          },
+          "val_combo_cfm_loss": 0.8578823953866959,
+          "val_cfm_loss_all_heldout": 0.8196399956941605,
+          "heldout_energy_distance": 0.030490208259607243,
+          "heldout_energy_distance_null": 0.03635596898255766,
+          "normalised_energy_distance": 0.8386575605847665,
+          "wall_clock_s": 5.591670989990234
+        }
+      ],
+      "selected": "sinkhorn_uot",
+      "selection_criterion": "held-out COMBINATION CFM loss (order >= 2 only)",
+      "spread_max_over_min": 8.144816621373144
+    }
+  },
+  "signatures": [
+    "InterventionEmbed(k, r=4, init_scale=1.0, normalise=False, seed=None)",
+    "SetMoments()  # forward(a, E) -> (m1, m2); .reference_moments(a, E) oracle",
+    "OneFormHierarchy(d_ambient, r=4, code_dim=0, hidden=64, depth=2, interaction_enabled=True, interaction_init_scale=0.1, k=None, embed=None, embed_seed=0)",
+    "PopulationEncoder(d, code_dim=8, hidden=64, use_second_moment=True, depth=2)",
+    "CFMObjective(sigma=0.0, coupling='independent', sinkhorn_eps=0.05, sinkhorn_iters=200, unbalanced_tau=None, seed=0, max_coupling_n=512)",
+    "ConditionalVelocity(d, k, r=4, code_dim=0, hidden=64, depth=2, dose=None, one_form=None, pullback=None, embed_seed=0, interaction_enabled=True, decoder=None)",
+    "train_hierarchical(model, populations, train_idx, objective=None, val_idx=None, steps=(300,300,200), batch=128, lr=3e-3, lr_stage3=1e-3, anchor_weight=1.0, int_penalty=0.0, singleton_oversample=3.0, seed=0, eval_states=None, eval_tau=1.0, verbose=False)"
+  ],
+  "checks": {
+    "permutation_invariance": true,
+    "singleton_vanishing_bit_exact": true,
+    "zero_dose_identity": true,
+    "moment_cost_okr": true,
+    "cfm_target_matches_analytic": true,
+    "stage2_improves_train_combos": true,
+    "singleton_anchoring_holds": true,
+    "interaction_pred_zero_on_singletons": true
+  },
+  "honest_negatives": [
+    {
+      "claim_NOT_supported": "the interaction branch generalises to an unseen combination",
+      "measured": {
+        "heldout_combo_cfm_loss_by_stage": {
+          "stage1": 0.5749855637550354,
+          "stage2": 1.0598055720329285,
+          "stage3": 1.2142186760902405
+        },
+        "train_combo_cfm_loss_by_stage": {
+          "stage1": 0.8263145877669255,
+          "stage2": 0.24050894596924385,
+          "stage3": 0.2331768077177306
+        },
+        "heldout_pair_recovery": {
+          "rel_l2": 3.785651441241837,
+          "cosine": 0.5195489912389907,
+          "optimal_scale": 0.12348121868799421,
+          "truth_norm": 2.613593939806749,
+          "pred_norm": 10.996733830154207,
+          "n_conditions": 1,
+          "n_states": 128
+        },
+        "heldout_pair_main_branch": [
+          {
+            "condition": "X0+X1",
+            "held_out": true,
+            "cos_main_vs_additive_flow_displacement": -0.3178046192372931,
+            "main_over_additive_norm": 0.13346629120560413,
+            "cos_main_vs_sum_singleton_main": -0.31803779918849767,
+            "cos_interaction_vs_true_interaction": 0.5195489912389907,
+            "cos_interaction_vs_full_minus_singletons": 0.5374294291993925,
+            "interaction_over_residual_norm": 3.701272999862124
+          }
+        ]
+      },
+      "diagnosed_cause": "stage 2 does improve the TRAINING combinations it is fitted on, so the branch has capacity and the schedule optimises. It does NOT improve the leave-one-combination-out pair. Two measured causes, neither of which is fixed by simplifying the model: (a) on the held-out pair the MAIN branch itself is wrong -- its cosine against the additive-flow displacement is NEGATIVE and its norm is ~0.12 of the additive scale -- so the failure starts in the main effects, before the interaction branch is reached; (b) the kinematic displacement-composition defect is 0.09-1.98x the true interaction and near-orthogonal to it, so the m2-gated branch necessarily absorbs a large non-interaction term (interaction/residual norm ratio ~3.8 on the held-out pair).",
+      "implication_for_the_method": "the hierarchy's STRUCTURAL properties (permutation invariance, bit-exact singleton and zero-exposure vanishing, zero-dose identity, O(kr) cost) are verified and independent of this. What is NOT supported is a claim that a straight-line observed-space interpolant separates the generator interaction from the kinematic composition term. That separation is what the geometry track's field composition exists to provide (project facts P1/E), so the negative is evidence about the INTERPOLANT, and it should be re-measured once the geometry pullback replaces identity_pullback."
+    },
+    {
+      "claim_NOT_supported": "the recovered interaction field matches the ground truth",
+      "measured": {
+        "model_cosine": 0.4722111921077561,
+        "model_rel_l2": 1.1951545338774712,
+        "oracle_ceiling_cosine": 0.9392803743273357,
+        "oracle_ceiling_rel_l2": 0.4071272447258948
+      },
+      "diagnosed_cause": "the oracle ceiling for ANY CFM-interpolant readout of this benchmark is cosine 0.939 / rel_l2 0.407, not 1.0, because the truth is an ODE generator and the readout is an interpolant velocity. The model sits well below even that ceiling, and the kinematic confound above is the measured reason. Reporting rel_l2 > 1 as 'interaction not recovered' is correct; attributing it to the hierarchy's parameterisation would not be, since the ablation with the interaction head blind to m1 moves the cosine only 0.449 -> 0.524.",
+      "implication_for_the_method": "recovery of the TRUE interaction field is the point of the component, so this is a failure of the current end-to-end configuration and must be reported as such. It is NOT authorisation to simplify the hierarchy: the diagnosed cause is upstream of it."
+    }
+  ],
+  "wall_clock_s": 31.385006189346313
+}

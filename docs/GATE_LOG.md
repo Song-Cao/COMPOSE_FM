@@ -443,3 +443,110 @@ for that reason alone.
 
 **Decision.** Phase 1 complete; both negatives recorded above are to be reported in the
 paper, not buried. Advance to Phase 2 (IHC-FM implementation).
+
+---
+
+# PHASE 2 — IHC-FM implementation
+
+`src/composefm/ihcfm_geometry.py` (52 kB), `src/composefm/ihcfm_hierarchy.py` (99 kB),
+with self-test json under `results/`.
+
+## Geometry: 23/23 verdicts pass
+
+- **WHOLE-FIELD covariance of the implementation**: rel err **7.26e-16** (chart Hessian
+  scale 0.0242) and **1.08e-15** on a stronger chart. `G` is a (0,2) tensor to 6.65e-16,
+  `alpha` a (0,1) tensor to 2.99e-16. float32 contrast: 3.12e-07 — confirms fact D.
+- **No `eps*I`**: default latent eps is 0 and there is no unconditional `eye` add. The
+  ablation proves the test has power: latent eps 1e-6 -> 2.64e-07, 1e-2 -> 2.60e-03,
+  0.1 -> 2.27e-02. `G` is SPD by construction (min eig 0.514, `cond(G)` max 5.72,
+  no solver fallback triggered).
+- **HillDose**: `a_p(0) = 0.0` bit-exact, strictly monotone (min increment 1.03e-03),
+  bounded (max over ceiling -0.143). Fits a bounded monotone reference at rel L2 0.0142.
+- **MetricRadialSat earns its place, measured**: direction preserved (min cosine
+  0.9999999999999998, max cross-product norm 2.78e-17); norm bounded under 50x stress
+  (raw metric norm 15.68 -> saturated 2.03 against ceiling ~2.01); and it stays covariant
+  under stress (7.26e-16). The contrast that justifies it: `t5_coord_gate_breaks_covariance`
+  and `t5_coord_norm_breaks_covariance` are both TRUE — the old coordinate scalar gate
+  destroys covariance where the metric-radial form preserves it.
+- Velocity eval at d=6, k=4, batch=256: 1.70 ms (float32) / 2.02 ms (float64).
+
+## Hierarchy: structural guarantees exact, CFM correct
+
+- **Permutation invariance** <= 7.77e-16; **singleton vanishing bit-exact 0.0 (15/15
+  cases)**; zero-exposure vanishing bit-exact (5/5); **zero-dose identity exactly 0.0**.
+  Dense-vs-sparse moments agree at 8.88e-16 under torch's blocked reduction and exactly
+  0.0 when reduction order is forced — summation order, not construction.
+- **O(k·r) cost confirmed**: `O(k^2)/O(kr)` speedup 1.05x (k=2) -> 121.33x (k=32);
+  log-log slope 1.95 for the pair loop vs 0.23 for the moment form, agreeing to 1.40e-15.
+  The paper's arithmetic claim (main O(k), interactions O(kr), NOT O(k^2)) is verified.
+  Caveat recorded: the 0.23 slope reflects fixed per-call overhead at these sizes and is
+  NOT evidence of sub-linear scaling.
+- **CFM objective correct**: I-CFM linear interpolant, conditional velocity target matches
+  the analytic `x1 - x0` at **6.66e-16**; marginal-velocity cosine >= 0.99993 across t.
+  Coupling selected on held-out COMBINATION loss: `sinkhorn_uot` (0.858) vs `ot` (0.860)
+  vs `independent` (6.987) — an 8.14x spread, so the coupling choice is load-bearing and
+  is now a selected, reported hyperparameter rather than an assumption.
+
+## FAILURE — the interaction branch does not recover the true interaction field
+
+Measured with the selected OT coupling, d=6, k=4, r_true=2, 6 training combinations:
+
+| | mean cosine vs truth | mean rel L2 |
+|---|---|---|
+| all combinations | **+0.161** | 1.842 |
+| oracle ceiling for any CFM-interpolant readout | **+0.939** | 0.407 |
+
+The oracle ceiling is below 1.0 because the benchmark truth is an ODE **generator** while
+the branch is an **interpolant velocity**; it was measured, not assumed. The model sits far
+below even that ceiling, so the gap is real.
+
+### Causes ruled OUT (each measured, not argued)
+
+1. **Not the CFM target.** The endpoint residual (joint minus sum-of-singletons) aligns
+   with the true interaction generator at cosine **+0.9414**, so the target encodes the
+   right object. The branch scores +0.115 against the endpoint residual and +0.161 against
+   the generator — it fails against BOTH, so this is not a target-mismatch artefact.
+2. **Not the main branch's parameterisation.** Trained on a genuinely additive target,
+   the main branch extrapolates from singletons to a pair at cosine **+0.932** with
+   `||main(pair)||/||true|| = 1.11`. The earlier "main branch is wrong on the held-out
+   pair" reading (cosine -0.318) is a symptom of the aliasing below, not a cause.
+3. **Not stage-2 leakage into main effects.** A hard freeze of the main group in stage 2
+   was implemented (`freeze_main_stage2`, default OFF) and tested over 3 seeds: it lowers
+   singleton drift 0.2497 -> 0.2207 but makes held-out combination loss WORSE
+   (6.7757 +- 0.0708 -> 6.9876 +- 0.2073). Retained as an ablation arm, not adopted.
+4. **Not undertraining.** 0 non-finite steps; training-combination loss falls 9.31 -> 7.30.
+
+### Cause 1 (structural, and it is an architectural REQUIREMENT we had wrong)
+
+The second moment uses `e_p ⊙ e_q`, and the rank of the resulting pair-basis saturates at
+**min(r, k(k-1)/2)**:
+
+| r | pair-basis rank (k=4, 6 pairs) | can distinguish all pairs |
+|---|---|---|
+| 2 | 2.0 | no |
+| 4 | 4.0 | no |
+| 6 | 6.0 | yes |
+| 8, 12, 16 | 6.0 | yes |
+
+With `r < k(k-1)/2` distinct pairs are **aliased onto the same interaction direction**, so
+the model structurally cannot assign them different fields. Recovery duly rises with r:
+**+0.0799 (r=2) -> +0.2586 (r=4) -> +0.4361 (r=8)**, mean over seeds 0/1/2. The default
+r=4 at k=4 was mis-specified. **Requirement for the paper and for all runs: `r >= k(k-1)/2`
+whenever pairs must be individually resolved.** This is a specification fix, NOT a
+simplification — no component is removed.
+
+### Cause 2 (identifiability, and it bounds what this benchmark can show)
+
+Even at r=8 the ceiling is not reached: **training combinations +0.4420, held-out pair
++0.2476**. With 6 observed combinations constraining 6 pair directions the system is
+critically determined with zero redundancy, so a held-out pair is unconstrained except
+through whatever structure the low-rank state-dependent field shares across pairs. This
+is the honest limit of a k=4 benchmark, and the fix is more combinations per pair
+direction (larger k, or more pairs observed per embedding dimension) — an evaluation-design
+change, not an architecture change.
+
+**Decision.** Set `r >= k(k-1)/2` for all subsequent runs. Keep every component. Report
+the recovery gap and both causes in the paper. Advance to Phase 3 with `r` corrected and
+the interaction-recovery metric reported alongside distributional scores, since a good
+distributional score with a wrong interaction field is a failure by this project's own
+standard.
