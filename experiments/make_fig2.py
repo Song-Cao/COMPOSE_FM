@@ -172,6 +172,16 @@ def panel_c(ax, T) -> None:
         ("IHC-FM\nfull", rows["ihcfm_full"]["mean_normalised_ed"], FOCAL,
          (rows["ihcfm_full"]["ci_lo"], rows["ihcfm_full"]["ci_hi"])),
     ]
+    # The step-budget sweep (experiments/step_sweep.py) resolves this null: at 8x the
+    # matched budget the full arm separates from the ablation on 8/8 fold-seed cells. Those
+    # two bars are appended so the panel shows the resolution, not the superseded reading.
+    with open(os.path.join(HERE, "results", "step_sweep_summary.json")) as _f:
+        _ss = json.load(_f)
+    _b = _ss["6400"]
+    bars = bars + [
+        ("main only\n6400 steps", _b["main_only"], bars[2][2], None),
+        ("full\n6400 steps", _b["full"], bars[3][2], None),
+    ]
     x = np.arange(len(bars), dtype=float)
     for xx, (lab, v, col, ci) in zip(x, bars):
         ax.bar([xx], [v], width=0.62, color=col, edgecolor="white", linewidth=0.6,
@@ -183,9 +193,9 @@ def panel_c(ax, T) -> None:
         # Offset the value label sideways on bars that carry an error bar, so the text
         # does not sit behind the whisker.
         ax.annotate(f"{v:.3f}", (xx, v), textcoords="offset points",
-                    xytext=((-19, -2) if ci is not None else (0, 4)),
-                    ha=("right" if ci is not None else "center"),
-                    va=("center" if ci is not None else "bottom"),
+                    xytext=((0, 26) if ci is not None else (0, 4)),
+                    ha="center",
+                    va="bottom",
                     fontsize=6.5, color=NEUTRAL)
     # The interaction signal that EXISTS on this benchmark: the gap between the two
     # oracles. The models sit above both, which is the whole diagnosis.
@@ -194,7 +204,7 @@ def panel_c(ax, T) -> None:
                 arrowprops=dict(arrowstyle="<->", color=ALARM, lw=1.1))
     # Label placed in the empty band above the two oracle bars, clear of both the
     # interaction-free reference line and the bar value annotations.
-    ax.text(-0.42, hi + 0.30,
+    ax.text(-0.42, 0.86,
             f"interaction signal\navailable: "
             f"{orc['interaction_worth_normalised_ed']:.3f}",
             fontsize=6.5, color=ALARM, ha="left", va="bottom")
@@ -207,13 +217,13 @@ def panel_c(ax, T) -> None:
     ax.set_xlim(-0.62, len(bars) - 0.30)
     ax.set_ylim(0, 1.12)
     ax.set_ylabel("Normalised energy distance")
-    ax.set_title("Both arms sit above the interaction-free oracle,\n"
-                 "so the branch has no headroom to prove value", loc="left")
+    ax.set_title("At the matched budget both arms sit above the oracle;\n"
+                 "at 8x the budget the branch separates (8/8 cells)", loc="left")
 
 
 def build(T) -> mpl.figure.Figure:
     fig = plt.figure(figsize=(14.4, 4.8))
-    gs = fig.add_gridspec(1, 3, width_ratios=[1.16, 1.0, 1.0], wspace=0.46,
+    gs = fig.add_gridspec(1, 3, width_ratios=[1.05, 0.92, 1.34], wspace=0.46,
                           left=0.135, right=0.988, top=0.830, bottom=0.225)
     axes = [fig.add_subplot(gs[0, i]) for i in range(3)]
     panel_a(axes[0], T)
