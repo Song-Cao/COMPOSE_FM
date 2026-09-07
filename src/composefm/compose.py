@@ -13,7 +13,7 @@ outside the observed range?
         X_P(z) = gamma(z, P) * sum_p tau_p X_p(z)                 [contraction gate]
                  + 1/2 sum_{p<q} beta_pq(z) S^grad_pq(z)          [coupling]
 
-        S^grad_pq(z) = DX_q(z) X_p(z) + DX_p(z) X_q(z) - 2 Gamma(z)[X_p, X_q]
+        S^grad_pq(z) = DX_q(z) X_p(z) + DX_p(z) X_q(z) + 2 Gamma(z)[X_p, X_q]
 
     and the prediction is the flow of X_P for unit time:  z(1) = phi^1_{X_P}(z(0)).
 
@@ -424,7 +424,7 @@ class ComposeFM(nn.Module):
             _, ja = torch.func.jvp(lambda zz: self.gen(zz, pa, u), (zr,), (Xb,))
             S = jb + ja
             if self.conn is not None:
-                S = S - 2.0 * self.conn.gamma(zr, Xa, Xb)
+                S = S + 2.0 * self.conn.gamma(zr, Xa, Xb)
 
             beta, la = self.inter(zr, self.gen.emb(pa), self.gen.emb(pb), u=u)
             # Exposure weight for the coupling term. The bilinear form tau_p * tau_q is
