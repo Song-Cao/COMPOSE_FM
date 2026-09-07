@@ -7,3 +7,4 @@ data/processed/
 __pycache__/
 *.pyc
 .cache/
+results/*_predictions.npz

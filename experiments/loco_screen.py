@@ -550,7 +550,8 @@ def rank_report(k: int = K_PERT, r: int = R_DEFAULT) -> dict:
 
 def select_rank(pops: list[Pop], train_idx: np.ndarray, candidates=R_CANDIDATES,
                 seed: int = 0, steps=STEPS, n_val_units: int = 8,
-                verbose: bool = True) -> dict:
+                verbose: bool = True, default_r: int = R_DEFAULT,
+                min_margin: float = 0.05) -> dict:
     """Choose r by held-out DISTRIBUTIONAL score, never by CFM loss and never by formula.
 
     r IS TUNED PER FOLD, and the pool passed in must be that fold's TRAINING side only.
@@ -624,8 +625,31 @@ def select_rank(pops: list[Pop], train_idx: np.ndarray, candidates=R_CANDIDATES,
                   f"pairs {rows[-1]['n_pairs_representable']}/"
                   f"{rows[-1]['n_distinct_pairs']}  ({rows[-1]['wall_clock_s']:.0f}s)",
                   flush=True)
-    best = min(rows, key=lambda x: x["ed_normalised"])
+    # A winner by a hair is not a winner. On one smoke fold the three candidates scored
+    # 1.1095 / 1.2363 / 1.1094 with bootstrap CIs overlapping almost completely -- the
+    # "best" r was decided by 1e-4, which is exactly the noise-selection failure this
+    # function exists to avoid. So a candidate only displaces the default if it beats it
+    # by at least `min_margin` AND its CI upper bound sits below the default's point
+    # estimate (i.e. the improvement survives the fold's own uncertainty). Otherwise the
+    # default stands and `decisive` is False, which is reported rather than hidden.
+    ranked = sorted(rows, key=lambda x: x["ed_normalised"])
+    best = ranked[0]
+    dflt = next((x for x in rows if int(x["r"]) == int(default_r)), None)
+    decisive = True
+    if dflt is not None and int(best["r"]) != int(default_r):
+        gain = float(dflt["ed_normalised"]) - float(best["ed_normalised"])
+        decisive = bool(gain >= float(min_margin)
+                        and best["ed_normalised_ci"][1] < dflt["ed_normalised"])
+        if not decisive:
+            best = dflt
     return dict(selected_r=int(best["r"]), criterion="held-out normalised energy distance",
+                decisive=bool(decisive), default_r=int(default_r),
+                min_margin=float(min_margin),
+                selection_note=("a candidate displaces the default only if it wins by "
+                                ">= min_margin AND its CI upper bound is below the "
+                                "default's point estimate; otherwise the default stands "
+                                "and decisive=False, because a sub-noise margin is not "
+                                "evidence"),
                 validation_basis=basis,
                 n_validation_records=int(pick.size), n_validation_populations=int(val.size),
                 n_fit_populations=int(sub.size), candidates=rows,
@@ -724,6 +748,11 @@ def run_fold(pops: list[Pop], fold: dict, seed: int = 0, steps=STEPS, code_dim: 
                           candidates=R_CANDIDATES, verbose=verbose)
         res["rank_tuning"] = tun
         if tun.get("selected_r"):
+            if verbose:
+                print(f"      r={tun['selected_r']} selected"
+                      f"{'' if tun.get('decisive') else ' (NOT decisive -- margin below '
+                                                        'noise, default retained)'}",
+                      flush=True)
             r = int(tun["selected_r"])
             res["r"] = r
             model = make_ihcfm(r=r, code_dim=code_dim, seed=seed)

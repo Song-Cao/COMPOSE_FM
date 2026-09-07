@@ -677,11 +677,15 @@ distributional one is the defensible choice.
 Across seeds 0/1/2 on one fold (n=2 held-out populations) the neural rows swing wildly
 while the controls are deterministic:
 
-| model | seed 0 | seed 1 | seed 2 | mean +- sd |
+All sd figures below are **population sd (ddof=0)**, matching the json's `std` field, so
+adjacent rows are the same statistic (the sample sd at n=3 is ~1.22x larger; e.g.
+FactoredAdditiveCFM is 0.366 population vs 0.448 sample):
+
+| model | seed 0 | seed 1 | seed 2 | mean +- sd (pop) |
 |---|---|---|---|---|
-| FactoredAdditiveCFM | 0.647 | 1.510 | 0.871 | 1.009 +- 0.45 |
-| DeepSetsEndpoint | 0.713 | 1.142 | 1.368 | 1.074 +- 0.27 |
-| MonolithicCFM | 0.828 | 1.444 | 0.824 | — |
+| FactoredAdditiveCFM | 0.647 | 1.510 | 0.871 | 1.010 +- 0.366 |
+| MonolithicCFM | 0.828 | 1.444 | 0.824 | 1.032 +- 0.292 |
+| DeepSetsEndpoint | 0.713 | 1.142 | 1.368 | 1.074 +- 0.272 |
 | NoChange / MatchingMean / PerturbedMean / LinearResponse | deterministic (sd <= 1.2e-10) | | | |
 
 Two pre-registered checks consequently FAIL, and both failures are reported rather than
@@ -713,6 +717,99 @@ demonstrated with paired statistics, not a single number.
   and does not. This is why the shared-coupling requirement carries a "where applicable"
   clause; the arm was selected on held-out distributional score, and the exception is
   recorded in the json rather than hidden.
+
+---
+
+# PHASE 3b — METRICS, ORGANOID LOCO SCREEN, BLOCKED FINANCE SPLITS
+
+`src/composefm/metrics.py` (63 kB, **53/53 unit tests pass**), `experiments/loco_screen.py`,
+`experiments/finance_blocked.py`, with `results/loco_screen.json` (5.6 MB),
+`results/loco_screen_predictions.npz` (119 MB), `results/finance_blocked.json` (5.3 MB).
+Wall clock: organoid 1889.8 s, finance 354.4 s. 0 non-finite steps anywhere.
+
+Metrics are validated against known answers (point masses = 2c exactly; identical arrays
+0.0; unbiased ED mean 0.0012 +- 0.0037 under H0 while the V-statistic is biased upward at
+0.0575; translation and permutation invariance exactly 0.0; no-change prediction normalises
+to exactly 1.0). **Every normalised figure below is reported with its denominator, and all
+CIs are grouped bootstraps over populations/blocks — never over cells or overlapping
+windows.**
+
+## Organoid LOCO screen — 5 folds, 666 populations, r selected without leakage
+
+`r=8` chosen on held-out **singletons only** (52 populations), because every combination is
+screened and validating on one would leak the screen's test data. PCA on 60,000 control
+cells only, 8 components (cumulative EVR 0.690), 400 cells/population.
+
+| held-out | IHC-FM normalised ED [95% CI] | PerturbedMean (additive) | no-change | n pops |
+|---|---|---|---|---|
+| VS | 1.371 [1.092, 1.686] | 1.462 [1.225, 1.755] | 1.000 | 29 |
+| CS | **0.894** [0.667, 1.139] | 2.011 [1.182, 3.011] | 1.000 | 27 |
+| SF | 2.023 [1.134, 3.133] | 4.472 [2.378, 7.090] | 1.000 | 27 |
+| CF | 1.044 [0.763, 1.393] | 2.152 [1.410, 3.087] | 1.000 | 27 |
+| **CSF (triple)** | 3.177 [1.942, 4.571] | 6.484 [3.647, 9.532] | 1.000 | 26 |
+
+**Result, paired over 136 populations:** IHC-FM beats the additive-displacement baseline
+decisively — mean 1.688 vs 3.265, difference **-1.577 [-2.100, -1.101]** (excludes zero),
+better on **113/136** populations, sign test **p = 1.8e-15**.
+
+**HONEST NEGATIVE, and it is the headline caveat for the biology case study:** IHC-FM does
+**not** beat the no-change control on this screen. Mean 1.688 vs 1.000, difference
+**+0.688 [+0.351, +1.058]** — significantly WORSE on the mean. Per population it is a coin
+flip (72/136 better, sign test p = 0.549), i.e. the mean is dragged by a minority of large
+failures rather than uniform degradation. Only the CS fold is below 1.0. **Composing
+generators beats composing displacements, but on this organoid screen neither beats
+predicting no change.** This must be stated in the paper, not buried.
+
+## Population encoder — the earlier negative is confirmed and sharpened
+
+The previous session measured pop_code=16 making the held-out triple worse (0.903 ->
+1.283) and defaulted it OFF. Under a proper **leave-replicate-out** split, that is
+confirmed but nuanced:
+
+| split | code_dim 0 | code_dim 16 | paired diff [CI] | sign test |
+|---|---|---|---|---|
+| leave-replicate-out (all conditions, n=87) | 1.361 | 1.335 | +0.027 [-0.026, +0.085] | p = 0.086, **CI includes 0** |
+| **combinations only (n=57)** | **1.193** | 1.252 | **-0.059 [-0.113, -0.011]** | **p = 0.016** |
+
+So the encoder is neutral overall but **significantly harmful on exactly the combinations
+the method targets**. Default OFF is the right call and is now supported by a paired test
+on independent replicates rather than a single fold.
+
+## Finance — purged splits, and the exposure question answered
+
+Splits are audited, not asserted: 0 overlapping indices, 0 shared bins, minimum same-day
+gap 31 windows against a 30-window embargo, and day 3 removed before any fitting.
+
+| split | IHC-FM | PerturbedMean | paired diff [CI] | n blocks |
+|---|---|---|---|---|
+| chronological | **0.698** | 1.691 | **-0.993 [-1.098, -0.873]** | 11 |
+| held-out day | **0.890** | 1.512 | **-0.622 [-0.764, -0.476]** | 12 |
+| exposure (block-purged) | **0.823** | 1.403 | **-0.580 [-0.679, -0.486]** | 11 |
+| exposure (window-purged) | 2.180 | 1.926 | +0.254 [+0.184, +0.332] | 24 |
+
+**The finance case study is the strong one**: on three of four valid splits IHC-FM is well
+below 1.0 and beats the additive baseline with CIs excluding zero.
+
+**The previously-reported exposure failure is now diagnosed, on a valid split.** Last
+session an oracle fitted *on* the exposure split scored 0.2866 but transferred from train
+scored 2.7877, under a split that allowed window overlap — not comparable. Recomputed under
+purged splits, the verdict is **`distribution_shift` on every split**, established by the
+oracle ratio (an oracle fitted in-split vs the same oracle transferred):
+
+| split | oracle in-split | oracle transferred | ratio |
+|---|---|---|---|
+| chronological | 0.526 | 0.946 | 1.799 |
+| held-out day | 0.536 | 0.967 | 1.803 |
+| exposure (block) | 0.510 | 0.952 | 1.868 |
+| exposure (window) | 0.382 | 1.071 | 2.802 |
+
+An oracle with access to the truth loses ~1.8-2.8x when transferred, so **the exposure axis
+in 10 s crypto spot is a distribution-shift test, not a model-extrapolation test** — the
+previous session's suspicion, now measured properly. The window-purged exposure arm is the
+only split where IHC-FM loses to the additive baseline, and it is also the arm with the
+largest shift (pre-state ED 2.522 vs 0.0023 within-train, a ~1000x ratio); it is reported
+as a negative with that cause attached. Framing recorded in the config: **observational
+order-flow conditioning, NOT causal intervention estimation.**
 
 **Decision.** Keep every component. Report
 the recovery gap and both causes in the paper. Advance to Phase 3 with `r` corrected and

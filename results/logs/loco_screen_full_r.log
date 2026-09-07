@@ -58,3 +58,21 @@ rank: k=6 r=8 -> 8/15 pairs representable (fully unaliased: False) -- reported, 
   [repfold1] held 207 pops / 29 records (53 combination pops) | train 459
     code_dim=0
     trained in 48s (skipped 0 non-finite steps)
+      ihcfm           normED 1.3380 [1.0656, 1.6978]  absED 0.1230  denom 0.1557  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1557  denom 0.1557  (n_units 29)
+    code_dim=16
+    trained in 48s (skipped 0 non-finite steps)
+      ihcfm           normED 1.2851 [1.0350, 1.6065]  absED 0.1210  denom 0.1557  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1557  denom 0.1557  (n_units 29)
+  [repfold2] held 224 pops / 29 records (70 combination pops) | train 442
+    code_dim=0
+    trained in 54s (skipped 0 non-finite steps)
+      ihcfm           normED 1.0201 [0.8979, 1.1719]  absED 0.1269  denom 0.1659  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1659  denom 0.1659  (n_units 29)
+    code_dim=16
+    trained in 45s (skipped 0 non-finite steps)
+      ihcfm           normED 1.0449 [0.9055, 1.2045]  absED 0.1327  denom 0.1659  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1659  denom 0.1659  (n_units 29)
+
+wrote results/loco_screen.json  (1890s total)
+wrote results/loco_screen_predictions.npz (118.8 MB, 3243 prediction records) -- every score in the json is recomputable from these alone

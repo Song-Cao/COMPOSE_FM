@@ -8,7 +8,61 @@ rank: k=6 r=8 -> 8/15 pairs representable (fully unaliased: False) -- reported, 
 /Users/songcao/workdir/FM_project/src/composefm/ihcfm_hierarchy.py:933: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
 Consider using tensor.detach() first. (Triggered internally at /Users/runner/miniforge3/conda-bld/libtorch_1786372171327/work/torch/csrc/autograd/generated/python_variable_methods.cpp:823.)
   hist.append(float(loss))
-    r=  2  val normED 1.2345 [0.5982, 2.0684]  denom 0.2010  pairs 2/15  (55s)
-    r=  8  val normED 1.2293 [0.5274, 2.0638]  denom 0.2010  pairs 8/15  (49s)
-    r= 15  val normED 1.2208 [0.5377, 2.0564]  denom 0.2010  pairs 15/15  (54s)
-    trained in 200s (skipped 0 non-finite steps)
+    r=  2  val normED 1.2345 [0.5982, 2.0684]  denom 0.2010  pairs 2/15  (56s)
+    r=  8  val normED 1.2293 [0.5274, 2.0638]  denom 0.2010  pairs 8/15  (52s)
+    r= 15  val normED 1.2208 [0.5377, 2.0564]  denom 0.2010  pairs 15/15  (57s)
+      r=8 selected (NOT decisive -- margin below noise, default retained)
+    trained in 203s (skipped 0 non-finite steps)
+      ihcfm           normED 1.3714 [1.0923, 1.6861]  absED 0.2081  denom 0.2280  (n_units 29)
+      perturbed_mean  normED 1.4618 [1.2249, 1.7551]  absED 0.1954  denom 0.2280  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.2280  denom 0.2280  (n_units 29)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -0.0777 [-0.3860, +0.2030] sign p=0.458 over 29 records
+  [CS] order 2 doses [3] DOSE-CONFOUNDED | train 639 | held 27 pops / 27 records | feasible True
+    r=  2  val normED 1.1429 [0.8231, 1.5159]  denom 0.1550  pairs 2/15  (62s)
+    r=  8  val normED 1.2191 [0.8218, 1.7828]  denom 0.1550  pairs 8/15  (63s)
+    r= 15  val normED 1.2414 [0.8619, 1.7821]  denom 0.1550  pairs 15/15  (64s)
+      r=8 selected (NOT decisive -- margin below noise, default retained)
+    trained in 236s (skipped 0 non-finite steps)
+      ihcfm           normED 0.8938 [0.6668, 1.1389]  absED 0.1455  denom 0.2365  (n_units 27)
+      perturbed_mean  normED 2.2324 [1.2959, 3.3703]  absED 0.2111  denom 0.2365  (n_units 27)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.2365  denom 0.2365  (n_units 27)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -1.3387 [-2.2541, -0.6053] sign p=0.000311 over 27 records
+  [SF] order 2 doses [3] DOSE-CONFOUNDED | train 639 | held 27 pops / 27 records | feasible True
+    r=  2  val normED 1.1210 [0.8160, 1.5003]  denom 0.1594  pairs 2/15  (62s)
+    r=  8  val normED 1.2619 [0.8732, 1.8885]  denom 0.1594  pairs 8/15  (63s)
+    r= 15  val normED 1.2779 [0.9049, 1.8899]  denom 0.1594  pairs 15/15  (66s)
+      r=8 selected (NOT decisive -- margin below noise, default retained)
+    trained in 238s (skipped 0 non-finite steps)
+      ihcfm           normED 2.0226 [1.1341, 3.1334]  absED 0.1453  denom 0.2063  (n_units 27)
+      perturbed_mean  normED 4.8577 [2.5792, 7.7182]  absED 0.2810  denom 0.2063  (n_units 27)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.2063  denom 0.2063  (n_units 27)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -2.8351 [-4.5529, -1.4184] sign p=1.49e-08 over 27 records
+  [CF] order 2 doses [3] DOSE-CONFOUNDED | train 639 | held 27 pops / 27 records | feasible True
+    r=  2  val normED 1.1027 [0.8092, 1.4595]  denom 0.1652  pairs 2/15  (62s)
+    r=  8  val normED 1.1947 [0.7990, 1.7452]  denom 0.1652  pairs 8/15  (62s)
+    r= 15  val normED 1.1947 [0.8297, 1.7109]  denom 0.1652  pairs 15/15  (68s)
+      r=8 selected (NOT decisive -- margin below noise, default retained)
+    trained in 243s (skipped 0 non-finite steps)
+      ihcfm           normED 1.0442 [0.7633, 1.3931]  absED 0.0819  denom 0.1309  (n_units 27)
+      perturbed_mean  normED 2.1861 [1.4367, 3.1513]  absED 0.1330  denom 0.1309  (n_units 27)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1309  denom 0.1309  (n_units 27)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -1.1418 [-1.8300, -0.6076] sign p=4.92e-05 over 27 records
+  [CSF] order 3 doses [4] DOSE-CONFOUNDED | train 640 | held 26 pops / 26 records | feasible True
+    r=  2  val normED 1.1273 [0.8076, 1.4980]  denom 0.1647  pairs 2/15  (62s)
+    r=  8  val normED 1.1095 [0.7938, 1.5286]  denom 0.1647  pairs 8/15  (63s)
+    r= 15  val normED 1.1242 [0.8162, 1.5557]  denom 0.1647  pairs 15/15  (65s)
+      r=8 selected
+    trained in 238s (skipped 0 non-finite steps)
+      ihcfm           normED 3.1772 [1.9415, 4.5707]  absED 0.2146  denom 0.1863  (n_units 26)
+      perturbed_mean  normED 6.7956 [3.8302, 9.9989]  absED 0.3779  denom 0.1863  (n_units 26)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1863  denom 0.1863  (n_units 26)
+      PAIRED ihcfm - perturbed_mean (normED, lower better): -3.6184 [-5.6273, -1.7560] sign p=0.000534 over 26 records
+
+=== leave-replicate-out: 3 folds, code_dim 0 vs 16 ===
+  [repfold0] held 235 pops / 29 records (70 combination pops) | train 431
+    code_dim=0
+    trained in 41s (skipped 0 non-finite steps)
+      ihcfm           normED 1.1553 [0.9242, 1.4760]  absED 0.1146  denom 0.1751  (n_units 29)
+      no_change       normED 1.0000 [1.0000, 1.0000]  absED 0.1751  denom 0.1751  (n_units 29)
+    code_dim=16
+    trained in 43s (skipped 0 non-finite steps)
